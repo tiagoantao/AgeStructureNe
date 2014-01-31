@@ -105,3 +105,6 @@ are SNPs). 100 loci will be used to compute H.
 
 This will generate hz computations on
 data/ldne/1000grizzly-\*hz
+
+The models on the directory hz simulate 600 years, probably more appropriate
+to test Hz than the standard models (100 years)
