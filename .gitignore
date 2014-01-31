@@ -1,5 +1,15 @@
 *.py[cod]
 
+*.vk
+*.vk.mature
+*.bree
+*.db
+*.ofs
+*.demo
+*.demoF
+*.demoM
+*.bz2
+
 # C extensions
 *.so
 

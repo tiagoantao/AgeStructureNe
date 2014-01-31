@@ -40,15 +40,39 @@ Data Simulation
 ---------------
 
 
-You can start by running the simulator on one scenario, for example
+You can start by running the simulator on one scenario, for example:
 
 python sim.py ldne/100grizzly.conf example
 
 Will run an age structured population of Grizzlies with a N1 of 100 and write
-the output on example.* files
+the output on example.\* files
+
+This will generate 2 files:
+
+example.sim - non-genetic output (generation, replicate, individual id sex and
+parent id)
+
+example.gen - the genome of each individual
+
+Typically you will want to run several replicates. For that you can run
+
+bash doSim.sh 100grizzly 0 20 ldne
+
+This will do 20 replicates (0 to 19) and store them on data/ldne/100grizzly\* .
+Ignore the rm errors.
+
+If you desire you can run replicates in parallel (i.e. run several instances
+of the above, see e.g doSimAll.sh which runs 20 replicates - 10 at a time).
+You will need to have enough CPU power and memory for this!
 
 Non-genetic Analysis
 --------------------
+
+Generate non-genetic raw information (vk, offspring count, ...)
+
+python totalAll.py ldne/var-100grizzly.conf
+
+(see ldne/var\*conf for examples)
 
 Genetic Analysis
 ----------------
