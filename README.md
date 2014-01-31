@@ -9,6 +9,8 @@ Requirements
 
 Linux (64-bit)
 
+Python 2.7
+
 simuPOP
 
 Genepop (1)
@@ -36,6 +38,14 @@ need genetic analysis)
 
 Data Simulation
 ---------------
+
+
+You can start by running the simulator on one scenario, for example
+
+python sim.py ldne/100grizzly.conf example
+
+Will run an age structured population of Grizzlies with a N1 of 100 and write
+the output on example.* files
 
 Non-genetic Analysis
 --------------------
