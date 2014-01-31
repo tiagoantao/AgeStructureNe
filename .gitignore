@@ -1,5 +1,8 @@
 *.py[cod]
 
+*.gen
+*.sim
+*.hz
 *.vk
 *.vk.mature
 *.bree

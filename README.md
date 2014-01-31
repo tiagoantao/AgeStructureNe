@@ -13,6 +13,8 @@ Python 2.7
 
 simuPOP
 
+Biopython
+
 Genepop (1)
 
 LDNe (1,2)
@@ -87,3 +89,19 @@ Genetic Analysis
 ----------------
 
 Heterozygosity
+
+Do:
+
+bash doH.sh 100grizzly 0 20 ldne 100 0
+
+0 20 are the start and end replicates (0 to 19)
+
+ldne is the directory name
+
+100 is the number of generations
+
+0 is the loci to start the analysis (0 - 100 are normally MSats, 100 onwards
+are SNPs). 100 loci will be used to compute H.
+
+This will generate hz computations on
+data/ldne/1000grizzly-\*hz
