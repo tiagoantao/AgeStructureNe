@@ -39,7 +39,6 @@ need genetic analysis)
 Data Simulation
 ---------------
 
-
 You can start by running the simulator on one scenario, for example:
 
 python sim.py ldne/100grizzly.conf example
@@ -65,6 +64,7 @@ If you desire you can run replicates in parallel (i.e. run several instances
 of the above, see e.g doSimAll.sh which runs 20 replicates - 10 at a time).
 You will need to have enough CPU power and memory for this!
 
+
 Non-genetic Analysis
 --------------------
 
@@ -74,5 +74,16 @@ python totalAll.py ldne/var-100grizzly.conf
 
 (see ldne/var\*conf for examples)
 
+Generate summary statistics
+
+python demo.py ldne/var-100grizzly.conf > demo.txt
+
+python nb3.py ldne/var-100grizzly.conf > nb3.txt
+
+These files can be loaded into Excel (space delimited)
+
+
 Genetic Analysis
 ----------------
+
+Heterozygosity
