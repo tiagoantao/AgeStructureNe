@@ -2,7 +2,12 @@
 
 *.gen
 *.sim
+output/*txt
+*-snp-*
+*/ldout/*-*
+*.r2
 *.hz
+*.hz-newb
 *.vk
 *.vk.mature
 *.bree

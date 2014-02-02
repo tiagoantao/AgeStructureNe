@@ -37,6 +37,8 @@ There are 3 parts to the analysis
 You might want to skip 2 or 3 (e.g to repeat the Evolution paper, you do not
 need genetic analysis)
 
+Some of these calculations can be very slow or very computationally
+demanding...
 
 Data Simulation
 ---------------
@@ -108,3 +110,18 @@ data/ldne/1000grizzly-\*hz
 
 The models on the directory hz simulate 600 years, probably more appropriate
 to test Hz than the standard models (100 years)
+
+
+Trout studies
+-------------
+
+[This assumes LDNe was run]
+
+python nb3.py trout/var.conf > /dev/null 2> output/trt-nb.txt
+
+Heterozygosity levels on the simulations need to be computed BEFORE the main
+study is done. Do:
+
+python sumTrout.py trout/var.conf trt
+
+Errors...
