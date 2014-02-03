@@ -117,7 +117,7 @@ Trout studies
 
 [This assumes LDNe was run]
 
-python nb3.py trout/var.conf > /dev/null 2> output/trt-nb.txt
+python nb3.py trout/var.conf > output/trt-nb3.txt 2> output/trt-nb.txt
 
 Heterozygosity levels on the simulations need to be computed BEFORE the main
 study is done. Do:
