@@ -124,4 +124,19 @@ study is done. Do:
 
 python sumTrout.py trout/var.conf trt
 
-Errors...
+Errors starting with err can be ignored. There will be an exception at the
+end.
+
+Run:
+
+python plotTrout.py trt
+
+This will fail. Re-run both commands in order again:
+
+python sumTrout.py trout/var.conf trt
+
+python plotTrout.py trt
+
+
+And now all should be fine (again, ignore the err messages). This is
+convoluted but works!

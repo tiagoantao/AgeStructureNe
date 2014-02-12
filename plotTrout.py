@@ -25,15 +25,18 @@ nindivs = [15, 25, 50, 100]
 nlocis = [15]
 nsnps = [100, 200, 400]
 N0s = [90, 180, 361, 722]  # , 1805]
-Nbs = {90: 25, 180: 50, 361: 100, 722: 200,  # 1805: 500,
-       "bullpred-193": 50, "bullpred-387": 100, "bullpred-775": 200,
-       "bullt2-305": 5, "bullt2-610": 10, "bullt2-915": 15, "bullt2-1220": 20,
-       "bullt2-1525": 25, "bullt2-1830": 30, "bullt2-2440": 40,
-       "bullt2-3050": 50, "bullt2-4575": 75, "bullt2-6100": 100,
+Nbs = {('bulltrout', 90): 25, ('bulltrout', 180): 50, ('bulltrout', 361): 100,
+       ('bulltrout', 722): 200,  # 1805: 500,
+       ('bullpred', 193): 50, ('bullpred', 387): 100, ('bullpred', 775): 200,
+       ('bullt2', 305): 5, ('bullt2', 610): 10, ('bullt2', 915): 15,
+       ('bullt2', 1220): 20,
+       ('bullt2', 1525): 25, ('bullt2', 1830): 30, ('bullt2', 2440): 40,
+       ('bullt2', 3050): 50, ('bullt2', 4575): 75, ('bullt2', 6100): 100,
        # "btrout-1619": 50, "btrout-6476": 200,
-       "shepard-518": 50, "shepard-1036": 100, "fraley-641": 50, "fraley-1282": 100}
+       ('shepard', 518): 50, ('shepard', 1036): 100,
+       ('fraley', 641): 50, ('fraley', 1282): 100}
 #       "lake-18": 50, "lake-72": 200}
-NbNames = [(None, "BuTrout"), ("bullpred", "BuPred"), ("bullt2", "BuLong"),
+NbNames = [("bulltrout", "BuTrout"), ("bullpred", "BuPred"), ("bullt2", "BuLong"),
            ("shepard", "WCT-S"), ("fraley", "WCT-F")]
 Nes = {90: 32.3, 180: 64.7, 361: 129.4, 722: 258.8}
 cohorts = ["All",  "Newb", "c2c", "c3c"]
@@ -59,48 +62,16 @@ def load_file(pref, cut=None):
     f.readline()
     f.readline()
     for l in f:
-        toks = l.split("\t")
-        toks[-1] = toks[-1].rstrip()
-        if len(toks) == 1 and toks[0].find(" ") == -1:
-            curr_case = {}
-            case[toks[0]] = curr_case
-            curr_case["bullpred-193"] = {}
-            curr_case["bullpred-387"] = {}
-            curr_case["bullpred-775"] = {}
-            curr_case["bullt2-305"] = {}
-            curr_case["bullt2-610"] = {}
-            curr_case["bullt2-915"] = {}
-            curr_case["bullt2-1220"] = {}
-            curr_case["bullt2-1525"] = {}
-            curr_case["bullt2-1830"] = {}
-            curr_case["bullt2-2440"] = {}
-            curr_case["bullt2-3050"] = {}
-            curr_case["bullt2-4575"] = {}
-            curr_case["bullt2-6100"] = {}
-            curr_case["btrout-1619"] = {}
-            curr_case["btrout-6476"] = {}
-            curr_case["shepard-518"] = {}
-            curr_case["shepard-1036"] = {}
-            curr_case["fraley-641"] = {}
-            curr_case["fraley-1282"] = {}
-            curr_case["lake-18"] = {}
-            curr_case["lake-72"] = {}
-            curr_case[90] = {}
-            curr_case[180] = {}
-            curr_case[361] = {}
-            curr_case[722] = {}
-            #curr_case[1805] = {}
-            continue
-        if len(toks) == 1:
-            continue
-        pcrit, nindivs, nloci, my_type = tuple(toks[0].rstrip().split(" "))
-        nindivs = int(nindivs)
-        nloci = int(nloci)
-        #print nindivs, nloci, my_type, len(toks)
-        if pcrit == "":
-            pcrit = None
-        else:
-            pcrit = float(pcrit)
+        toks = l.rstrip().split("\t")
+        cohort = toks[0]
+        pcrit = float(toks[1]) if toks[1] != '' else None
+        nindivs = int(toks[2])
+        nloci = int(toks[3])
+        my_type = toks[4]
+        model = toks[5]
+        N0 = int(toks[6])
+        curr_case = case.setdefault(cohort, {})
+        case_id = model, N0
 
         def get_vals(tok):
             ts = tok.rstrip()
@@ -112,36 +83,14 @@ def load_file(pref, cut=None):
                     return eval(point), eval(ci)
                 except ValueError:
                     return [], []
-        curr_case["btrout-1619"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[1])
-        curr_case["btrout-6476"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[2])
-        curr_case["bullpred-193"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[3])
-        curr_case["bullpred-387"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[4])
-        curr_case["bullpred-775"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[5])
-        curr_case["bullt2-305"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[6])
-        curr_case["bullt2-610"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[7])
-        curr_case["bullt2-915"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[8])
-        curr_case["bullt2-1220"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[9])
-        curr_case["bullt2-1525"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[10])
-        curr_case["bullt2-1830"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[11])
-        curr_case["bullt2-2440"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[12])
-        curr_case["bullt2-3050"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[13])
-        curr_case["bullt2-4575"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[14])
-        curr_case["bullt2-6100"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[15])
-        curr_case[90][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[16])
-        curr_case[180][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[17])
-        curr_case[361][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[18])
-        curr_case[722][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[19])
-        curr_case["fraley-641"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[20])
-        curr_case["fraley-1282"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[21])
-        curr_case["lake-18"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[22])
-        curr_case["lake-72"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[23])
-        curr_case["shepard-518"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[16])
-        curr_case["shepard-1036"][(pcrit, nindivs, nloci, my_type)] = get_vals(toks[17])
+        if len(toks) > 7:
+            modeln0 = curr_case.setdefault(case_id, {})
+            modeln0[(pcrit, nindivs, nloci, my_type)] = eval(toks[7]), eval(toks[8])
     return case
 
 
 def load_nb(pref):
-    f = open(pref + "-nb.txt")
+    f = open("output/" + pref + "-nb.txt")
     for l in f:
         toks = l.rstrip().split(" ")
         model = toks[0]
@@ -155,9 +104,10 @@ def load_nb(pref):
 
 
 def do_nb(cohort, nsnps, pref):
+    model = 'bulltrout'
     for N0 in N0s:
         pylab.clf()
-        pylab.title("Nb: %d (N1: %d) - cohort %s" % (Nbs[N0], N0, cohort))
+        pylab.title("Nb: %d (N1: %d) - cohort %s" % (Nbs[model, N0], N0, cohort))
         box_vals = []
         tops = []
         bottoms = []
@@ -205,8 +155,8 @@ def do_nb(cohort, nsnps, pref):
                        ha="center", va="bottom", size="small",
                        rotation="horizontal")
         pylab.ylabel("$\hat{N}_{e}$")
-        pylab.ylim(0, Nbs[N0] * 3)
-        pylab.axhline(Nbs[N0], color="k", lw=0.3)
+        pylab.ylim(0, Nbs[(model, N0)] * 3)
+        pylab.axhline(Nbs[(model, N0)], color="k", lw=0.3)
         pylab.xticks(range(len(labels)), labels, rotation="vertical")
         pylab.boxplot(box_vals, notch=0, sym="")
         pylab.plot([1 + x for x in range(len(tops))], tops, "rx", ms=20)
@@ -216,9 +166,11 @@ def do_nb(cohort, nsnps, pref):
 
 
 def do_cohort(N0, nindiv):
+    model = 'bulltrout'
     last = 0.5
     pylab.clf()
-    pylab.title("Nb: %d (N1: %d) - different cohorts - 100 SNPs" % (Nbs[N0], N0))
+    pylab.title("Nb: %d (N1: %d) - different cohorts - 100 SNPs" %
+                (Nbs[(model, N0)], N0))
     box_vals = []
     labels = []
     tops = []
@@ -240,9 +192,9 @@ def do_cohort(N0, nindiv):
                        ha="center", va="bottom", size="small",
                        rotation="horizontal")
             last = pos
-    pylab.ylim(0, Nbs[N0] * 3)
+    pylab.ylim(0, Nbs[(model, N0)] * 3)
     pylab.ylabel("$\hat{N}_{e}$")
-    pylab.axhline(Nbs[N0], color="k", lw=0.3)
+    pylab.axhline(Nbs[(model, N0)], color="k", lw=0.3)
     pylab.xticks(range(len(labels)), labels)
     pylab.boxplot(box_vals, notch=0, sym="")
     pylab.plot([1 + x for x in range(len(tops))], tops, "rx")
@@ -252,9 +204,11 @@ def do_cohort(N0, nindiv):
 
 
 def do_rel(N0, nindiv):
+    model = 'bulltrout'
     #last = 0.5
     pylab.clf()
-    pylab.title("Nb: %d (N1: %d) - 20pc related individuals" % (Nbs[N0], N0))
+    pylab.title("Nb: %d (N1: %d) - 20pc related individuals" % (Nbs[(model,
+                                                                     N0)], N0))
     box_vals = []
     labels = []
     cohort = "All"
@@ -270,9 +224,9 @@ def do_rel(N0, nindiv):
     vals, ci = case[cohort][N0][(None, nindiv, 100, "SNP")]
     box_vals.append(vals)
     labels.append("SNP-100")
-    pylab.ylim(0, Nbs[N0] * 3)
+    pylab.ylim(0, Nbs[(model, N0)] * 3)
     pylab.ylabel("$\hat{N}_{e}$")
-    pylab.axhline(Nbs[N0], color="k", lw=0.3)
+    pylab.axhline(Nbs[(model, N0)], color="k", lw=0.3)
     pylab.xticks(range(len(labels)), labels)
     pylab.boxplot(box_vals, notch=0, sym="")
     pylab.savefig("output/rel-%d.png" % (N0))
@@ -285,11 +239,11 @@ def do_nb_comp():
     n0s = Nbs.keys()
     n0s.sort()
     pylab.title("Nb comparison - 100 SNPs - 50 indivs")
-    for n0 in n0s:
+    for model, n0 in n0s:
         if type(n0) != int:
             continue
-        nb = Nbs[n0]
-        vals, ci = case["All"][n0][(None, 50, 100, "SNP")]
+        nb = Nbs[(model, n0)]
+        vals, ci = case["All"][(model, n0)][(None, 50, 100, "SNP")]
         labels.append(str(nb))
         box_vals.append(vals)
     pylab.xticks(range(len(labels)), labels)
@@ -310,17 +264,14 @@ def do_lt_comp(nb, strat):
     pylab.title("Nb: %d (Life table comparison)" % nb)
     pylab.suptitle("%s sampled - 100 SNPs - 50 individuals" % strat)
     for pref, name in NbNames:
-        for n0, nb2 in Nbs.items():
+        for k, nb2 in Nbs.items():
+            model, n0 = k
             if nb2 != nb:
                 continue
-            if pref is None and type(n0) == int:
-                pass
-            elif pref is not None:
-                if type(n0) == int or not n0.startswith(pref):
-                    continue
-            else:
+            elif pref != model:
                 continue
-            vals, ci = case[strat][n0][(None, 50, 100, "SNP")]
+            print strat, model, n0
+            vals, ci = case[strat][(model, n0)][(None, 50, 100, "SNP")]
             hmeans.append(hmean(vals))
             try:
                 bottom, top = zip(*ci)
@@ -396,7 +347,7 @@ def do_bias():
 
 def do_hz(model, ltype, loc, N1s):
     title = "%s %s" % (model, ltype)
-    os.system('python plotHz.py "%s" data/gordon %s' %
+    os.system('python plotHz.py "%s" data/trout %s' %
               (title, " ".join([str(N1) + model + "-" + str(loc) for N1 in N1s])))
     shutil.copyfile("hz.png", "output/hz-%s-%s.png" % (model, ltype))
     shutil.copyfile("hhz.png", "output/hhz-%s-%s.png" % (model, ltype))
@@ -413,7 +364,7 @@ def do_hz_comp(model, N0):
         cutCase[cut] = {}
         case = load_file(pref, cut * 100)
         for nsnps in snps:
-            vals, ci = case[cohort][N0][(None, 50, nsnps, "SNP")]
+            vals, ci = case[cohort][(model, N0)][(None, 50, nsnps, "SNP")]
             cutCase[cut][nsnps] = vals, ci
     pylab.clf()
     pylab.title("Hz comparison: %s - %d " % (model, N0))
@@ -444,8 +395,8 @@ def do_hz_comp(model, N0):
     pylab.plot([1 + x for x in range(len(tops))], tops, "rx")
     pylab.plot([1 + x for x in range(len(bottoms))], bottoms, "rx")
     pylab.plot([1 + x for x in range(len(hmeans))], hmeans, "k+")
-    pylab.axhline(Nbs[N0], color="k", lw=0.3)
-    pylab.ylim(0, Nbs[N0] * 3)
+    pylab.axhline(Nbs[(model, N0)], color="k", lw=0.3)
+    pylab.ylim(0, Nbs[(model, N0)] * 3)
     pylab.savefig("output/hz-comp.png")
 
 
@@ -457,7 +408,7 @@ def do_pcrit(model, N0):
         sampCase[nsnps] = {}
         for pcrit in pcrits:
             #print case[cohort][N0].keys()
-            vals, ci = case[cohort][N0][(pcrit, 50, nsnps, "SNP")]
+            vals, ci = case[cohort][(model, N0)][(pcrit, 50, nsnps, "SNP")]
             sampCase[nsnps][pcrit] = vals, ci
     pylab.clf()
     pylab.title("pcrit comparison: %s - %d " % (model, N0))
@@ -510,7 +461,7 @@ def do_ld_progress(model, N0s):
 
     for N0 in N0s:
         pylab.clf()
-        pylab.title("LDNe estimates %s %d (%d)" % (model, N0, Nbs[N0]))
+        pylab.title("LDNe estimates %s %d (%d)" % (model, N0, Nbs[(model, N0)]))
 
         for nsnp in nsnps:
             vals = []
@@ -533,7 +484,7 @@ def do_ld_progress(model, N0s):
                 # We are done
             if rep > 0:
                 pylab.plot(_do_window(map(lambda x: x / rep, vals)), label=str(nsnp))
-        pylab.ylim(1.0 * Nbs[N0], 1.5 * Nbs[N0])
+        pylab.ylim(1.0 * Nbs[(model, N0)], 1.5 * Nbs[(model, N0)])
         pylab.legend()
         pylab.savefig("output/ldne-%d.png" % N0)
 
@@ -557,7 +508,7 @@ def do_nb_ne(model, N0, rep):
     start_year, vals = realNbs[model, N0][rep]
     nes, cis = fetch_nes(model, N0, rep, "Newb")
     pylab.clf()
-    pylab.title("%s N1: %d Nb: %d Ne: %.2f" % (model, N0, Nbs[N0], Nes[N0]))
+    pylab.title("%s N1: %d Nb: %d Ne: %.2f" % (model, N0, Nbs[(model, N0)], Nes[N0]))
     pylab.plot(vals[start_year:start_year + points], "+")
     shift = 1
     myNes = nes[start_year + shift:start_year + shift + 100]
@@ -574,13 +525,13 @@ def do_nb_ne(model, N0, rep):
         cerrs.append((cvals[i] - cci[i][0], cci[i][1] - cvals[i]))
     pylab.errorbar(numpy.array(range(len(cis20))) + 0.1, nes20, fmt="+", yerr=zip(*errs), mec="red", color="red")
     pylab.errorbar(range(len(cis20)), cvals, fmt="+", yerr=zip(*cerrs), mec="green", color="green")
-    pylab.axhline(Nbs[N0])
+    pylab.axhline(Nbs[(model, N0)])
     pylab.axhline(Nes[N0])
     pylab.savefig("output/nb-ne-%s-%d-%d.png" % (model, N0, rep))
 
     pylab.clf()
     median = numpy.median(myNes)
-    median = Nbs[N0]
+    median = Nbs[(model, N0)]
     ne = Nes[N0]
     basics = []
     nbcomps = []
@@ -740,6 +691,7 @@ def do_all_nb_ne():
 
 
 def do_robin_nb_ne():
+    model = 'bulltrout'
     allBasics = {}
     allNbComps = {}
     allNeComps = {}
@@ -807,7 +759,9 @@ def do_robin_nb_ne():
 
             pylab.text(tops["X"], tops["Y"], text, va="bottom", ha="right")
             pylab.text(tops["X"], tops["Y"], "%.2f (%.2f)" % tuple(stats[i]), va="top", ha="right")
-        pylab.figtext(0.02, 0.5, "bulltrout N1: %d Nb: %d Ne: %.2f" % (N0, Nbs[N0], Nes[N0]),
+        pylab.figtext(0.02, 0.5, "bulltrout N1: %d Nb: %d Ne: %.2f" % (N0,
+                                                                       Nbs[(model,
+                                                                            N0)], Nes[N0]),
                       rotation="vertical", ha="left", va="center")
         pylab.savefig("output/nb-robin-%d.png" % N0)
 
@@ -818,9 +772,9 @@ def do_nb_linear(models, name, fun):
     pes = []
     tops = []
     bottoms = []
-    for model in models:
-        nb = Nbs[model]
-        vals, ci = case["Newb"][model][(None, 50, 100, "SNP")]
+    for model, n0 in models:
+        nb = Nbs[(model, n0)]
+        vals, ci = case["Newb"][(model, n0)][(None, 50, 100, "SNP")]
         vals, ci = fun(model, vals, ci)
         if len(vals) == 0:
             continue
@@ -849,11 +803,8 @@ do_all_nb_ne()
 
 do_ld_progress("bulltrout", [180, 361, 722])
 
-do_hz_comp("bulltrout", 361)
-
-
 try:
-    os.remove("hz-cut.html")
+    os.remove("output/hz-cut.html")
 except OSError:
     pass  # OK
 for loc, ltype in [(0, "MSAT"), (100, "SNP")]:
@@ -866,16 +817,19 @@ for loc, ltype in [(0, "MSAT"), (100, "SNP")]:
         do_hz("shepard", ltype, loc, [518, 1036])
         do_hz("fraley", ltype, loc, [641, 1282])
         do_hz("lake", ltype, loc, [18, 72])
-        do_hz("bullt2", ltype, loc, [305, 610, 915, 1220, 3050, 6100])
+        do_hz("bullt2", ltype, loc, [305, 610, 915, 1220, 1525, 3050, 6100])
 shutil.copyfile("hz-cut.html", "output/hz-cut.html")
+shutil.copyfile("hz-cut.txt", "output/hz-cut.txt")
+
+do_hz_comp("bulltrout", 361)
 
 case = load_file(pref, 45)
 do_lt_comp(200, "Newb")
 do_lt_comp(200, "All")
 case = load_file(pref, 40)
-linear = ["bullt2-305", "bullt2-610", "bullt2-915", "bullt2-1220",
-          "bullt2-1525", "bullt2-1830", "bullt2-2440",
-          "bullt2-3050", "bullt2-4575", "bullt2-6100"]
+linear = [("bullt2", 305), ("bullt2", 610), ("bullt2", 915), ("bullt2", 1220),
+          ("bullt2", 1525), ("bullt2", 1830), ("bullt2", 2440),
+          ("bullt2", 3050), ("bullt2", 4575), ("bullt2", 6100)]
 do_nb_linear(linear, "std",
              functools.partial(lambda model, x, y: (x, y)))
 do_nb_linear(linear, "Int0.9",

@@ -17,7 +17,7 @@ def doCase(w, age, indivs, loci, isSNP, isRel, startGens, numGens,
         Ns = N0[model]
         Ns.sort()
         for N in Ns:
-            print >>w, "%s\t%s\t%d" % (case, model, N)
+            print >>w, "%s\t%s\t%s\t%d" % (age, case, model, N),
             if type(startGens) == int:
                 startGen = startGens  # hack
             else:
@@ -26,6 +26,7 @@ def doCase(w, age, indivs, loci, isSNP, isRel, startGens, numGens,
                 except KeyError:
                     print >>sys.stderr, "err", N, model
                     print >>w, "\t",
+                    print >>w
                     continue
             if pcrit is None:
                 name = ""
@@ -57,30 +58,18 @@ def doCase(w, age, indivs, loci, isSNP, isRel, startGens, numGens,
 
                 if len(ldne) > 0:
                     print >>w, "\t" + str(ldne),
-                    print >>w, "\t" + str(ldneCI)
-                else:
-                    print >>w, "\t\t"
+                    print >>w, "\t" + str(ldneCI),
             except IOError:
                 print >>sys.stderr, "err", mName, model, indivs, loci, rep, name
-                print >>w, "\t\t",
+            print >>w
 
-#N0, sampCohort, sampSize, sampSNP, numGens, reps, dataDir = myUtils.getConfig(confFile)
 N0, sampCohort, sampSize, sampSNP, numGens, reps, dataDir = myUtils.getVarConf(confFile)
-#cat ~/tmp/robin/ldne/ecology0.sim |python ../sampleIndivs.py True 100 20 40|python ../sampleLoci.py /home/tiago/tmp/out0.gen 100 100|python ../ld2.py
-#N1modelAgeIndivsLoci-rep
 
 models = N0.keys()
 models.sort()
 
 
 def doHz(w, startGens):
-    print >>w, "\t",
-    for model in models:
-        for t in range(len(N0[model])):
-            print >>w, model + "\t",
-    print >>w
-
-    print >>w, "\t",
     for model in models:
         Ns = N0[model]
         Ns.sort()
@@ -90,12 +79,9 @@ def doHz(w, startGens):
                 startGen = cfg.gens - numGens - 1
             else:
                 startGen = startGens
-            print >>w, "\t" + str(N) + "\t",
-    print >>w
 
     ages = sampCohort.keys()
     for age in ages:
-        print >>w, age
         for indivs, loci in sampSize:
             case = '\t%d\t%d\tMSAT' % (indivs, loci)
             doCase(w, age, indivs, loci, False, False, startGen, numGens,

@@ -1,6 +1,6 @@
 from sys import stdin, stderr, argv, exit
-from PopGen.LDNe.Controller import LDNeController
-from PopGen import LDNe
+from igrat.genetics.popgen.ldne.Controller import LDNeController
+from igrat.genetics.popgen import ldne
 import scipy
 from scipy import stats
 import sys
@@ -24,7 +24,7 @@ out=open(fname,"w")
 l = stdin.readline()
 cnt = 0
 while l!= "":
-    out.write(l) 
+    out.write(l)
     l = stdin.readline()
     cnt += 1
 if cnt ==0: # Sample size above indivs
@@ -32,7 +32,7 @@ if cnt ==0: # Sample size above indivs
 out.close()
 ldnec.run_ldne(fname, fname+".out")
 ldout = open(fname+'.out')
-ldres = LDNe.RecordParser().parse(ldout)
+ldres = ldne.RecordParser().parse(ldout)
 mNes = []
 mOr2s= []
 mNesPow = []

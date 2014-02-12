@@ -2,6 +2,9 @@
 
 *.gen
 *.sim
+*out
+*ldne
+*png
 output/*txt
 *-snp-*
 */ldout/*-*
