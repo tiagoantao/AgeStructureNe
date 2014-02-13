@@ -119,8 +119,8 @@ for l in f:
     modelCuts[model] = gen
 f.close()
 for cut, modelCuts in allCuts.items():
-    print cut
-    print modelCuts.keys()
+    #print cut
+    #print modelCuts.keys()
     w = open("output/%s-%d.txt" % (pref, cut * 100), "w")
     doHz(w, modelCuts)
     w.close()

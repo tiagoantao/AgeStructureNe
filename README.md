@@ -19,6 +19,8 @@ Genepop (1)
 
 LDNe (1,2)
 
+igrat
+
 
 1 - Only if you do genetic analysis
 
