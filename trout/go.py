@@ -74,7 +74,6 @@ for rep in range(reps, repe):
                         if nindivs != 50 or nloci != 100:
                             continue
                     os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivs.py "{AGECOND}" {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ld2.py {thres} > ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep} 2> ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep}.r2'.format(**myd))
-                continue
                 # related individuals
                 if nindivs == 50:
                     if model not in ["180bulltrout", "361bulltrout"]:
