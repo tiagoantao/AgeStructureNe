@@ -258,11 +258,11 @@ def do_hz(model, ltype, loc, N1s):
     title = "%s %s" % (model, ltype)
     os.system('python plotHz.py "%s" data/trout %s' %
               (title, " ".join([str(N1) + model + "-" + str(loc) for N1 in N1s])))
-    shutil.copyfile("hz.png", "output/hz-%s-%s.png" % (model, ltype))
-    shutil.copyfile("hhz.png", "output/hhz-%s-%s.png" % (model, ltype))
+    shutil.move("hz.png", "output/hz-%s-%s.png" % (model, ltype))
+    shutil.move("hhz.png", "output/hhz-%s-%s.png" % (model, ltype))
     for N1 in N1s:
-        print "ahz-%d%s-%d.png" % (N1, model, loc), "output/ahz-%s-%d-%s.png" % (model, N1, ltype)
-        shutil.copyfile("ahz-%d%s-%d.png" % (N1, model, loc), "output/ahz-%s-%d-%s.png" % (model, N1, ltype))
+        shutil.move("ahz-%d%s-%d.png" % (N1, model, loc), "output/ahz-%s-%d-%s.png" % (model, N1, ltype))
+        os.remove("ahz-%d%s-%d.eps" % (N1, model, loc))
 
 
 def do_hz_comp(model, N0):
@@ -461,12 +461,12 @@ def do_nb_ne(model, N0, rep):
     return median, basics, nbcomps, necomps, harmcomps, vals, in_naive, in_corr
 
 
-def do_table_ci(modelN0s):
+def do_table_ci(modelN0s, nsnps):
     #table = []
     cohort = "Newb"
-    nsnps = 100
-    w = open("output/table-ci.txt", "w")
-    print >>w, "Corr Model N1 median mean stdDev medianTopCI meanTopCI stdDevTopCI aboveTop medianTopErr medianBotCI meanBotCI stdDevBotCI belowBot medianBotErr"
+    thres = 10
+    w = open("output/table-ci-%d.txt" % nsnps, "w")
+    print >>w, "Corr Model N1 median mean stdDev medianTopCI meanTopCI stdDevTopCI aboveTop probTop medianTopErr medianBotCI meanBotCI stdDevBotCI belowBot probBot medianBotErr"
     for bname, model, N0 in modelN0s:
         nb = Nbs[(model, N0)]
         vals, ci = case[cohort][(model, N0)][(None, 50, nsnps, "SNP")]
@@ -479,6 +479,8 @@ def do_table_ci(modelN0s):
             cvals, cci = corrections
             topErr = [0, 0.0]
             botErr = [0, 0.0]
+            probTop = 0
+            probBot = 0
             if len(ci) > 0:
                 bottoms, tops = zip(*cci)
                 topProb = botProb = 0
@@ -487,12 +489,16 @@ def do_table_ci(modelN0s):
                         botProb += 1
                         botErr[0] += 1
                         botErr[1] += bottom - nb
+                        if bottom - nb > thres:
+                            probBot += 1
                 for top in tops:
                     if top < nb or top > 10000:
                         topProb += 1
                         if top < nb:
                             topErr[0] += 1
                             topErr[1] += nb - top
+                            if nb - top > thres:
+                                probTop += 1
                 topMean = numpy.mean(tops)
                 botMean = numpy.mean(bottoms)
                 topMedian = numpy.median(tops)
@@ -503,11 +509,15 @@ def do_table_ci(modelN0s):
                 botProb /= len(bottoms)
                 topProb *= 100
                 botProb *= 100
+                probTop /= len(tops)
+                probBot /= len(bottoms)
+                probTop *= 100
+                probBot *= 100
             else:
-                topMedian = botMedian = topProb = botProb = topMean = botMean = topStd = botStd = "NA"
+                topMedian = botMedian = topProb = botProb = topMean = botMean = topStd = botStd = probBot = probTop = "NA"
             print >>w, has_corr, bname, N0, numpy.median(cvals), numpy.mean(cvals), numpy.std(cvals),
-            print >>w, topMedian, topMean, topStd, topProb, numpy.median(topErr[1]),
-            print >>w, botMedian, botMean, botStd, botProb, numpy.median(botErr[1])
+            print >>w, topMedian, topMean, topStd, topProb, probTop, numpy.median(topErr[1]),
+            print >>w, botMedian, botMean, botStd, botProb, probBot, numpy.median(botErr[1])
     w.close()
 
 
@@ -683,8 +693,8 @@ for loc, ltype in [(0, "MSAT"), (100, "SNP")]:
         do_hz("lake", ltype, loc, [18, 72])
         do_hz("bullt2", ltype, loc, [305, 610, 915, 1220, 1525,
                                      1830, 2440, 3050, 4575, 6100])
-shutil.copyfile("hz-cut.html", "output/hz-cut.html")
-shutil.copyfile("hz-cut.txt", "output/hz-cut.txt")
+shutil.movefile("hz-cut.html", "output/hz-cut.html")
+shutil.movefile("hz-cut.txt", "output/hz-cut.txt")
 
 do_hz_comp("bulltrout", 361)
 
@@ -707,16 +717,19 @@ do_lt_comp(100, "Newb")
 
 do_pcrit("bulltrout", 361)
 
-do_table_ci([("BuTrout", "bulltrout", 90), ("BuTrout", "bulltrout", 180),
-             ("BuTrout", "bulltrout", 361), ("BuTrout", "bulltrout", 722),
-             ("WCT-S", "shepard", 518), ("WCT-S", "shepard", 1036),
-             ("WCT-F", "fraley", 641), ("WCT-F", "fraley", 1282),
-             ("BuLong", "bullt2", 305), ("BuLong", "bullt2", 610),
-             ("BuLong", "bullt2", 915), ("BuLong", "bullt2", 1220),
-             ("BuLong", "bullt2", 3050),
-             ("BuLong", "bullt2", 4575),
-             ("BuLong", "bullt2", 6100),
-             ("BuPred", "bullpred", 193), ("BuPred", "bullpred", 387)])
+cis = [("BuTrout", "bulltrout", 90), ("BuTrout", "bulltrout", 180),
+       ("BuTrout", "bulltrout", 361), ("BuTrout", "bulltrout", 722),
+       ("WCT-S", "shepard", 518), ("WCT-S", "shepard", 1036),
+       ("WCT-F", "fraley", 641), ("WCT-F", "fraley", 1282),
+       ("BuLong", "bullt2", 305), ("BuLong", "bullt2", 610),
+       ("BuLong", "bullt2", 915), ("BuLong", "bullt2", 1220),
+       ("BuLong", "bullt2", 1525), ("BuLong", "bullt2", 2440),
+       ("BuLong", "bullt2", 3050), ("BuLong", "bullt2", 4575),
+       ("BuLong", "bullt2", 6100),
+       ("BuPred", "bullpred", 193), ("BuPred", "bullpred", 387)]
+
+do_table_ci(cis, 100)
+do_table_ci(cis, 200)
 
 for cohort in cohorts:
     do_nb(cohort, [100], "")

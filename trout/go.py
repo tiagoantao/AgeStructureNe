@@ -21,7 +21,7 @@ sampleStratsLociSNP = True, []
 sampleStratsIndivs = False, [(15, 15), (15, 25), (15, 50), (15, 100)]
 sampleStratsIndivs = False, []
 sampleStratsIndivsSNP = True, [(100, 15), (100, 25), (100, 50), (100, 100)]
-sampleStratsIndivsSNP = True, [(100, 50)]
+sampleStratsIndivsSNP = True, [(200, 50)]
 
 myd = {"DDIR": DDIR, "MODEL": model,
        "AGECOND": agecond, "AGEDESC": agedesc, "GENS": gens}
@@ -70,10 +70,11 @@ for rep in range(reps, repe):
                         continue
                     os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivs.py "{AGECOND}" {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 100|python ../ld2.py {thres} > ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-{rep} 2> ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-{rep}.r2'.format(**myd))
                 else:
-                    if model not in ["180bulltrout", "361bulltrout"]:
-                        if nindivs != 50 or nloci != 100:
-                            continue
+                    #if model not in ["180bulltrout", "361bulltrout"]:
+                    #    if nindivs != 50 or nloci != 100:
+                    #        continue
                     os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivs.py "{AGECOND}" {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ld2.py {thres} > ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep} 2> ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep}.r2'.format(**myd))
+                continue
                 # related individuals
                 if nindivs == 50:
                     if model not in ["180bulltrout", "361bulltrout"]:

@@ -63,7 +63,7 @@ def plot_model(fig, model):
     ax.set_xticklabels(labels)
     ax.legend()
 
-    fig.savefig("x.png")
+    fig.savefig("output/correct.png")
 
 fig = pylab.figure(figsize=(10, 20))
 plot_model(fig, 'bullt2')

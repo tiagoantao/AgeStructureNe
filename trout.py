@@ -118,6 +118,7 @@ def correct_logquad(bname, vals, ci, abc):
         bot, top = ci[i]
         lval = math.log10(val)
         corr = a * lval * lval + b * lval + c
+        corr = 1 - corr
         #print val, val*corr, lval, corr, "X"
         diff = val - val * corr
         cvals.append(val * corr)
@@ -130,8 +131,10 @@ def get_corrs(bname, vals, ci):
             ("Nb/Ne", correct_ci(bname, vals, ci)),
             ("0.9", correct_ci(bname, vals, ci, 0.9)),
             ("Int0.9", correct_ci(bname, vals, ci, -0.9)),
+            #("LogQuad", correct_logquad(bname, vals, ci,
+            #                            [-0.17599607, 0.75649721, 0.07641839]))]
             ("LogQuad", correct_logquad(bname, vals, ci,
-                                        [-0.17599607, 0.75649721, 0.07641839]))]
+                                        [0.15458222, -0.671991958, 0.799127]))]
 
 
 def get_bname(model):
