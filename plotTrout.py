@@ -693,8 +693,8 @@ for loc, ltype in [(0, "MSAT"), (100, "SNP")]:
         do_hz("lake", ltype, loc, [18, 72])
         do_hz("bullt2", ltype, loc, [305, 610, 915, 1220, 1525,
                                      1830, 2440, 3050, 4575, 6100])
-shutil.movefile("hz-cut.html", "output/hz-cut.html")
-shutil.movefile("hz-cut.txt", "output/hz-cut.txt")
+shutil.move("hz-cut.html", "output/hz-cut.html")
+shutil.move("hz-cut.txt", "output/hz-cut.txt")
 
 do_hz_comp("bulltrout", 361)
 

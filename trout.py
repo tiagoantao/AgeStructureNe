@@ -133,6 +133,8 @@ def get_corrs(bname, vals, ci):
             ("Int0.9", correct_ci(bname, vals, ci, -0.9)),
             #("LogQuad", correct_logquad(bname, vals, ci,
             #                            [-0.17599607, 0.75649721, 0.07641839]))]
+            #("LogQuad2", correct_logquad(bname, vals, ci,
+            #                             [0.144624, -0.654859, 0.8009])),
             ("LogQuad", correct_logquad(bname, vals, ci,
                                         [0.15458222, -0.671991958, 0.799127]))]
 
