@@ -31,9 +31,11 @@ def plot_model(fig, model):
         ldnes[cname] = []
         errs[cname] = []
 
+    nobs = 0
     for name, N0 in nbks:
         if name != model:
             continue
+        nobs += 1
         labels.append(str(N0))
         val = Nbs[(model, N0)]
         ldne, ci = cnb[(model, N0)][None, 50, 100, 'SNP']
@@ -58,6 +60,7 @@ def plot_model(fig, model):
 
     ax = fig.add_subplot(2, 1, 2)
     ax.set_title("Fraction of error %s" % bname)
+    ax.plot([1.0] * nobs, '+', label="Nb")
     for name, cvals in errs.items():
         ax.plot(cvals, '-', label=name)
     ax.set_xticklabels(labels)
