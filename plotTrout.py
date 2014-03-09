@@ -34,7 +34,7 @@ def do_nb(cohort, nsnps, pref):
         for nindiv in nindivs:
             for nloci in nlocis:
                 try:
-                    vals, ci = case[cohort][N0][(None, nindiv, nloci, "MSAT")]
+                    vals, ci = case[cohort][(model, N0)][(None, nindiv, nloci, "MSAT")]
                     if len(ci) > 0:
                         bottom, top = zip(*ci)
                         tops.append(numpy.percentile(top, 90))
@@ -48,10 +48,10 @@ def do_nb(cohort, nsnps, pref):
                     bottoms.append(None)
                 box_vals.append(vals)
                 hmeans.append(hmean(vals))
-                labels.append("%d (MSAT)" % nloci)
+                labels.append("%dMS" % nloci)
             for nsnp in nsnps:
                 try:
-                    vals, ci = case[cohort][N0][(None, nindiv, nsnp, "SNP")]
+                    vals, ci = case[cohort][(model, N0)][(None, nindiv, nsnp, "SNP")]
                     if len(ci) > 0:
                         bottom, top = zip(*ci)
                         tops.append(numpy.percentile(top, 90))

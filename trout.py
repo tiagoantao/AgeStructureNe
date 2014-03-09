@@ -4,7 +4,7 @@ import math
 
 dataDir = "trout"
 nindivs = [15, 25, 50, 100]
-nlocis = [15]
+nlocis = [15, 100]
 nsnps = [100, 200, 400]
 N0s = [90, 180, 361, 722]  # , 1805]
 Nbs = {('bulltrout', 90): 25, ('bulltrout', 180): 50, ('bulltrout', 361): 100,
