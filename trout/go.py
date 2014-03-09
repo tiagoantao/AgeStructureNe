@@ -15,13 +15,13 @@ DDIR = "../data/trout"
 gens = 1000
 
 sampleStratsLoci = False, [(10, 50), (15, 50), (25, 50), (50, 50), (100, 50)]
-sampleStratsLoci = False, []
+sampleStratsLoci = False, [(15, 50), (50, 50), (100, 50)]
 sampleStratsLociSNP = True, [(100, 50), (200, 50), (400, 50)]
 sampleStratsLociSNP = True, []
 sampleStratsIndivs = False, [(15, 15), (15, 25), (15, 50), (15, 100)]
 sampleStratsIndivs = False, []
 sampleStratsIndivsSNP = True, [(100, 15), (100, 25), (100, 50), (100, 100)]
-sampleStratsIndivsSNP = True, [(200, 50)]
+sampleStratsIndivsSNP = True, []
 
 myd = {"DDIR": DDIR, "MODEL": model,
        "AGECOND": agecond, "AGEDESC": agedesc, "GENS": gens}
@@ -74,9 +74,9 @@ for rep in range(reps, repe):
                     #    if nindivs != 50 or nloci != 100:
                     #        continue
                     os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivs.py "{AGECOND}" {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ld2.py {thres} > ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep} 2> ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep}.r2'.format(**myd))
-                continue
                 # related individuals
-                if nindivs == 50:
+                #if nindivs == 50:
+                if False:
                     if model not in ["180bulltrout", "361bulltrout"]:
                         continue
                     if isMSAT and nloci != 15:
@@ -86,10 +86,13 @@ for rep in range(reps, repe):
                     else:
                         os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivsRelated.py 20 {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ld2.py {thres} > ldout/{MODEL}All{nindivs}{nloci}-snp-rel-{rep} 2> ldout/{MODEL}All{nindivs}{nloci}-snp-rel-{rep}.r2'.format(**myd))
                 # Thresholds
-                continue
-                if nindivs == 50 and isSNP:
+                #if nindivs == 50 and isSNP:
+                if True:
                     if model not in ["180bulltrout", "361bulltrout"]:
                         continue
                     for thres in [0.021, 0.035, 0.05, 0.1]:
                         myd["thres"] = thres
-                        os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivs.py "{AGECOND}" {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ld2.py {thres} > ldout/{thres}-{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep} 2> ldout/{thres}-{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep}.r2'.format(**myd))
+                        if isSNP:
+                            os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivs.py "{AGECOND}" {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ld2.py {thres} > ldout/{thres}-{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep} 2> ldout/{thres}-{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep}.r2'.format(**myd))
+                        else:
+                            os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivs.py "{AGECOND}" {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 100|python ../ld2.py {thres} > ldout/{thres}-{MODEL}{AGEDESC}{nindivs}{nloci}-{rep} 2> ldout/{thres}-{MODEL}{AGEDESC}{nindivs}{nloci}-{rep}.r2'.format(**myd))

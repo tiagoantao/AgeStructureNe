@@ -92,7 +92,7 @@ These files can be loaded into Excel (space delimited)
 Genetic Analysis
 ----------------
 
-Heterozygosity
+*Heterozygosity*
 
 Do:
 
@@ -112,6 +112,17 @@ data/ldne/1000grizzly-\*hz
 
 The models on the directory hz simulate 600 years, probably more appropriate
 to test Hz than the standard models (100 years)
+
+
+*LDNe estimates*
+
+Do:
+
+python totalAll.py trout/var.conf gen
+
+This will run LDNe for the scenarios in trout/var.conf. Configuration for
+the sampling strategy will be done in trout/topGo.sh
+
 
 
 Trout studies
