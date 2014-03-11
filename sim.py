@@ -2,16 +2,16 @@ from simuOpt import simuOptions
 simuOptions["Quiet"] = True
 import simuPOP as sp
 from myUtils import getConfig
-from sys import argv
+import sys
 import random
 import numpy
 
-if len(argv) not in [3, ]:
-    print "Syntax:", argv[0], "<confFile> <prefout>"
-    exit(-1)
+if len(sys.argv) not in [3, ]:
+    print "Syntax:", sys.argv[0], "<confFile> <prefout>"
+    sys.exit(-1)
 
-cfg = getConfig(argv[1])
-prefOut = argv[2]
+cfg = getConfig(sys.argv[1])
+prefOut = sys.argv[2]
 
 
 def createGenome(size, numMSats, numSNPs):
@@ -194,6 +194,53 @@ def litterSkipGenerator(pop, subPop):
         female.breed = gen
         if cfg.isMonog:
             female.mate = male.ind_id
+        yield male, female
+
+
+def calcNb(pop, pair):
+    fecms = cfg.fecundityMale
+    fecfs = cfg.fecundityFemale
+    cofs = []
+    for ind in pop.individuals():
+        if ind.sex() == 1:  # male
+            fecs = fecms
+            pos = 0
+        else:
+            pos = 1
+            fecs = fecfs
+        if fecs[int(ind.age) - 1] > 0:
+            nofs = len([x for x in pair if x[pos] == ind])
+            cofs.append(nofs)
+    kbar = 2.0 * cfg.N0 / len(cofs)
+    Vk = numpy.var(cofs)
+    nb = (kbar * len(cofs) - 2) / (kbar - 1 + Vk / kbar)
+    #print len(pair), kbar, Vk, (kbar * len(cofs) - 2) / (kbar - 1 + Vk / kbar)
+    return nb
+
+
+def restrictedGenerator(pop, subPop):
+    """No monogamy, skip or litter"""
+    nbOK = False
+    nb = None
+    attempts = 0
+    while not nbOK:
+        pair = []
+        gen = litterSkipGenerator(pop, subPop)
+        #print 1, pop.dvars().gen, nb
+        for i in range(cfg.N0):
+            pair.append(gen.next())
+        if pop.dvars().gen < 10:
+            break
+        nb = calcNb(pop, pair)
+        if abs(nb - cfg.Nb) <= cfg.NbVar:
+            nbOK = True
+        else:
+            for male, female in pair:
+                female.breed -= 1
+            attempts += 1
+        if attempts > 50:
+            sys.exit(-1)
+    for male, female in pair:
         yield male, female
 
 
@@ -387,7 +434,8 @@ def createAge(pop):
     mateOp = sp.HeteroMating([
         sp.HomoMating(
             sp.PyParentsChooser(fitnessGenerator if cfg.doNegBinom
-                             else litterSkipGenerator),
+                             else (litterSkipGenerator if cfg.Nb is None else
+                                   restrictedGenerator)),
             sp.OffspringGenerator(numOffspring=1, ops=[
                 sp.MendelianGenoTransmitter(), sp.IdTagger(),
                 sp.PedigreeTagger()],

@@ -89,6 +89,11 @@ def doHz(w, startGens):
             case = '\t%d\t%d\tMSAT-rel' % (indivs, loci)
             doCase(w, age, indivs, loci, False, True, startGen, numGens,
                    None, case)
+            for pcrit in [0.021, 0.035, 0.05, 0.1]:
+                case = '%s\t%d\t%d\tMSAT' % ("{pcrit}".format(pcrit=pcrit),
+                                             indivs, loci)
+                doCase(w, age, indivs, loci, False, False, startGen, numGens,
+                       pcrit, case)
         for indivs, loci in sampSNP:
             case = '\t%d\t%d\tSNP' % (indivs, loci)
             doCase(w, age, indivs, loci, True, False, startGen, numGens,

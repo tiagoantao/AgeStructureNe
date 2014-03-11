@@ -15,7 +15,7 @@ DDIR = "../data/trout"
 gens = 1000
 
 sampleStratsLoci = False, [(10, 50), (15, 50), (25, 50), (50, 50), (100, 50)]
-sampleStratsLoci = False, [(15, 50), (50, 50), (100, 50)]
+sampleStratsLoci = False, [(100, 50)]
 sampleStratsLociSNP = True, [(100, 50), (200, 50), (400, 50)]
 sampleStratsLociSNP = True, []
 sampleStratsIndivs = False, [(15, 15), (15, 25), (15, 50), (15, 100)]
@@ -87,7 +87,7 @@ for rep in range(reps, repe):
                         os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivsRelated.py 20 {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ld2.py {thres} > ldout/{MODEL}All{nindivs}{nloci}-snp-rel-{rep} 2> ldout/{MODEL}All{nindivs}{nloci}-snp-rel-{rep}.r2'.format(**myd))
                 # Thresholds
                 #if nindivs == 50 and isSNP:
-                if True:
+                if False:
                     if model not in ["180bulltrout", "361bulltrout"]:
                         continue
                     for thres in [0.021, 0.035, 0.05, 0.1]:

@@ -309,19 +309,28 @@ def do_hz_comp(model, N0):
     pylab.savefig("output/hz-comp.png")
 
 
-def do_pcrit(model, N0):
-    snps = [100, 200, 400]
+def do_pcrit(model, N0, isSNP):
+    if isSNP:
+        markers = [100, 200, 400]
+        marker_name = 'SNP'
+    else:
+        markers = [15, 50, 100]
+        marker_name = 'MSAT'
     cohort = "Newb"
     sampCase = {}
-    for nsnps in snps:
-        sampCase[nsnps] = {}
+    for nmarkers in markers:
+        sampCase[nmarkers] = {}
         for pcrit in pcrits:
             #print case[cohort][N0].keys()
-            vals, ci = case[cohort][(model, N0)][(pcrit, 50, nsnps, "SNP")]
-            sampCase[nsnps][pcrit] = vals, ci
+            try:
+                vals, ci = case[cohort][(model, N0)][(pcrit, 50, nmarkers,
+                                                     marker_name)]
+            except KeyError:
+                vals, ci = [], []
+            sampCase[nmarkers][pcrit] = vals, ci
     pylab.clf()
     pylab.title("pcrit comparison: %s - %d " % (model, N0))
-    pylab.suptitle("Newb sampled - SNPs - 50 individuals")
+    pylab.suptitle("Newb sampled - %ss - 50 individuals" % marker_name)
     box = []
     cnt = 0
     labels = []
@@ -329,9 +338,9 @@ def do_pcrit(model, N0):
     bottoms = []
     hmeans = []
 
-    for nsnps in snps:
-        pylab.text(cnt + 1, 0, str(nsnps) + " SNPs", rotation="vertical", ha="left", va="bottom")
-        critCases = sampCase[nsnps]
+    for nmarkers in markers:
+        pylab.text(cnt + 1, 0, str(nmarkers) + " %ss" % marker_name, rotation="vertical", ha="left", va="bottom")
+        critCases = sampCase[nmarkers]
         for pcrit in pcrits:
             vals, ci = critCases[pcrit]
             if len(vals) > 0:
@@ -354,7 +363,8 @@ def do_pcrit(model, N0):
     pylab.plot([1 + x for x in range(len(hmeans))], hmeans, "k+")
     pylab.ylabel("$\hat{N}_{e}$")
     pylab.ylim(0, Nbs[(model, N0)] * 3)
-    pylab.savefig("output/pcrit-%d.png" % N0)
+    pylab.savefig("output/pcrit-%s-%d.png" % (marker_name, N0))
+    print(N0, isSNP, hmeans)
 
 
 def _do_window(lst):
@@ -715,7 +725,10 @@ do_lt_comp(50, "All")
 do_lt_comp(50, "Newb")
 do_lt_comp(100, "Newb")
 
-do_pcrit("bulltrout", 361)
+do_pcrit("bulltrout", 180, True)
+do_pcrit("bulltrout", 180, False)
+do_pcrit("bulltrout", 361, True)
+do_pcrit("bulltrout", 361, False)
 
 cis = [("BuTrout", "bulltrout", 90), ("BuTrout", "bulltrout", 180),
        ("BuTrout", "bulltrout", 361), ("BuTrout", "bulltrout", 722),

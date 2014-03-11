@@ -354,6 +354,12 @@ def getConfig(fName):
         cfg.startLambda = 99999
         #cfg.lbd = mp.mpf(1.0)
         cfg.lbd = 1.0
+    if config.has_option("pop", "Nb"):
+        cfg.Nb = config.getint("pop", "Nb")
+        cfg.NbVar = config.getfloat("pop", "NbVar")
+    else:
+        cfg.Nb = None
+        cfg.NbVar = None
 
     cfg.startAlleles = config.getint("genome", "startAlleles")
     cfg.mutFreq = config.getfloat("genome", "mutFreq")
