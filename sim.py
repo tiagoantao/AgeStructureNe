@@ -238,7 +238,8 @@ def restrictedGenerator(pop, subPop):
             for male, female in pair:
                 female.breed -= 1
             attempts += 1
-        if attempts > 50:
+        if attempts > 100:
+            print "out", pop.dvars().gen
             sys.exit(-1)
     for male, female in pair:
         yield male, female
