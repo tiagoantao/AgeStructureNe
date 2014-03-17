@@ -417,3 +417,27 @@ def getNonGenStats(f):
 
         l = f.readline()
     return stats
+
+
+def getDemo(project, model, N0, rep):
+    f = open('data/%s/%d%s%d.demo' % (project, N0, model, rep))
+    for l in f:
+        toks = [x for x in l.strip().rstrip().split(' ') if x != '']
+        cycle = int(toks[0])
+        gentime = float(toks[1])
+        pyramid = [int(x) for x in toks[2:]]
+        yield {'cycle': cycle, 'generation': gentime, 'pyramid': pyramid}
+    f.close()
+
+
+def getVk(project, model, N0, rep):
+    f = open('data/%s/%d%s%d.vk' % (project, N0, model, rep))
+    for l in f:
+        toks = [x for x in l.strip().rstrip().split(' ') if x != '']
+        cycle = int(toks[0])
+        k = float(toks[1])
+        vk = float(toks[2])
+        nb = float(toks[3])
+        ne = float(toks[4])
+        yield {'cycle': cycle, 'k': k, 'vk': vk, 'nb': nb, 'ne': ne}
+    f.close()
