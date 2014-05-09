@@ -697,6 +697,7 @@ for loc, ltype in [(0, "MSAT"), (100, "SNP")]:
     do_hz("bullt2", ltype, loc, [3050, 6100])
     if ltype == "SNP":
         do_hz("bulltrout", ltype, loc, [90])
+        do_hz("restricted", ltype, loc, [90, 180, 361, 722])
         do_hz("btrout", ltype, loc, [1619, 6476])
         do_hz("shepard", ltype, loc, [518, 1036])
         do_hz("fraley", ltype, loc, [641, 1282])
@@ -719,9 +720,10 @@ do_nb_linear(linear, "std",
              functools.partial(lambda model, x, y: (x, y)))
 do_nb_linear(linear, "Int0.9",
              functools.partial(correct_ci, fixed=-0.9))
-do_lt_comp(50, "All")
+#do_lt_comp(50, "All")
 #do_lt_comp(100, "All")
 
+do_lt_comp(25, "Newb")
 do_lt_comp(50, "Newb")
 do_lt_comp(100, "Newb")
 

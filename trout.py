@@ -9,6 +9,7 @@ nsnps = [100, 200, 400]
 N0s = [90, 180, 361, 722]  # , 1805]
 Nbs = {('bulltrout', 90): 25, ('bulltrout', 180): 50, ('bulltrout', 361): 100,
        ('bulltrout', 722): 200,  # 1805: 500,
+       ('restricted', 90): 25, ('restricted', 180): 50, ('restricted', 361): 100,
        ('bullpred', 193): 50, ('bullpred', 387): 100, ('bullpred', 775): 200,
        ('bullt2', 305): 5, ('bullt2', 610): 10, ('bullt2', 915): 15,
        ('bullt2', 1220): 20,
@@ -19,7 +20,7 @@ Nbs = {('bulltrout', 90): 25, ('bulltrout', 180): 50, ('bulltrout', 361): 100,
        ('fraley', 641): 50, ('fraley', 1282): 100}
 #       "lake-18": 50, "lake-72": 200}
 NbNames = [("bulltrout", "BuTrout"), ("bullpred", "BuPred"), ("bullt2", "BuLong"),
-           ("shepard", "WCT-S"), ("fraley", "WCT-F")]
+           ("shepard", "WCT-S"), ("fraley", "WCT-F"), ('restricted', "Restr")]
 Nes = {90: 32.3, 180: 64.7, 361: 129.4, 722: 258.8}
 cohorts = ["All",  "Newb", "c2c", "c3c"]
 cuts = [0.45, 0.4, 0.35, 0.3, 0.25]
