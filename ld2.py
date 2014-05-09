@@ -1,40 +1,38 @@
-from sys import stdin, stderr, argv, exit
+import os
+import sys
+
 from igrat.genetics.popgen.ldne.Controller import LDNeController
 from igrat.genetics.popgen import ldne
-import scipy
-from scipy import stats
-import sys
-import os
 
-if len(argv) != 2:
+if len(sys.argv) != 2:
     print "%s <thres>"
     exit(-1)
 
-thres = argv[1] #float but we really prefer string here
+thres = sys.argv[1]  # float but we really prefer string here
 
 os.chdir(thres)
 
 ldnec = LDNeController()
 
 
-fname="ld"+str(os.getpid())+".ldne"
-out=open(fname,"w")
+fname = "ld" + str(os.getpid()) + ".ldne"
+out = open(fname, "w")
 
 
-l = stdin.readline()
+l = sys.stdin.readline()
 cnt = 0
-while l!= "":
+while l != "":
     out.write(l)
-    l = stdin.readline()
+    l = sys.stdin.readline()
     cnt += 1
-if cnt ==0: # Sample size above indivs
+if cnt == 0:  # Sample size above indivs
     sys.exit(0)
 out.close()
-ldnec.run_ldne(fname, fname+".out")
-ldout = open(fname+'.out')
+ldnec.run_ldne(fname, fname + ".out")
+ldout = open(fname + '.out')
 ldres = ldne.RecordParser().parse(ldout)
 mNes = []
-mOr2s= []
+mOr2s = []
 mNesPow = []
 mNesCI = []
 for id, fcases in ldres.populations:
@@ -44,7 +42,7 @@ for id, fcases in ldres.populations:
     mNesCI.append((ne95, ne05))
 ldout.close()
 os.remove(fname)
-os.remove(fname+".out")
+os.remove(fname + ".out")
 print mNes
 print mNesCI
 print >>sys.stderr, mOr2s
