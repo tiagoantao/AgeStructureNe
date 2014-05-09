@@ -86,7 +86,7 @@ def load_nb(pref):
     f.close()
 
 
-def correct_ci(bname, vals, ci, fixed=None):
+def correct_ci(bname, vals, ci, r2, poli, fixed=None):
     cvals = []
     cci = []
     diffs = []
@@ -109,7 +109,7 @@ def correct_ci(bname, vals, ci, fixed=None):
     return cvals, cci
 
 
-def correct_logquad(bname, vals, ci, abc):
+def correct_logquad(bname, vals, ci, r2, poli, abc):
     a, b, c = abc
     cvals = []
     cci = []
@@ -127,16 +127,16 @@ def correct_logquad(bname, vals, ci, abc):
     return cvals, cci
 
 
-def get_corrs(bname, vals, ci):
+def get_corrs(bname, vals, ci, r2, poli):
     return [("None", (vals, ci)),
-            ("Nb/Ne", correct_ci(bname, vals, ci)),
-            ("0.9", correct_ci(bname, vals, ci, 0.9)),
-            ("Int0.9", correct_ci(bname, vals, ci, -0.9)),
-            #("LogQuad", correct_logquad(bname, vals, ci,
+            ("Nb/Ne", correct_ci(bname, vals, ci, r2, poli)),
+            ("0.9", correct_ci(bname, vals, ci, r2, poli, 0.9)),
+            ("Int0.9", correct_ci(bname, vals, ci, r2, poli, -0.9)),
+            #("LogQuad", correct_logquad(bname, vals, ci, r2, poli,
             #                            [-0.17599607, 0.75649721, 0.07641839]))]
-            #("LogQuad2", correct_logquad(bname, vals, ci,
+            #("LogQuad2", correct_logquad(bname, vals, ci, r2, poli,
             #                             [0.144624, -0.654859, 0.8009])),
-            ("LogQuad", correct_logquad(bname, vals, ci,
+            ("LogQuad", correct_logquad(bname, vals, ci, r2, poli,
                                         [0.15458222, -0.671991958, 0.799127]))]
 
 
