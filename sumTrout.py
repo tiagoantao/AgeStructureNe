@@ -37,6 +37,7 @@ def doCase(w, age, indivs, loci, isSNP, isRel, startGens, numGens,
             name += "rel-" if isRel else ""
             ldne = []
             ldneCI = []
+            npoli = []
             try:
                 for rep in range(reps):
                     mName = name + str(rep)
@@ -56,9 +57,18 @@ def doCase(w, age, indivs, loci, isSNP, isRel, startGens, numGens,
                     ldneCI.extend(le[startGen:startGen + numGens])
                     f.close()
 
+                    f = open(dataDir + '/ldout/' + mName + '.r2')
+                    f.readline()
+                    l = f.readline()
+                    if l != '':
+                        le = eval(l)
+                        npoli.extend(le[startGen:startGen + numGens])
+                    f.close()
+
                 if len(ldne) > 0:
                     print >>w, "\t" + str(ldne),
                     print >>w, "\t" + str(ldneCI),
+                    print >>w, "\t" + str(npoli),
             except IOError:
                 print >>sys.stderr, "err", mName, model, indivs, loci, rep, name
             print >>w
