@@ -1,6 +1,8 @@
 import os
 import sys
 
+from Bio.PopGen.GenePop.Controller import GenePopController
+
 from igrat.genetics.popgen.ldne.Controller import LDNeController
 from igrat.genetics.popgen import ldne
 
@@ -13,7 +15,7 @@ thres = sys.argv[1]  # float but we really prefer string here
 os.chdir(thres)
 
 ldnec = LDNeController()
-
+gp_ctrl = GenePopController()
 
 fname = "ld" + str(os.getpid()) + ".ldne"
 out = open(fname, "w")
@@ -41,11 +43,19 @@ for id, fcases in ldres.populations:
     mOr2s.append(or2)
     mNesCI.append((ne95, ne05))
 ldout.close()
+
+popi, loci = gp_ctrl.calc_allele_genotype_freqs(fname)
+poli = []
+for pop in popi:
+    name, locs = pop
+    genos_len = [len(x[0]) for x in locs.values()]
+    poli.append(len(genos_len) - genos_len.count(1))
 os.remove(fname)
 os.remove(fname + ".out")
 print mNes
 print mNesCI
 print >>sys.stderr, mOr2s
+print >>sys.stderr, poli
 sys.stdout.flush()
 
 os.chdir("..")
