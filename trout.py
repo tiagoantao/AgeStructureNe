@@ -56,19 +56,16 @@ def load_file(pref, cut=None):
         curr_case = case.setdefault(cohort, {})
         case_id = model, N0
 
-        def get_vals(tok):
-            ts = tok.rstrip()
-            if ts == "":
-                return [], []
-            else:
-                try:
-                    point, ci = ts.split("!")
-                    return eval(point), eval(ci)
-                except ValueError:
-                    return [], []
         if len(toks) > 7:
             modeln0 = curr_case.setdefault(case_id, {})
-            modeln0[(pcrit, nindivs, nloci, my_type)] = eval(toks[7]), eval(toks[8])
+            if len(toks) > 8:
+                r2 = eval(toks[9])
+                npoli = eval(toks[10])
+            else:
+                r2 = []
+                npoli = []
+            modeln0[(pcrit, nindivs, nloci, my_type)] = (
+                eval(toks[7]), eval(toks[8]), r2, npoli)
     return case
 
 
@@ -87,6 +84,7 @@ def load_nb(pref):
 
 
 def patch_ci(r2, r2vals):
+    pass
 
 
 def correct_ci(bname, vals, ci, r2=None, fixed=None, r2vals=None):
