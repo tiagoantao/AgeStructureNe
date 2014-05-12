@@ -62,6 +62,7 @@ def doCase(w, age, indivs, loci, isSNP, isRel, startGens, numGens,
                     l = f.readline()
                     le = eval(l)
                     r2.extend(le[startGen:startGen + numGens])
+                    l = f.readline()
                     if l != '':
                         le = eval(l)
                         npoli.extend(le[startGen:startGen + numGens])
