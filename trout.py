@@ -2,6 +2,8 @@ from __future__ import division
 
 import math
 
+from scipy.stats import chi2
+
 dataDir = "trout"
 nindivs = [15, 25, 50, 100]
 nlocis = [15, 100]
@@ -83,11 +85,23 @@ def load_nb(pref):
     f.close()
 
 
-def patch_ci(r2, r2vals):
-    pass
+def get_ldne(nindivs, r2):
+    if nindivs < 30:
+        return (.308 + math.sqrt(.308 ** 2 - 2.08 * r2)) / (2 * r2)
+    else:
+        return (1 / 3 + math.sqrt(1 / 9 - 2.76 * r2)) / (2 * r2)
 
 
-def correct_ci(bname, vals, ci, r2=None, fixed=None, r2vals=None):
+def patch_ci(nindivs, r2, poli):
+    print 99, nindivs, r2, poli
+    df = poli * (poli - 1) / 2
+    b = chi2.isf(0.025, df)
+    t = chi2.isf(0.975, df)
+    r2b, r2t = df * r2 / b, df * r2 / t
+    return get_ldne(nindivs, r2b), get_ldne(nindivs, r2t)
+
+
+def correct_ci(bname, nindivs, vals, ci, r2=None, fixed=None, poli=None):
     cvals = []
     cci = []
     diffs = []
@@ -99,11 +113,11 @@ def correct_ci(bname, vals, ci, r2=None, fixed=None, r2vals=None):
         cvals.append(v * abs(my_corr))
         if my_corr < 0:
             diffs.append(v * (1 + my_corr))
-    if r2vals is not None:
+    if r2 is not None:
         #We are going to patch the CIs with r2
         ci = []
         for i in range(len(r2)):
-            patch_ci(r2, r2vals)
+            ci.append(patch_ci(nindivs, r2[i], poli[i]))
     for i in range(len(ci)):
         bot, top = ci[i]
         if my_corr < 0:
@@ -115,7 +129,7 @@ def correct_ci(bname, vals, ci, r2=None, fixed=None, r2vals=None):
     return cvals, cci
 
 
-def correct_logquad(bname, vals, ci, r2, abc):
+def correct_logquad(bname, vals, ci, abc, r2=None):
     a, b, c = abc
     cvals = []
     cci = []
@@ -135,9 +149,10 @@ def correct_logquad(bname, vals, ci, r2, abc):
 
 def get_corrs(bname, nindivs, vals, ci, r2, poli):
     return [("None", (vals, ci)),
-            ("Nb/Ne", correct_ci(bname, vals, ci)),
-            ("0.9", correct_ci(bname, vals, ci, 0.9)),
-            ("Int0.9", correct_ci(bname, vals, ci, -0.9)),
+            ("Nb/Ne", correct_ci(bname, nindivs, vals, ci)),
+            ("Nb/Nec", correct_ci(bname, nindivs, vals, ci, r2, poli=poli)),
+            ("0.9", correct_ci(bname, nindivs, vals, ci, fixed=0.9)),
+            ("Int0.9", correct_ci(bname, nindivs, vals, ci, fixed=-0.9)),
             #("LogQuad", correct_logquad(bname, vals, ci,
             #                            [-0.17599607, 0.75649721, 0.07641839]))]
             #("LogQuad2", correct_logquad(bname, vals, ci,
