@@ -34,7 +34,7 @@ def do_nb(cohort, nsnps, pref):
         for nindiv in nindivs:
             for nloci in nlocis:
                 try:
-                    vals, ci = case[cohort][(model, N0)][(None, nindiv, nloci, "MSAT")]
+                    vals, ci, r2, poli = case[cohort][(model, N0)][(None, nindiv, nloci, "MSAT")]
                     if len(ci) > 0:
                         bottom, top = zip(*ci)
                         tops.append(numpy.percentile(top, 90))
@@ -51,7 +51,7 @@ def do_nb(cohort, nsnps, pref):
                 labels.append("%dMS" % nloci)
             for nsnp in nsnps:
                 try:
-                    vals, ci = case[cohort][(model, N0)][(None, nindiv, nsnp, "SNP")]
+                    vals, ci, r2, poli = case[cohort][(model, N0)][(None, nindiv, nsnp, "SNP")]
                     if len(ci) > 0:
                         bottom, top = zip(*ci)
                         tops.append(numpy.percentile(top, 90))
@@ -95,7 +95,7 @@ def do_cohort(model, N0, nindiv):
     hmeans = []
 
     for cohort in cohorts:
-        vals, ci = case[cohort][(model, N0)][(None, nindiv, 100, "SNP")]
+        vals, ci, r2, poli = case[cohort][(model, N0)][(None, nindiv, 100, "SNP")]
         box_vals.append(vals)
         hmeans.append(hmean(vals))
         bottom, top = zip(*ci)
@@ -128,16 +128,16 @@ def do_rel(model, N0, nindiv):
                 (Nbs[(model, N0)], N0, cohort))
     box_vals = []
     labels = []
-    #vals, ci = case[cohort][N0][(None, nindiv, 15, "MSAT-rel")]
+    #vals, ci, r2, poli = case[cohort][N0][(None, nindiv, 15, "MSAT-rel")]
     #box_vals.append(vals)
     #labels.append("MSAT-15-rel")
-    #vals, ci = case[cohort][N0][(None, nindiv, 15, "MSAT")]
+    #vals, ci, r2, poli = case[cohort][N0][(None, nindiv, 15, "MSAT")]
     #box_vals.append(vals)
     #labels.append("MSAT-15")
-    vals, ci = case[cohort][(model, N0)][(None, nindiv, 100, "SNP-rel")]
+    vals, ci, r2, poli = case[cohort][(model, N0)][(None, nindiv, 100, "SNP-rel")]
     box_vals.append(vals)
     labels.append("SNP-100-rel")
-    vals, ci = case[cohort][(model, N0)][(None, nindiv, 100, "SNP")]
+    vals, ci, r2, poli = case[cohort][(model, N0)][(None, nindiv, 100, "SNP")]
     box_vals.append(vals)
     labels.append("SNP-100")
     pylab.ylim(0, Nbs[(model, N0)] * 3)
@@ -159,7 +159,7 @@ def do_nb_comp():
         if type(n0) != int:
             continue
         nb = Nbs[(model, n0)]
-        vals, ci = case["Newb"][(model, n0)][(None, 50, 100, "SNP")]
+        vals, ci, r2, poli = case["Newb"][(model, n0)][(None, 50, 100, "SNP")]
         labels.append(str(nb))
         box_vals.append(vals)
     pylab.xticks(range(len(labels)), labels)
@@ -187,7 +187,7 @@ def do_lt_comp(nb, strat):
             elif pref != model:
                 continue
             print strat, model, n0
-            vals, ci = case[strat][(model, n0)][(None, 50, 100, "SNP")]
+            vals, ci, r2, poli = case[strat][(model, n0)][(None, 50, 100, "SNP")]
             hmeans.append(hmean(vals))
             try:
                 bottom, top = zip(*ci)
@@ -228,7 +228,7 @@ def do_bias():
     table = [["Nb", "Sampling", "Model", "N1", "NeEst", "NeEst/Nb", "Above", "Below"]]
     for model, n0 in n0s:
         nb = Nbs[(model, n0)]
-        vals, ci = case[sampling][(model, n0)][(None, 50, 100, "SNP")]
+        vals, ci, r2, poli = case[sampling][(model, n0)][(None, 50, 100, "SNP")]
         print n0, nb
         for p, bname in NbNames:
             if p == model:
@@ -273,8 +273,8 @@ def do_hz_comp(model, N0):
         cutCase[cut] = {}
         case = load_file(pref, cut * 100)
         for nsnps in snps:
-            vals, ci = case[cohort][(model, N0)][(None, 50, nsnps, "SNP")]
-            cutCase[cut][nsnps] = vals, ci
+            vals, ci, r2, poli = case[cohort][(model, N0)][(None, 50, nsnps, "SNP")]
+            cutCase[cut][nsnps] = vals, ci, r2, poli
     pylab.clf()
     pylab.title("Hz comparison: %s - %d " % (model, N0))
     pylab.suptitle("Newb sampled - SNPs - 50 individuals")
@@ -289,7 +289,7 @@ def do_hz_comp(model, N0):
         #pylab.text(cnt, 0, str(cut), rotation="vertical")
         cases = cutCase[cut]
         for nsnps in snps:
-            vals, ci = cases[nsnps]
+            vals, ci, r2, poli = cases[nsnps]
             hmeans.append(hmean(vals))
             bottom, top = zip(*ci)
             tops.append(numpy.percentile(top, 90))
@@ -323,11 +323,12 @@ def do_pcrit(model, N0, isSNP):
         for pcrit in pcrits:
             #print case[cohort][N0].keys()
             try:
-                vals, ci = case[cohort][(model, N0)][(pcrit, 50, nmarkers,
-                                                     marker_name)]
+                vals, ci, r2, poli = case[cohort][(model, N0)][(pcrit,
+                                                                50, nmarkers,
+                                                                marker_name)]
             except KeyError:
-                vals, ci = [], []
-            sampCase[nmarkers][pcrit] = vals, ci
+                vals, ci, r2, poli = [], [], [], []
+            sampCase[nmarkers][pcrit] = vals, ci, r2, poli
     pylab.clf()
     pylab.title("pcrit comparison: %s - %d " % (model, N0))
     pylab.suptitle("Newb sampled - %ss - 50 individuals" % marker_name)
@@ -342,7 +343,7 @@ def do_pcrit(model, N0, isSNP):
         pylab.text(cnt + 1, 0, str(nmarkers) + " %ss" % marker_name, rotation="vertical", ha="left", va="bottom")
         critCases = sampCase[nmarkers]
         for pcrit in pcrits:
-            vals, ci = critCases[pcrit]
+            vals, ci, r2, poli = critCases[pcrit]
             if len(vals) > 0:
                 hmeans.append(hmean(vals))
                 bottom, top = zip(*ci)
@@ -480,7 +481,7 @@ def do_table_ci(modelN0s, nsnps):
     print >>w, "Corr Model N1 median mean stdDev medianTopCI meanTopCI stdDevTopCI aboveTop probTop medianTopErr medianBotCI meanBotCI stdDevBotCI belowBot probBot medianBotErr"
     for bname, model, N0 in modelN0s:
         nb = Nbs[(model, N0)]
-        vals, ci = case[cohort][(model, N0)][(None, nindivs, nsnps, "SNP")]
+        vals, ci, r2, poli = case[cohort][(model, N0)][(None, nindivs, nsnps, "SNP")]
         errs = []
         for v in vals:
             perc_err = abs(v - nb) / nb
@@ -660,7 +661,7 @@ def do_nb_linear(models, name, fun):
     bottoms = []
     for model, n0 in models:
         nb = Nbs[(model, n0)]
-        vals, ci = case["Newb"][(model, n0)][(None, 50, 100, "SNP")]
+        vals, ci, r2, poli = case["Newb"][(model, n0)][(None, 50, 100, "SNP")]
         vals, ci = fun(model, vals, ci)
         if len(vals) == 0:
             continue
