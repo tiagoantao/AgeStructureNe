@@ -434,7 +434,7 @@ def do_nb_ne(model, N0, rep):
     myCis = cis[start_year + shift:start_year + shift + 100]
     nes20 = myNes[:points]
     cis20 = myCis[:points]
-    cvals, cci = correct_ci(model, nes20, cis20, -0.9)
+    cvals, cci = correct_ci(model, nes20, cis20, None, -0.9)
     errs = []
     cerrs = []
     for i in range(len(cis20)):
@@ -475,17 +475,19 @@ def do_table_ci(modelN0s, nsnps):
     #table = []
     cohort = "Newb"
     thres = 10
+    nindivs = 50
     w = open("output/table-ci-%d.txt" % nsnps, "w")
     print >>w, "Corr Model N1 median mean stdDev medianTopCI meanTopCI stdDevTopCI aboveTop probTop medianTopErr medianBotCI meanBotCI stdDevBotCI belowBot probBot medianBotErr"
     for bname, model, N0 in modelN0s:
         nb = Nbs[(model, N0)]
-        vals, ci = case[cohort][(model, N0)][(None, 50, nsnps, "SNP")]
+        vals, ci = case[cohort][(model, N0)][(None, nindivs, nsnps, "SNP")]
         errs = []
         for v in vals:
             perc_err = abs(v - nb) / nb
             errs.append(perc_err)
         print bname, model, N0, nb, numpy.median(errs)
-        for has_corr, corrections in get_corrs(bname, vals, ci):
+        for has_corr, corrections in get_corrs(bname, nindivs,
+                                               vals, ci, r2, poli):
             cvals, cci = corrections
             topErr = [0, 0.0]
             botErr = [0, 0.0]

@@ -15,7 +15,7 @@ DDIR = "../data/trout"
 gens = 1000
 
 sampleStratsLoci = False, [(10, 50), (15, 50), (25, 50), (50, 50), (100, 50)]
-sampleStratsLoci = False, [(50, 50)]
+sampleStratsLoci = False, []
 sampleStratsLociSNP = True, [(100, 50), (200, 50), (400, 50)]
 sampleStratsLociSNP = True, []
 sampleStratsIndivs = False, [(15, 15), (15, 25), (15, 50), (15, 100)]
