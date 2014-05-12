@@ -435,7 +435,7 @@ def do_nb_ne(model, N0, rep):
     myCis = cis[start_year + shift:start_year + shift + 100]
     nes20 = myNes[:points]
     cis20 = myCis[:points]
-    cvals, cci = correct_ci(model, nes20, cis20, None, -0.9)
+    cvals, cci = correct_ci(model, 50, nes20, cis20, r2=None, fixed=-0.9)
     errs = []
     cerrs = []
     for i in range(len(cis20)):
@@ -659,10 +659,12 @@ def do_nb_linear(models, name, fun):
     pes = []
     tops = []
     bottoms = []
+    nindivs = 50
     for model, n0 in models:
         nb = Nbs[(model, n0)]
-        vals, ci, r2, poli = case["Newb"][(model, n0)][(None, 50, 100, "SNP")]
-        vals, ci = fun(model, vals, ci)
+        print model, n0, case["Newb"][(model, n0)].keys()
+        vals, ci, r2, poli = case["Newb"][(model, n0)][(None, nindivs, 100, "SNP")]
+        vals, ci = fun(model, nindivs, vals, ci)
         if len(vals) == 0:
             continue
         bottom, top = zip(*ci)
@@ -720,7 +722,7 @@ linear = [("bullt2", 305), ("bullt2", 610), ("bullt2", 915), ("bullt2", 1220),
           ("bullt2", 1525), ("bullt2", 1830), ("bullt2", 2440),
           ("bullt2", 3050), ("bullt2", 4575), ("bullt2", 6100)]
 do_nb_linear(linear, "std",
-             functools.partial(lambda model, x, y: (x, y)))
+             functools.partial(lambda model, nindivs, x, y: (x, y)))
 do_nb_linear(linear, "Int0.9",
              functools.partial(correct_ci, fixed=-0.9))
 #do_lt_comp(50, "All")
