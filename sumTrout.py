@@ -59,7 +59,6 @@ def doCase(w, age, indivs, loci, isSNP, isRel, startGens, numGens,
                     f.close()
 
                     f = open(dataDir + '/ldout/' + mName + '.r2')
-                    f.readline()
                     l = f.readline()
                     le = eval(l)
                     r2.extend(le[startGen:startGen + numGens])
