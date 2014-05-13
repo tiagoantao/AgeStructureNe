@@ -186,7 +186,6 @@ def do_lt_comp(nb, strat):
                 continue
             elif pref != model:
                 continue
-            print strat, model, n0
             vals, ci, r2, poli = case[strat][(model, n0)][(None, 50, 100, "SNP")]
             hmeans.append(hmean(vals))
             try:
@@ -222,14 +221,11 @@ def do_bias():
     #labels = []
     n0s = Nbs.keys()
     n0s.sort()
-    print "X"
-    print n0s
     sampling = "Newb"
     table = [["Nb", "Sampling", "Model", "N1", "NeEst", "NeEst/Nb", "Above", "Below"]]
     for model, n0 in n0s:
         nb = Nbs[(model, n0)]
         vals, ci, r2, poli = case[sampling][(model, n0)][(None, 50, 100, "SNP")]
-        print n0, nb
         for p, bname in NbNames:
             if p == model:
                 break
@@ -365,7 +361,6 @@ def do_pcrit(model, N0, isSNP):
     pylab.ylabel("$\hat{N}_{e}$")
     pylab.ylim(0, Nbs[(model, N0)] * 3)
     pylab.savefig("output/pcrit-%s-%d.png" % (marker_name, N0))
-    print(N0, isSNP, hmeans)
 
 
 def _do_window(lst):

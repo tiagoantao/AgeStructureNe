@@ -87,17 +87,20 @@ def load_nb(pref):
 
 def get_ldne(nindivs, r2):
     if nindivs < 30:
-        return (.308 + math.sqrt(.308 ** 2 - 2.08 * r2)) / (2 * r2)
+        r2l = 0.0018 + 0.907 / nindivs + 4.44 / nindivs ** 2
+        return (.308 + math.sqrt(.308 ** 2 - 2.08 * r2l)) / (2 * r2l)
     else:
-        return (1 / 3 + math.sqrt(1 / 9 - 2.76 * r2)) / (2 * r2)
+        r2l = 1 / nindivs + 3.19 / nindivs ** 2
+        return (1 / 3 + math.sqrt(1 / 9 - 2.76 * r2l)) / (2 * r2l)
 
 
 def patch_ci(nindivs, r2, poli):
-    print 99, nindivs, r2, poli
+    #print 99, nindivs, r2, poli
     df = poli * (poli - 1) / 2
     b = chi2.isf(0.025, df)
     t = chi2.isf(0.975, df)
     r2b, r2t = df * r2 / b, df * r2 / t
+    #print 98, get_ldne(nindivs, r2b), get_ldne(nindivs, r2t)
     return get_ldne(nindivs, r2b), get_ldne(nindivs, r2t)
 
 
