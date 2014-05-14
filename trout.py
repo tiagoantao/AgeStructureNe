@@ -93,7 +93,10 @@ def get_ldne(sr2, r2):
     else:
         #r2l = 1 / nindivs + 3.19 / nindivs ** 2
         myr2 = r2 - sr2
-        return (1 / 3 + math.sqrt(1 / 9 - 2.76 * myr2)) / (2 * myr2)
+        try:
+            return (1 / 3 + math.sqrt(1 / 9 - 2.76 * myr2)) / (2 * myr2)
+        except ValueError:
+            return None
 
 
 def patch_ci(r2, sr2, j):
