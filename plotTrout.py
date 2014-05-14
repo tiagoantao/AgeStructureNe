@@ -36,7 +36,7 @@ def do_nb(cohort, nsnps, pref):
         for nindiv in nindivs:
             for nloci in nlocis:
                 try:
-                    vals, ci, r2, poli = case[cohort][(model, N0)][(None, nindiv, nloci, "MSAT")]
+                    vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindiv, nloci, "MSAT")]
                     if len(ci) > 0:
                         bottom, top = zip(*ci)
                         tops.append(numpy.percentile(top, 90))
@@ -53,7 +53,7 @@ def do_nb(cohort, nsnps, pref):
                 labels.append("%dMS" % nloci)
             for nsnp in nsnps:
                 try:
-                    vals, ci, r2, poli = case[cohort][(model, N0)][(None, nindiv, nsnp, "SNP")]
+                    vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindiv, nsnp, "SNP")]
                     if len(ci) > 0:
                         bottom, top = zip(*ci)
                         tops.append(numpy.percentile(top, 90))
@@ -97,7 +97,7 @@ def do_cohort(model, N0, nindiv):
     hmeans = []
 
     for cohort in cohorts:
-        vals, ci, r2, poli = case[cohort][(model, N0)][(None, nindiv, 100, "SNP")]
+        vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindiv, 100, "SNP")]
         box_vals.append(vals)
         hmeans.append(hmean(vals))
         bottom, top = zip(*ci)
@@ -130,16 +130,16 @@ def do_rel(model, N0, nindiv):
                 (Nbs[(model, N0)], N0, cohort))
     box_vals = []
     labels = []
-    #vals, ci, r2, poli = case[cohort][N0][(None, nindiv, 15, "MSAT-rel")]
+    #vals, ci, r2, sr2, j, ssize = case[cohort][N0][(None, nindiv, 15, "MSAT-rel")]
     #box_vals.append(vals)
     #labels.append("MSAT-15-rel")
-    #vals, ci, r2, poli = case[cohort][N0][(None, nindiv, 15, "MSAT")]
+    #vals, ci, r2, sr2, j, ssize = case[cohort][N0][(None, nindiv, 15, "MSAT")]
     #box_vals.append(vals)
     #labels.append("MSAT-15")
-    vals, ci, r2, poli = case[cohort][(model, N0)][(None, nindiv, 100, "SNP-rel")]
+    vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindiv, 100, "SNP-rel")]
     box_vals.append(vals)
     labels.append("SNP-100-rel")
-    vals, ci, r2, poli = case[cohort][(model, N0)][(None, nindiv, 100, "SNP")]
+    vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindiv, 100, "SNP")]
     box_vals.append(vals)
     labels.append("SNP-100")
     pylab.ylim(0, Nbs[(model, N0)] * 3)
@@ -161,7 +161,7 @@ def do_nb_comp():
         if type(n0) != int:
             continue
         nb = Nbs[(model, n0)]
-        vals, ci, r2, poli = case["Newb"][(model, n0)][(None, 50, 100, "SNP")]
+        vals, ci, r2, sr2, j, ssize = case["Newb"][(model, n0)][(None, 50, 100, "SNP")]
         labels.append(str(nb))
         box_vals.append(vals)
     pylab.xticks(range(len(labels)), labels)
@@ -188,7 +188,7 @@ def do_lt_comp(nb, strat):
                 continue
             elif pref != model:
                 continue
-            vals, ci, r2, poli = case[strat][(model, n0)][(None, 50, 100, "SNP")]
+            vals, ci, r2, sr2, j, ssize = case[strat][(model, n0)][(None, 50, 100, "SNP")]
             hmeans.append(hmean(vals))
             try:
                 bottom, top = zip(*ci)
@@ -227,7 +227,7 @@ def do_bias():
     table = [["Nb", "Sampling", "Model", "N1", "NeEst", "NeEst/Nb", "Above", "Below"]]
     for model, n0 in n0s:
         nb = Nbs[(model, n0)]
-        vals, ci, r2, poli = case[sampling][(model, n0)][(None, 50, 100, "SNP")]
+        vals, ci, r2, sr2, j, ssize = case[sampling][(model, n0)][(None, 50, 100, "SNP")]
         for p, bname in NbNames:
             if p == model:
                 break
@@ -271,8 +271,8 @@ def do_hz_comp(model, N0):
         cutCase[cut] = {}
         case = load_file(pref, cut * 100)
         for nsnps in snps:
-            vals, ci, r2, poli = case[cohort][(model, N0)][(None, 50, nsnps, "SNP")]
-            cutCase[cut][nsnps] = vals, ci, r2, poli
+            vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, 50, nsnps, "SNP")]
+            cutCase[cut][nsnps] = vals, ci, r2, sr2, j, ssize
     pylab.clf()
     pylab.title("Hz comparison: %s - %d " % (model, N0))
     pylab.suptitle("Newb sampled - SNPs - 50 individuals")
@@ -287,7 +287,7 @@ def do_hz_comp(model, N0):
         #pylab.text(cnt, 0, str(cut), rotation="vertical")
         cases = cutCase[cut]
         for nsnps in snps:
-            vals, ci, r2, poli = cases[nsnps]
+            vals, ci, r2, sr2, j, ssize = cases[nsnps]
             hmeans.append(hmean(vals))
             bottom, top = zip(*ci)
             tops.append(numpy.percentile(top, 90))
@@ -321,12 +321,12 @@ def do_pcrit(model, N0, isSNP):
         for pcrit in pcrits:
             #print case[cohort][N0].keys()
             try:
-                vals, ci, r2, poli = case[cohort][(model, N0)][(pcrit,
+                vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(pcrit,
                                                                 50, nmarkers,
                                                                 marker_name)]
             except KeyError:
-                vals, ci, r2, poli = [], [], [], []
-            sampCase[nmarkers][pcrit] = vals, ci, r2, poli
+                vals, ci, r2, sr2, j, ssize = [], [], [], [], [], []
+            sampCase[nmarkers][pcrit] = vals, ci, r2, sr2, j, ssize
     pylab.clf()
     pylab.title("pcrit comparison: %s - %d " % (model, N0))
     pylab.suptitle("Newb sampled - %ss - 50 individuals" % marker_name)
@@ -341,7 +341,7 @@ def do_pcrit(model, N0, isSNP):
         pylab.text(cnt + 1, 0, str(nmarkers) + " %ss" % marker_name, rotation="vertical", ha="left", va="bottom")
         critCases = sampCase[nmarkers]
         for pcrit in pcrits:
-            vals, ci, r2, poli = critCases[pcrit]
+            vals, ci, r2, sr2, j, ssize = critCases[pcrit]
             if len(vals) > 0:
                 hmeans.append(hmean(vals))
                 bottom, top = zip(*ci)
@@ -478,7 +478,7 @@ def do_table_ci(modelN0s, nsnps):
     print >>w, "Corr Model N1 median mean stdDev medianTopCI meanTopCI stdDevTopCI aboveTop probTop medianTopErr medianBotCI meanBotCI stdDevBotCI belowBot probBot medianBotErr"
     for bname, model, N0 in modelN0s:
         nb = Nbs[(model, N0)]
-        vals, ci, r2, poli = case[cohort][(model, N0)][(None, nindivs, nsnps, "SNP")]
+        vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindivs, nsnps, "SNP")]
         errs = []
         for v in vals:
             perc_err = abs(v - nb) / nb
@@ -660,7 +660,7 @@ def do_nb_linear(models, name, fun):
     for model, n0 in models:
         nb = Nbs[(model, n0)]
         print model, n0, case["Newb"][(model, n0)].keys()
-        vals, ci, r2, poli = case["Newb"][(model, n0)][(None, nindivs, 100, "SNP")]
+        vals, ci, r2, sr2, j, ssize = case["Newb"][(model, n0)][(None, nindivs, 100, "SNP")]
         vals, ci = fun(model, nindivs, vals, ci)
         if len(vals) == 0:
             continue
@@ -681,58 +681,58 @@ def do_nb_linear(models, name, fun):
     pylab.legend()
     pylab.savefig("output/nb-linear-%s.png" % name)
 
-load_nb(pref)
-
-do_robin_nb_ne()
-
-do_all_nb_ne()
-
-do_ld_progress("bulltrout", [180, 361, 722])
-
-try:
-    os.remove("output/hz-cut.html")
-except OSError:
-    pass  # OK
-for loc, ltype in [(0, "MSAT"), (100, "SNP")]:
-    do_hz("bulltrout", ltype, loc, [180, 361, 722])
-    do_hz("bullpred", ltype, loc, [193, 387, 775])
-    do_hz("bullt2", ltype, loc, [3050, 6100])
-    if ltype == "SNP":
-        do_hz("bulltrout", ltype, loc, [90])
-        do_hz("restricted", ltype, loc, [90, 180, 361, 722])
-        do_hz("btrout", ltype, loc, [1619, 6476])
-        do_hz("shepard", ltype, loc, [518, 1036])
-        do_hz("fraley", ltype, loc, [641, 1282])
-        do_hz("lake", ltype, loc, [18, 72])
-        do_hz("bullt2", ltype, loc, [305, 610, 915, 1220, 1525,
-                                     1830, 2440, 3050, 4575, 6100])
-shutil.move("hz-cut.html", "output/hz-cut.html")
-shutil.move("hz-cut.txt", "output/hz-cut.txt")
-
-do_hz_comp("bulltrout", 361)
-
-case = load_file(pref, 45)
-do_lt_comp(200, "Newb")
-do_lt_comp(200, "All")
+#load_nb(pref)
+#
+#do_robin_nb_ne()
+#
+#do_all_nb_ne()
+#
+#do_ld_progress("bulltrout", [180, 361, 722])
+#
+#try:
+#    os.remove("output/hz-cut.html")
+#except OSError:
+#    pass  # OK
+#for loc, ltype in [(0, "MSAT"), (100, "SNP")]:
+#    do_hz("bulltrout", ltype, loc, [180, 361, 722])
+#    do_hz("bullpred", ltype, loc, [193, 387, 775])
+#    do_hz("bullt2", ltype, loc, [3050, 6100])
+#    if ltype == "SNP":
+#        do_hz("bulltrout", ltype, loc, [90])
+#        do_hz("restricted", ltype, loc, [90, 180, 361, 722])
+#        do_hz("btrout", ltype, loc, [1619, 6476])
+#        do_hz("shepard", ltype, loc, [518, 1036])
+#        do_hz("fraley", ltype, loc, [641, 1282])
+#        do_hz("lake", ltype, loc, [18, 72])
+#        do_hz("bullt2", ltype, loc, [305, 610, 915, 1220, 1525,
+#                                     1830, 2440, 3050, 4575, 6100])
+#shutil.move("hz-cut.html", "output/hz-cut.html")
+#shutil.move("hz-cut.txt", "output/hz-cut.txt")
+#
+#do_hz_comp("bulltrout", 361)
+#
+#case = load_file(pref, 45)
+#do_lt_comp(200, "Newb")
+#do_lt_comp(200, "All")
 case = load_file(pref, 40)
-linear = [("bullt2", 305), ("bullt2", 610), ("bullt2", 915), ("bullt2", 1220),
-          ("bullt2", 1525), ("bullt2", 1830), ("bullt2", 2440),
-          ("bullt2", 3050), ("bullt2", 4575), ("bullt2", 6100)]
-do_nb_linear(linear, "std",
-             functools.partial(lambda model, nindivs, x, y: (x, y)))
-do_nb_linear(linear, "Int0.9",
-             functools.partial(correct_ci, fixed=-0.9))
-#do_lt_comp(50, "All")
-#do_lt_comp(100, "All")
-
-do_lt_comp(25, "Newb")
-do_lt_comp(50, "Newb")
-do_lt_comp(100, "Newb")
-
-do_pcrit("bulltrout", 180, True)
-do_pcrit("bulltrout", 180, False)
-do_pcrit("bulltrout", 361, True)
-do_pcrit("bulltrout", 361, False)
+#linear = [("bullt2", 305), ("bullt2", 610), ("bullt2", 915), ("bullt2", 1220),
+#          ("bullt2", 1525), ("bullt2", 1830), ("bullt2", 2440),
+#          ("bullt2", 3050), ("bullt2", 4575), ("bullt2", 6100)]
+#do_nb_linear(linear, "std",
+#             functools.partial(lambda model, nindivs, x, y: (x, y)))
+#do_nb_linear(linear, "Int0.9",
+#             functools.partial(correct_ci, fixed=-0.9))
+##do_lt_comp(50, "All")
+##do_lt_comp(100, "All")
+#
+#do_lt_comp(25, "Newb")
+#do_lt_comp(50, "Newb")
+#do_lt_comp(100, "Newb")
+#
+#do_pcrit("bulltrout", 180, True)
+#do_pcrit("bulltrout", 180, False)
+#do_pcrit("bulltrout", 361, True)
+#do_pcrit("bulltrout", 361, False)
 
 cis = [("BuTrout", "bulltrout", 90), ("BuTrout", "bulltrout", 180),
        ("BuTrout", "bulltrout", 361), ("BuTrout", "bulltrout", 722),
@@ -748,15 +748,15 @@ cis = [("BuTrout", "bulltrout", 90), ("BuTrout", "bulltrout", 180),
 do_table_ci(cis, 100)
 do_table_ci(cis, 200)
 
-for cohort in cohorts:
-    do_nb(cohort, [100], "")
-    do_nb(cohort, nsnps, "allsnps-")
-
-do_cohort("bulltrout", 361, 50)
-do_cohort("bulltrout", 180, 50)
-
-do_rel("bulltrout", 361, 50)
-#do_rel("bulltrout", 180, 50)
-
-do_nb_comp()
-do_bias()
+#for cohort in cohorts:
+#    do_nb(cohort, [100], "")
+#    do_nb(cohort, nsnps, "allsnps-")
+#
+#do_cohort("bulltrout", 361, 50)
+#do_cohort("bulltrout", 180, 50)
+#
+#do_rel("bulltrout", 361, 50)
+##do_rel("bulltrout", 180, 50)
+#
+#do_nb_comp()
+#do_bias()
