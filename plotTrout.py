@@ -469,12 +469,10 @@ def do_nb_ne(model, N0, rep):
     return median, basics, nbcomps, necomps, harmcomps, vals, in_naive, in_corr
 
 
-def do_table_ci(modelN0s, nsnps):
-    #table = []
+def do_table_ci(modelN0s, nsnps, nindivs):
     cohort = "Newb"
     thres = 10
-    nindivs = 50
-    w = open("output/table-ci-%d.txt" % nsnps, "w")
+    w = open("output/table-ci-%d-%d.txt" % (nsnps, nindivs), "w")
     print >>w, "Corr Model N1 median mean stdDev medianTopCI meanTopCI stdDevTopCI aboveTop probTop medianTopErr medianBotCI meanBotCI stdDevBotCI belowBot probBot medianBotErr"
     for bname, model, N0 in modelN0s:
         nb = Nbs[(model, N0)]
@@ -492,7 +490,7 @@ def do_table_ci(modelN0s, nsnps):
             probTop = 0
             probBot = 0
             if len(ci) > 0:
-                bottoms, tops = zip(*cci)
+                tops, bottoms = zip(*cci)
                 topProb = botProb = 0
                 for bottom in bottoms:
                     if bottom > nb or bottom is None:
@@ -747,8 +745,9 @@ cis = [("BuTrout", "bulltrout", 90), ("BuTrout", "bulltrout", 180),
        ("BuLong", "bullt2", 6100),
        ("BuPred", "bullpred", 193), ("BuPred", "bullpred", 387)]
 
-do_table_ci(cis, 100)
-do_table_ci(cis, 200)
+do_table_ci(cis, 100, 50)
+do_table_ci(cis, 100, 25)
+do_table_ci(cis, 200, 50)
 
 #for cohort in cohorts:
 #    do_nb(cohort, [100], "")
