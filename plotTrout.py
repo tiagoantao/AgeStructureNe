@@ -8,6 +8,8 @@ import sys
 import numpy
 from scipy.stats import hmean
 
+import matplotlib
+matplotlib.use('AGG')
 from matplotlib import rc
 rc('font', **{'family': 'sans-serif', 'sans-serif': ['Helvetica']})
 ## for Palatino and other serif fonts use:

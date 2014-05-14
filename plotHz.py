@@ -3,9 +3,11 @@ from __future__ import division
 import os
 import sys
 
+import matplotlib
+matplotlib.use('AGG')
 import pylab
 
-if len(sys.argv)<4:
+if len(sys.argv) < 4:
     print "python %s title baseDir models..." % (sys.argv[0],)
     sys.exit(-1)
 
@@ -36,7 +38,7 @@ for model in models:
             cnt = 0
             for l in ls:
                 res = map(lambda x: float(x), l.rstrip().replace("\t", " ").split(" "))
-                all_sims[model][rep].append(sum(res)/len(res))
+                all_sims[model][rep].append(sum(res) / len(res))
                 if cnt == 200:
                     bla = res
                 if start:
@@ -64,7 +66,7 @@ for model in models:
                 hztf.write("%s\t%.2f\t%d\n" % (model, cut, gen))
         currMean = meanHz
     pylab.plot(my, label=model.split("-")[0])
-    pylab.plot(monom, label= "Monom " + model.split("-")[0])
+    pylab.plot(monom, label="Monom " + model.split("-")[0])
 hzf.close()
 hztf.close()
 pylab.ylim(0, 0.5)
