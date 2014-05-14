@@ -495,14 +495,14 @@ def do_table_ci(modelN0s, nsnps):
                 bottoms, tops = zip(*cci)
                 topProb = botProb = 0
                 for bottom in bottoms:
-                    if bottom > nb:
+                    if bottom > nb or bottom is None:
                         botProb += 1
                         botErr[0] += 1
-                        botErr[1] += bottom - nb
-                        if bottom - nb > thres:
+                        botErr[1] += bottom - nb if bottom is not None else 10000
+                        if bottom is None or bottom - nb > thres:
                             probBot += 1
                 for top in tops:
-                    if top < nb or top > 10000:
+                    if top < nb or top > 10000 or top is None:
                         topProb += 1
                         if top < nb:
                             topErr[0] += 1
@@ -510,11 +510,11 @@ def do_table_ci(modelN0s, nsnps):
                             if nb - top > thres:
                                 probTop += 1
                 topMean = numpy.mean(tops)
-                botMean = numpy.mean(bottoms)
+                botMean = numpy.mean([x for x in bottoms if x is not None])
                 topMedian = numpy.median(tops)
-                botMedian = numpy.median(bottoms)
+                botMedian = numpy.median([x for x in bottoms if x is not None])
                 topStd = numpy.std(tops)
-                botStd = numpy.std(bottoms)
+                botStd = numpy.std([x for x in bottoms if x is not None])
                 topProb /= len(tops)
                 botProb /= len(bottoms)
                 topProb *= 100
