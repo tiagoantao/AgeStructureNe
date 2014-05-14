@@ -89,21 +89,22 @@ def get_ldne(sr2, r2):
     if nindivs < 30:
         #r2l = 0.0018 + 0.907 / nindivs + 4.44 / nindivs ** 2
         myr2 = r2 - sr2
-        return (.308 + math.sqrt(.308 ** 2 - 2.08 * myr2)) / (2 * myr2)
+        ldne = (.308 + math.sqrt(.308 ** 2 - 2.08 * myr2)) / (2 * myr2)
     else:
         #r2l = 1 / nindivs + 3.19 / nindivs ** 2
         myr2 = r2 - sr2
         try:
-            return (1 / 3 + math.sqrt(1 / 9 - 2.76 * myr2)) / (2 * myr2)
+            ldne = (1 / 3 + math.sqrt(1 / 9 - 2.76 * myr2)) / (2 * myr2)
         except ValueError:
             return None
+    return ldne if ldne > 0 else 100000
 
 
 def patch_ci(r2, sr2, j):
     b = chi2.isf(0.025, j)
     t = chi2.isf(0.975, j)
     r2b, r2t = j * r2 / b, j * r2 / t
-    return get_ldne(sr2, r2), get_ldne(sr2, r2t)
+    return get_ldne(sr2, r2b), get_ldne(sr2, r2t)
 
 
 def correct_ci(bname, nindivs, vals, ci, r2=None, fixed=None,
@@ -143,14 +144,18 @@ def correct_ci(bname, nindivs, vals, ci, r2=None, fixed=None,
     return cvals, cci
 
 
-def correct_logquad(bname, vals, ci, abc, sr2=None, j=None):
+def correct_logquad(bname, vals, ci, abc,
+                    r2=None, sr2=None, j=None, jcorr=None):
     a, b, c = abc
     cvals = []
     cci = []
 
     for i in range(len(ci)):
         val = vals[i]
-        bot, top = ci[i]
+        if r2 is None:
+            bot, top = ci[i]
+        else:
+            bot, top = patch_ci(r2[i], sr2[i], j[i] * jcorr)
         lval = math.log10(val)
         corr = a * lval * lval + b * lval + c
         corr = 1 - corr
@@ -166,7 +171,8 @@ def correct_logquad(bname, vals, ci, abc, sr2=None, j=None):
 def get_corrs(bname, nindivs, vals, ci, r2, sr2, j):
     return [("None", (vals, ci)),
             ("Nb/Ne", correct_ci(bname, nindivs, vals, ci)),
-            ("Nb/Nec", correct_ci(bname, nindivs, vals, ci, r2=r2, sr2=sr2, j=j)),
+            ("Nb/Nec", correct_ci(bname, nindivs, vals, ci, r2=r2,
+                                  sr2=sr2, j=j)),
             ("0.9", correct_ci(bname, nindivs, vals, ci, fixed=0.9)),
             ("Int0.9", correct_ci(bname, nindivs, vals, ci, fixed=-0.9)),
             #("LogQuad", correct_logquad(bname, vals, ci,
@@ -174,7 +180,21 @@ def get_corrs(bname, nindivs, vals, ci, r2, sr2, j):
             #("LogQuad2", correct_logquad(bname, vals, ci,
             #                             [0.144624, -0.654859, 0.8009])),
             ("LogQuad", correct_logquad(bname, vals, ci,
-                                        [0.15458222, -0.671991958, 0.799127]))]
+                                        [0.15458222, -0.671991958,
+                                         0.799127])),
+            ("Log0.1", correct_logquad(bname, vals, ci,
+                                        [0.15458222, -0.671991958,
+                                         0.799127], r2=r2, sr2=sr2,
+                                       j=j, jcorr=0.1)),
+            ("Log0.5", correct_logquad(bname, vals, ci,
+                                        [0.15458222, -0.671991958,
+                                         0.799127], r2=r2, sr2=sr2,
+                                       j=j, jcorr=0.5)),
+            ("Log0.9", correct_logquad(bname, vals, ci,
+                                        [0.15458222, -0.671991958,
+                                         0.799127], r2=r2, sr2=sr2,
+                                       j=j, jcorr=0.9)),
+            ]
 
 
 def get_bname(model):

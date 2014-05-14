@@ -473,7 +473,7 @@ def do_table_ci(modelN0s, nsnps, nindivs):
     cohort = "Newb"
     thres = 10
     w = open("output/table-ci-%d-%d.txt" % (nsnps, nindivs), "w")
-    print >>w, "Corr Model N1 median mean stdDev medianTopCI meanTopCI stdDevTopCI aboveTop probTop medianTopErr medianBotCI meanBotCI stdDevBotCI belowBot probBot medianBotErr"
+    print >>w, "Corr Model N1 J median mean stdDev medianTopCI meanTopCI stdDevTopCI aboveTop probTop medianTopErr medianBotCI meanBotCI stdDevBotCI belowBot probBot medianBotErr"
     for bname, model, N0 in modelN0s:
         nb = Nbs[(model, N0)]
         vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindivs, nsnps, "SNP")]
@@ -497,7 +497,7 @@ def do_table_ci(modelN0s, nsnps, nindivs):
                         botProb += 1
                         botErr[0] += 1
                         botErr[1] += bottom - nb if bottom is not None else nb
-                        if bottom is None or bottom - nb > thres:
+                        if bottom is None or bottom - nb > thres or True:
                             probBot += 1
                 for top in tops:
                     if top < nb or top > 10000 or top is None:
@@ -507,7 +507,7 @@ def do_table_ci(modelN0s, nsnps, nindivs):
                         if top < nb:
                             topErr[0] += 1
                             topErr[1] += nb - top
-                            if nb - top > thres:
+                            if nb - top > thres or True:
                                 probTop += 1
                 topMean = numpy.mean([x for x in tops if x is not None])
                 botMean = numpy.mean([x for x in bottoms if x is not None])
@@ -525,7 +525,7 @@ def do_table_ci(modelN0s, nsnps, nindivs):
                 probBot *= 100
             else:
                 topMedian = botMedian = topProb = botProb = topMean = botMean = topStd = botStd = probBot = probTop = "NA"
-            print >>w, has_corr, bname, N0, numpy.median(cvals), numpy.mean(cvals), numpy.std(cvals),
+            print >>w, has_corr, bname, N0, numpy.median(j), numpy.median(cvals), numpy.mean(cvals), numpy.std(cvals),
             print >>w, topMedian, topMean, topStd, topProb, probTop, numpy.median(topErr[1]),
             print >>w, botMedian, botMean, botStd, botProb, probBot, numpy.median(botErr[1])
     w.close()
