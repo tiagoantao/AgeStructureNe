@@ -485,7 +485,7 @@ def do_table_ci(modelN0s, nsnps):
             errs.append(perc_err)
         print bname, model, N0, nb, numpy.median(errs)
         for has_corr, corrections in get_corrs(bname, nindivs,
-                                               vals, ci, r2, poli):
+                                               vals, ci, r2, sr2, j):
             cvals, cci = corrections
             topErr = [0, 0.0]
             botErr = [0, 0.0]
