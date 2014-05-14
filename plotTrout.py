@@ -1,6 +1,5 @@
 from __future__ import division
 
-import functools
 import os
 import shutil
 import sys
@@ -18,7 +17,8 @@ rc('text', usetex=True)
 
 import pylab
 
-from trout import *
+from trout import N0s, Nbs, nindivs, nlocis, cohorts, NbNames, cuts, load_file
+from trout import pcrits, dataDir, realNbs, Nes, get_corrs, correct_ci, nsnps
 
 pref = sys.argv[1]
 
@@ -270,9 +270,10 @@ def do_hz_comp(model, N0):
     for cut in cuts:
         cutCase[cut] = {}
         case = load_file(pref, cut * 100)
-        for nsnps in snps:
-            vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, 50, nsnps, "SNP")]
-            cutCase[cut][nsnps] = vals, ci, r2, sr2, j, ssize
+        for nsnp in snps:
+            vals, ci, r2, sr2, j, ssize = case[cohort][
+                (model, N0)][(None, 50, nsnp, "SNP")]
+            cutCase[cut][nsnp] = vals, ci, r2, sr2, j, ssize
     pylab.clf()
     pylab.title("Hz comparison: %s - %d " % (model, N0))
     pylab.suptitle("Newb sampled - SNPs - 50 individuals")
@@ -286,13 +287,13 @@ def do_hz_comp(model, N0):
     for cut in cuts:
         #pylab.text(cnt, 0, str(cut), rotation="vertical")
         cases = cutCase[cut]
-        for nsnps in snps:
-            vals, ci, r2, sr2, j, ssize = cases[nsnps]
+        for nsnp in snps:
+            vals, ci, r2, sr2, j, ssize = cases[nsnp]
             hmeans.append(hmean(vals))
             bottom, top = zip(*ci)
             tops.append(numpy.percentile(top, 90))
             bottoms.append(numpy.percentile(bottom, 10))
-            #labels.append(str(nsnps))
+            #labels.append(str(nsnp))
             labels.append(str(cut))
             box.append(vals)
             cnt += 1
@@ -321,9 +322,8 @@ def do_pcrit(model, N0, isSNP):
         for pcrit in pcrits:
             #print case[cohort][N0].keys()
             try:
-                vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(pcrit,
-                                                                50, nmarkers,
-                                                                marker_name)]
+                vals, ci, r2, sr2, j, ssize = case[cohort][
+                    (model, N0)][(pcrit, 50, nmarkers, marker_name)]
             except KeyError:
                 vals, ci, r2, sr2, j, ssize = [], [], [], [], [], []
             sampCase[nmarkers][pcrit] = vals, ci, r2, sr2, j, ssize
