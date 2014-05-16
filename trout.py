@@ -190,7 +190,7 @@ def get_corrs(bname, nindivs, vals, ci, r2, sr2, j):
                                        [0.15458222, -0.671991958,
                                         0.799127], r2=r2, sr2=sr2,
                                        j=j, jcorr=0.2)),
-            ("Log0.2-90", correct_logquad(bname, vals, ci,
+            ("Log0.2-95", correct_logquad(bname, vals, ci,
                                           [0.15458222, -0.671991958,
                                            0.799127], r2=r2, sr2=sr2,
                                           j=j, jcorr=0.2, cut=0.05)),
