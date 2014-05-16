@@ -21,7 +21,7 @@ sampleStratsLociSNP = True, []
 sampleStratsIndivs = False, [(15, 15), (15, 25), (15, 50), (15, 100)]
 sampleStratsIndivs = False, []
 sampleStratsIndivsSNP = True, [(100, 15), (100, 25), (100, 50), (100, 100)]
-sampleStratsIndivsSNP = True, [(100, 50), (200, 50), (100, 25)]
+sampleStratsIndivsSNP = True, [(200, 25)]
 
 myd = {"DDIR": DDIR, "MODEL": model,
        "AGECOND": agecond, "AGEDESC": agedesc, "GENS": gens}

@@ -469,11 +469,12 @@ def do_nb_ne(model, N0, rep):
     return median, basics, nbcomps, necomps, harmcomps, vals, in_naive, in_corr
 
 
-def do_table_ci(modelN0s, nsnps, nindivs):
+def do_table_ci(modelN0s, nsnps, nindivs, ci_percentile=50.0):
     cohort = "Newb"
     thres = 10
-    w = open("output/table-ci-%d-%d.txt" % (nsnps, nindivs), "w")
-    print >>w, "Corr Model Nb N1 J median mean stdDev medianTopCI meanTopCI stdDevTopCI aboveTop probTop medianTopErr medianBotCI meanBotCI stdDevBotCI belowBot probBot medianBotErr"
+    w = open("output/table-ci-%d-%d-%.1f.txt" % (nsnps,
+                                                 nindivs, ci_percentile), "w")
+    print >>w, "Corr Model Nb N1 J median mean stdDev percTopCI meanTopCI stdDevTopCI aboveTop probTop medianTopErr percBotCI meanBotCI stdDevBotCI belowBot probBot medianBotErr"
     for bname, model, N0 in modelN0s:
         nb = Nbs[(model, N0)]
         vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindivs, nsnps, "SNP")]
@@ -511,8 +512,10 @@ def do_table_ci(modelN0s, nsnps, nindivs):
                                 probTop += 1
                 topMean = numpy.mean([x for x in tops if x is not None])
                 botMean = numpy.mean([x for x in bottoms if x is not None])
-                topMedian = numpy.median([x for x in tops if x is not None])
-                botMedian = numpy.median([x for x in bottoms if x is not None])
+                topMedian = numpy.percentile([x for x in tops if x is not
+                                              None], 100 - ci_percentile)
+                botMedian = numpy.percentile([x for x in bottoms if x is not
+                                              None], ci_percentile)
                 topStd = numpy.std([x for x in tops if x is not None])
                 botStd = numpy.std([x for x in bottoms if x is not None])
                 topProb /= len(tops)
@@ -746,6 +749,7 @@ cis = [("BuTrout", "bulltrout", 90), ("BuTrout", "bulltrout", 180),
        ("BuPred", "bullpred", 193), ("BuPred", "bullpred", 387)]
 
 do_table_ci(cis, 100, 50)
+do_table_ci(cis, 100, 50, 20)
 do_table_ci(cis, 100, 25)
 do_table_ci(cis, 200, 50)
 

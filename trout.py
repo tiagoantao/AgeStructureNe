@@ -100,9 +100,9 @@ def get_ldne(sr2, r2):
     return ldne if ldne > 0 else 100000
 
 
-def patch_ci(r2, sr2, j):
-    b = chi2.isf(0.025, j)
-    t = chi2.isf(0.975, j)
+def patch_ci(r2, sr2, j, cut=0.025):
+    b = chi2.isf(cut, j)
+    t = chi2.isf(1 - cut, j)
     r2b, r2t = j * r2 / b, j * r2 / t
     return get_ldne(sr2, r2b), get_ldne(sr2, r2t)
 
@@ -145,7 +145,7 @@ def correct_ci(bname, nindivs, vals, ci, r2=None, fixed=None,
 
 
 def correct_logquad(bname, vals, ci, abc,
-                    r2=None, sr2=None, j=None, jcorr=None):
+                    r2=None, sr2=None, j=None, jcorr=None, cut=0.025):
     a, b, c = abc
     cvals = []
     cci = []
@@ -155,7 +155,7 @@ def correct_logquad(bname, vals, ci, abc,
         if r2 is None:
             bot, top = ci[i]
         else:
-            bot, top = patch_ci(r2[i], sr2[i], j[i] * jcorr)
+            bot, top = patch_ci(r2[i], sr2[i], j[i] * jcorr, cut)
         lval = math.log10(val)
         corr = a * lval * lval + b * lval + c
         corr = 1 - corr
@@ -186,6 +186,18 @@ def get_corrs(bname, nindivs, vals, ci, r2, sr2, j):
                                        [0.15458222, -0.671991958,
                                         0.799127], r2=r2, sr2=sr2,
                                        j=j, jcorr=0.1)),
+            ("Log0.2", correct_logquad(bname, vals, ci,
+                                       [0.15458222, -0.671991958,
+                                        0.799127], r2=r2, sr2=sr2,
+                                       j=j, jcorr=0.2)),
+            ("Log0.2-90", correct_logquad(bname, vals, ci,
+                                          [0.15458222, -0.671991958,
+                                           0.799127], r2=r2, sr2=sr2,
+                                          j=j, jcorr=0.2, cut=0.05)),
+            ("Log0.3", correct_logquad(bname, vals, ci,
+                                       [0.15458222, -0.671991958,
+                                        0.799127], r2=r2, sr2=sr2,
+                                       j=j, jcorr=0.3)),
             ("Log0.5", correct_logquad(bname, vals, ci,
                                        [0.15458222, -0.671991958,
                                         0.799127], r2=r2, sr2=sr2,
