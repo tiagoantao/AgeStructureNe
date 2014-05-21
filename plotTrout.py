@@ -739,6 +739,8 @@ case = load_file(pref, 40)
 
 cis = [("BuTrout", "bulltrout", 90), ("BuTrout", "bulltrout", 180),
        ("BuTrout", "bulltrout", 361), ("BuTrout", "bulltrout", 722),
+       ("Restricted", "restricted", 90), ("Restricted", "restricted", 180),
+       ("Restricted", "restricted", 361), ("Restricted", "restricted", 722),
        ("WCT-S", "shepard", 518), ("WCT-S", "shepard", 1036),
        ("WCT-F", "fraley", 641), ("WCT-F", "fraley", 1282),
        ("BuLong", "bullt2", 305), ("BuLong", "bullt2", 610),
