@@ -19,6 +19,7 @@ import pylab
 
 from trout import N0s, Nbs, nindivs, nlocis, cohorts, NbNames, cuts, load_file
 from trout import pcrits, dataDir, realNbs, Nes, get_corrs, correct_ci, nsnps
+from trout import get_bname
 
 pref = sys.argv[1]
 
@@ -469,6 +470,36 @@ def do_nb_ne(model, N0, rep):
     return median, basics, nbcomps, necomps, harmcomps, vals, in_naive, in_corr
 
 
+def compare_correction_ci(model, N0, all_snps, all_indivs):
+    cohort = "Newb"
+    f, ax = pylab.subplots()
+    bname = get_bname(model)
+    Nb = Nbs[(model, N0)]
+
+    def plot_case(ax, nindivs, snps):
+        vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindivs, nsnps, "SNP")]
+        bottom_box_vals = []
+        top_box_vals = []
+        corr_names = []
+        for corr_name, corrections in get_corrs(bname, nindivs, vals, ci, r2,
+                                                sr2, j):
+            cvals, cci = corrections
+            corr_names.append(corr_name)
+            tops, bottoms = zip(*cci)
+            top_box_vals.append(tops)
+            bottom_box_vals.append(bottoms)
+        ax.boxplot(top_box_vals)
+        ax.boxplot(bottom_box_vals)
+        ind = numpy.arange(len(corr_names))
+        ax.set_xticks(ind + 1)
+        ax.set_xticklabels(corr_names, rotation="vertical")
+        ax.set_ylim(0, 2 * Nb)
+    for nsnps in all_snps:
+        for nindivs in all_indivs:
+            plot_case(ax, nindivs, nsnps)
+    pylab.savefig("output/compare-correction-%s-%d.png" % (model, N0))
+
+
 def do_table_ci(modelN0s, nsnps, nindivs, ci_percentile=50.0):
     cohort = "Newb"
     thres = 10
@@ -750,10 +781,12 @@ cis = [("BuTrout", "bulltrout", 90), ("BuTrout", "bulltrout", 180),
        ("BuLong", "bullt2", 6100),
        ("BuPred", "bullpred", 193), ("BuPred", "bullpred", 387)]
 
-do_table_ci(cis, 100, 50)
-do_table_ci(cis, 100, 50, 20)
-do_table_ci(cis, 100, 25)
-do_table_ci(cis, 200, 50)
+#do_table_ci(cis, 100, 50)
+#do_table_ci(cis, 100, 50, 20)
+#do_table_ci(cis, 100, 25)
+#do_table_ci(cis, 200, 50)
+
+compare_correction_ci('bulltrout', 180, [100], [50])
 
 #for cohort in cohorts:
 #    do_nb(cohort, [100], "")
