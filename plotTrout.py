@@ -16,6 +16,7 @@ rc('font', **{'family': 'sans-serif', 'sans-serif': ['Helvetica']})
 rc('text', usetex=True)
 
 import pylab
+import seaborn as sns
 
 from trout import N0s, Nbs, nindivs, nlocis, cohorts, NbNames, cuts, load_file
 from trout import pcrits, dataDir, realNbs, Nes, get_corrs, correct_ci, nsnps
@@ -488,8 +489,8 @@ def compare_correction_ci(model, N0, all_snps, all_indivs):
             tops, bottoms = zip(*cci)
             top_box_vals.append(tops)
             bottom_box_vals.append(bottoms)
-        ax.boxplot(top_box_vals)
-        ax.boxplot(bottom_box_vals)
+        sns.boxplot(top_box_vals)
+        sns.boxplot(bottom_box_vals)
         ind = numpy.arange(len(corr_names))
         ax.set_xticks(ind + 1)
         ax.set_xticklabels(corr_names, rotation="vertical")
