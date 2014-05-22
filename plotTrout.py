@@ -482,6 +482,8 @@ def compare_correction_ci(model, N0, all_snps, all_indivs):
         bottom_box_vals = []
         top_box_vals = []
         corr_names = []
+        ax.axhline(Nb)
+        i = 0
         for corr_name, corrections in get_corrs(bname, nindivs, vals, ci, r2,
                                                 sr2, j):
             cvals, cci = corrections
@@ -489,6 +491,15 @@ def compare_correction_ci(model, N0, all_snps, all_indivs):
             tops, bottoms = zip(*cci)
             top_box_vals.append(tops)
             bottom_box_vals.append(bottoms)
+            aboveTop = len([x for x in tops if x < Nb])
+            belowBottom = len([x for x in bottoms if x > Nb])
+            ax.text(i + 1, 2 * Nb, "%.1f" % (100 * aboveTop / len(tops)),
+                    va='top', ha='center', rotation='vertical',
+                    backgroundcolor='white')
+            ax.text(i + 1, 0, "%.1f" % (100 * belowBottom / len(bottoms)),
+                    va='bottom', ha='center', rotation='vertical',
+                    backgroundcolor='white')
+            i += 1
         sns.boxplot(top_box_vals)
         sns.boxplot(bottom_box_vals)
         ind = numpy.arange(len(corr_names))
