@@ -473,7 +473,11 @@ def do_nb_ne(model, N0, rep):
 
 def compare_correction_ci(model, N0, all_snps, all_indivs):
     cohort = "Newb"
-    f, ax = pylab.subplots()
+    f, axs = pylab.subplots(len(all_snps), len(all_indivs),
+                            sharex=True, sharey=True,
+                            figsize=(20, 20))
+    if len(all_indivs) == 1:
+        axs = [[x] for x in axs]  # This is ridiculous
     bname = get_bname(model)
     Nb = Nbs[(model, N0)]
 
@@ -500,15 +504,18 @@ def compare_correction_ci(model, N0, all_snps, all_indivs):
                     va='bottom', ha='center', rotation='vertical',
                     backgroundcolor='white')
             i += 1
-        sns.boxplot(top_box_vals)
-        sns.boxplot(bottom_box_vals)
+        sns.boxplot(top_box_vals, ax=ax)
+        sns.boxplot(bottom_box_vals, ax=ax)
         ind = numpy.arange(len(corr_names))
         ax.set_xticks(ind + 1)
         ax.set_xticklabels(corr_names, rotation="vertical")
         ax.set_ylim(0, 2 * Nb)
-    for nsnps in all_snps:
-        for nindivs in all_indivs:
-            plot_case(ax, nindivs, nsnps)
+        ax.text(1, 0, 'inds=%d snps=%d' % (nindivs, snps),
+                ha='left', size='xx-large')
+    for i, nsnps in enumerate(all_snps):
+        for j, nindivs in enumerate(all_indivs):
+            plot_case(axs[i][j], nindivs, nsnps)
+    f.tight_layout()
     pylab.savefig("output/compare-correction-%s-%d.png" % (model, N0))
 
 
@@ -798,7 +805,7 @@ cis = [("BuTrout", "bulltrout", 90), ("BuTrout", "bulltrout", 180),
 #do_table_ci(cis, 100, 25)
 #do_table_ci(cis, 200, 50)
 
-compare_correction_ci('bulltrout', 180, [100], [50])
+compare_correction_ci('bulltrout', 180, [100, 200], [50])
 
 #for cohort in cohorts:
 #    do_nb(cohort, [100], "")
