@@ -80,7 +80,7 @@ def do_nb(cohort, nsnps, pref):
         pylab.ylim(0, Nbs[(model, N0)] * 3)
         pylab.axhline(Nbs[(model, N0)], color="k", lw=0.3)
         pylab.xticks(range(len(labels)), labels, rotation="vertical")
-        pylab.boxplot(box_vals, notch=0, sym="")
+        sns.boxplot(box_vals, notch=0, sym="")
         pylab.plot([1 + x for x in range(len(tops))], tops, "rx", ms=20)
         pylab.plot([1 + x for x in range(len(bottoms))], bottoms, "rx", ms=20)
         pylab.plot([1 + x for x in range(len(hmeans))], hmeans, "k+", ms=20)
@@ -117,7 +117,7 @@ def do_cohort(model, N0, nindiv):
     pylab.ylabel("$\hat{N}_{e}$")
     pylab.axhline(Nbs[(model, N0)], color="k", lw=0.3)
     pylab.xticks(range(len(labels)), labels)
-    pylab.boxplot(box_vals, notch=0, sym="")
+    sns.boxplot(box_vals, notch=0, sym="")
     pylab.plot([1 + x for x in range(len(tops))], tops, "rx")
     pylab.plot([1 + x for x in range(len(bottoms))], bottoms, "rx")
     pylab.plot([1 + x for x in range(len(hmeans))], hmeans, "k+")
@@ -148,7 +148,7 @@ def do_rel(model, N0, nindiv):
     pylab.ylabel("$\hat{N}_{e}$")
     pylab.axhline(Nbs[(model, N0)], color="k", lw=0.3)
     pylab.xticks(range(len(labels)), labels)
-    pylab.boxplot(box_vals, notch=0, sym="")
+    sns.boxplot(box_vals, notch=0, sym="")
     pylab.savefig("output/rel-%s-%d.png" % (model, N0))
 
 
@@ -168,7 +168,7 @@ def do_nb_comp():
         box_vals.append(vals)
     pylab.xticks(range(len(labels)), labels)
     pylab.ylabel("$\hat{N}_{e}$")
-    pylab.boxplot(box_vals, notch=0, sym="")
+    sns.boxplot(box_vals, notch=0, sym="")
     pylab.savefig("output/nb-comp.png")
 
 
@@ -209,7 +209,7 @@ def do_lt_comp(nb, strat):
     pylab.plot([1 + x for x in range(len(tops))], tops, "rx", ms=20)
     pylab.plot([1 + x for x in range(len(bottoms))], bottoms, "rx", ms=20)
     pylab.plot([1 + x for x in range(len(hmeans))], hmeans, "k+", ms=20)
-    bp = pylab.boxplot(box_vals, notch=0, sym="")
+    bp = sns.boxplot(box_vals, notch=0, sym="")
     ymin, ymax = pylab.ylim()
     pylab.ylabel("$\hat{N}_{e}$")
     pylab.ylim(ymin, min([ymax, 3 * nb]))
@@ -300,7 +300,7 @@ def do_hz_comp(model, N0):
             box.append(vals)
             cnt += 1
     pylab.xticks(range(len(labels)), labels)
-    pylab.boxplot(box, notch=0, sym="",)
+    sns.boxplot(box, notch=0, sym="",)
     pylab.ylabel("$\hat{N}_{e}$")
     pylab.plot([1 + x for x in range(len(tops))], tops, "rx")
     pylab.plot([1 + x for x in range(len(bottoms))], bottoms, "rx")
@@ -358,7 +358,7 @@ def do_pcrit(model, N0, isSNP):
             cnt += 1
     pylab.axhline(Nbs[(model, N0)], color="k", lw=1)
     pylab.xticks(range(len(labels)), labels, rotation="vertical")
-    pylab.boxplot(box, notch=0, sym="",)
+    sns.boxplot(box, notch=0, sym="",)
     pylab.plot([1 + x for x in range(len(tops))], tops, "rx")
     pylab.plot([1 + x for x in range(len(bottoms))], bottoms, "rx")
     pylab.plot([1 + x for x in range(len(hmeans))], hmeans, "k+")
