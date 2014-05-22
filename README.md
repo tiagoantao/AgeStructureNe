@@ -21,6 +21,10 @@ LDNe (1,2)
 
 igrat
 
+matplotlib
+
+seaborn
+
 
 1 - Only if you do genetic analysis
 
