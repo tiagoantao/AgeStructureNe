@@ -17,6 +17,7 @@ rc('text', usetex=True)
 
 import pylab
 import seaborn as sns
+import matplotlib.pyplot as plt
 
 from trout import N0s, Nbs, nindivs, nlocis, cohorts, NbNames, cuts, load_file
 from trout import pcrits, dataDir, realNbs, Nes, get_corrs, correct_ci, nsnps
@@ -173,7 +174,7 @@ def do_nb_comp():
 
 
 def do_lt_comp(nb, strat):
-    pylab.clf()
+    f, ax = plt.subplots()
     tops = []
     box_vals = []
     bottoms = []
@@ -181,8 +182,7 @@ def do_lt_comp(nb, strat):
     labels = []
     n0s = Nbs.keys()
     n0s.sort()
-    pylab.title("Nb: %d (Life table comparison)" % nb)
-    pylab.suptitle("%s sampled - 100 SNPs - 50 individuals" % strat)
+    ax.set_title("Nb: %d - %s sampled - 100 SNPs - 50 indivs" % (nb, strat))
     for pref, name in NbNames:
         for k, nb2 in Nbs.items():
             model, n0 = k
@@ -206,18 +206,18 @@ def do_lt_comp(nb, strat):
                 box_vals.append([])
                 bottoms.append(None)
     pylab.xticks(range(len(labels)), labels)
-    pylab.plot([1 + x for x in range(len(tops))], tops, "rx", ms=20)
-    pylab.plot([1 + x for x in range(len(bottoms))], bottoms, "rx", ms=20)
-    pylab.plot([1 + x for x in range(len(hmeans))], hmeans, "k+", ms=20)
-    bp = sns.boxplot(box_vals, notch=0, sym="")
+    bp = sns.violinplot(box_vals, notch=0, sym="")
+    plt.plot([1 + x for x in range(len(tops))], tops, "rx", ms=20)
+    plt.plot([1 + x for x in range(len(bottoms))], bottoms, "rx", ms=20)
+    plt.plot([1 + x for x in range(len(hmeans))], hmeans, "k+", ms=20)
     ymin, ymax = pylab.ylim()
-    pylab.ylabel("$\hat{N}_{e}$")
-    pylab.ylim(ymin, min([ymax, 3 * nb]))
-    pylab.axhline(nb, color="k", lw=0.3)
-    pylab.setp(bp['boxes'], linewidth=1.0, color="k")
-    pylab.setp(bp['caps'], linewidth=1.0, color="k")
-    pylab.setp(bp['fliers'], linewidth=1.0, color="k")
-    pylab.savefig("output/lt-comp-%s-%d.png" % (strat, nb))
+    plt.ylabel("$\hat{N}_{e}$")
+    plt.ylim(ymin, min([ymax, 3 * nb]))
+    plt.axhline(nb, color="k", lw=0.3)
+    #pylab.setp(bp['boxes'], linewidth=1.0, color="k")
+    #pylab.setp(bp['caps'], linewidth=1.0, color="k")
+    #pylab.setp(bp['fliers'], linewidth=1.0, color="k")
+    plt.savefig("output/lt-comp-%s-%d.png" % (strat, nb))
 
 
 def do_bias():
@@ -517,6 +517,7 @@ def compare_correction_ci(model, N0, all_snps, all_indivs):
             plot_case(axs[i][j], nindivs, nsnps)
     f.tight_layout()
     pylab.savefig("output/compare-correction-%s-%d.png" % (model, N0))
+    pylab.savefig("output/compare-correction-%s-%d.eps" % (model, N0))
 
 
 def do_table_ci(modelN0s, nsnps, nindivs, ci_percentile=50.0):
@@ -779,8 +780,8 @@ case = load_file(pref, 40)
 ##do_lt_comp(100, "All")
 #
 #do_lt_comp(25, "Newb")
-#do_lt_comp(50, "Newb")
-#do_lt_comp(100, "Newb")
+do_lt_comp(50, "Newb")
+do_lt_comp(100, "Newb")
 #
 #do_pcrit("bulltrout", 180, True)
 #do_pcrit("bulltrout", 180, False)
