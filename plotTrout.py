@@ -207,6 +207,7 @@ def do_lt_comp(nb, strat):
                 bottoms.append(None)
     pylab.xticks(range(len(labels)), labels)
     bp = sns.violinplot(box_vals, notch=0, sym="")
+    print "loosing the next lines?"
     plt.plot([1 + x for x in range(len(tops))], tops, "rx", ms=20)
     plt.plot([1 + x for x in range(len(bottoms))], bottoms, "rx", ms=20)
     plt.plot([1 + x for x in range(len(hmeans))], hmeans, "k+", ms=20)
