@@ -173,7 +173,7 @@ def do_nb_comp():
     pylab.savefig("output/nb-comp.png")
 
 
-def do_lt_comp(nb, strat):
+def do_lt_comp(nb, strat, corr_name):
     f, ax = plt.subplots()
     tops = []
     box_vals = []
@@ -184,6 +184,9 @@ def do_lt_comp(nb, strat):
     n0s.sort()
     ax.set_title("Nb: %d - %s sampled - 100 SNPs - 50 indivs" % (nb, strat))
     for pref, name in NbNames:
+        if name == "Restr":
+            print "Ignoring Restr"
+            continue
         for k, nb2 in Nbs.items():
             model, n0 = k
             if nb2 != nb:
@@ -191,9 +194,17 @@ def do_lt_comp(nb, strat):
             elif pref != model:
                 continue
             vals, ci, r2, sr2, j, ssize = case[strat][(model, n0)][(None, 50, 100, "SNP")]
+            for cname, corrections in get_corrs(name, nindivs, vals,
+                                                ci, r2, sr2, j):
+                if cname != corr_name:
+                    continue
+                cvals, cci = corrections
+                vals = cvals
+                break
+
             hmeans.append(hmean(vals))
             try:
-                bottom, top = zip(*ci)
+                top, bottom = zip(*ci)
             except ValueError:
                 top, bottom = [], []
             labels.append(name)
@@ -205,12 +216,11 @@ def do_lt_comp(nb, strat):
                 tops.append(None)
                 box_vals.append([])
                 bottoms.append(None)
-    pylab.xticks(range(len(labels)), labels)
-    bp = sns.violinplot(box_vals, notch=0, sym="")
-    print "loosing the next lines?"
-    plt.plot([1 + x for x in range(len(tops))], tops, "rx", ms=20)
-    plt.plot([1 + x for x in range(len(bottoms))], bottoms, "rx", ms=20)
-    plt.plot([1 + x for x in range(len(hmeans))], hmeans, "k+", ms=20)
+    bp = sns.violinplot(box_vals, notch=0, sym="", ax=ax, alpha=0.9)
+    pylab.xticks(range(1, 1 + len(labels)), labels)
+    ax.plot([1 + x for x in range(len(tops))], tops, 'r.', ms=20)
+    ax.plot([1 + x for x in range(len(bottoms))], bottoms, "r.", ms=20)
+    ax.plot([1 + x for x in range(len(hmeans))], hmeans, "k.", ms=20)
     ymin, ymax = pylab.ylim()
     plt.ylabel("$\hat{N}_{e}$")
     plt.ylim(ymin, min([ymax, 3 * nb]))
@@ -218,7 +228,7 @@ def do_lt_comp(nb, strat):
     #pylab.setp(bp['boxes'], linewidth=1.0, color="k")
     #pylab.setp(bp['caps'], linewidth=1.0, color="k")
     #pylab.setp(bp['fliers'], linewidth=1.0, color="k")
-    plt.savefig("output/lt-comp-%s-%d.png" % (strat, nb))
+    plt.savefig("output/lt-comp-%s-%s-%d.png" % (corr_name, strat, nb))
 
 
 def do_bias():
@@ -781,8 +791,10 @@ case = load_file(pref, 40)
 ##do_lt_comp(100, "All")
 #
 #do_lt_comp(25, "Newb")
-do_lt_comp(50, "Newb")
-do_lt_comp(100, "Newb")
+do_lt_comp(50, "Newb", "None")
+do_lt_comp(50, "Newb", "LogQuad")
+do_lt_comp(100, "Newb", "None")
+do_lt_comp(100, "Newb", "LogQuad")
 #
 #do_pcrit("bulltrout", 180, True)
 #do_pcrit("bulltrout", 180, False)
