@@ -481,7 +481,7 @@ def do_nb_ne(model, N0, rep):
     return median, basics, nbcomps, necomps, harmcomps, vals, in_naive, in_corr
 
 
-def compare_correction_ci(model, N0, all_snps, all_indivs):
+def compare_correction_ci(model, N0, all_snps, all_indivs, suff):
     cohort = "Newb"
     f, axs = pylab.subplots(len(all_snps), len(all_indivs),
                             sharex=True, sharey=True,
@@ -500,6 +500,7 @@ def compare_correction_ci(model, N0, all_snps, all_indivs):
         corr_names = []
         ax.axhline(Nb)
         i = 0
+        top_y = 3 * Nb
         for corr_name, corrections in get_corrs(bname, nindivs, vals, ci, r2,
                                                 sr2, j):
             cvals, cci = corrections
@@ -509,7 +510,7 @@ def compare_correction_ci(model, N0, all_snps, all_indivs):
             bottom_box_vals.append(bottoms)
             aboveTop = len([x for x in tops if x < Nb])
             belowBottom = len([x for x in bottoms if x > Nb])
-            ax.text(i + 1, 2 * Nb, "%.1f" % (100 * aboveTop / len(tops)),
+            ax.text(i + 1, top_y, "%.1f" % (100 * aboveTop / len(tops)),
                     va='top', ha='center', rotation='vertical',
                     backgroundcolor='white')
             ax.text(i + 1, 0, "%.1f" % (100 * belowBottom / len(bottoms)),
@@ -521,15 +522,14 @@ def compare_correction_ci(model, N0, all_snps, all_indivs):
         ind = numpy.arange(len(corr_names))
         ax.set_xticks(ind + 1)
         ax.set_xticklabels(corr_names, rotation="vertical")
-        ax.set_ylim(0, 2 * Nb)
+        ax.set_ylim(0, top_y)
         ax.text(1, 0, 'inds=%d snps=%d' % (nindivs, snps),
                 ha='left', size='xx-large')
     for i, nsnps in enumerate(all_snps):
         for j, nindivs in enumerate(all_indivs):
             plot_case(axs[i][j], nindivs, nsnps)
     f.tight_layout()
-    pylab.savefig("output/compare-correction-%s-%d.png" % (model, N0))
-    pylab.savefig("output/compare-correction-%s-%d.eps" % (model, N0))
+    pylab.savefig("output/compare-correction-%s-%d-%s.png" % (model, N0, suff))
 
 
 def do_table_ci(modelN0s, nsnps, nindivs, ci_percentile=50.0):
@@ -820,8 +820,9 @@ cis = [("BuTrout", "bulltrout", 90), ("BuTrout", "bulltrout", 180),
 #do_table_ci(cis, 100, 25)
 #do_table_ci(cis, 200, 50)
 
-compare_correction_ci('bulltrout', 180, [100, 200], [50])
-compare_correction_ci('bulltrout', 180, [100], [25, 100])
+compare_correction_ci('bulltrout', 361, [100, 200], [50], "50inds")
+compare_correction_ci('bulltrout', 180, [100, 200], [50], "50inds")
+compare_correction_ci('bulltrout', 180, [100], [25, 50, 100], "100snps")
 
 #for cohort in cohorts:
 #    do_nb(cohort, [100], "")
