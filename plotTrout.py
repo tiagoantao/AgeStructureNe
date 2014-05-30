@@ -182,7 +182,8 @@ def do_lt_comp(nb, strat, corr_name):
     labels = []
     n0s = Nbs.keys()
     n0s.sort()
-    ax.set_title("Nb: %d - %s sampled - 100 SNPs - 50 indivs" % (nb, strat))
+    ax.set_title("Nb: %d - %s sampled - 100 SNPs - 50 indivs - %s corr" % (
+        nb, strat, corr_name))
     for pref, name in NbNames:
         if name == "Restr":
             print "Ignoring Restr"
@@ -200,6 +201,7 @@ def do_lt_comp(nb, strat, corr_name):
                     continue
                 cvals, cci = corrections
                 vals = cvals
+                ci = cci
                 break
 
             hmeans.append(hmean(vals))
@@ -225,9 +227,6 @@ def do_lt_comp(nb, strat, corr_name):
     plt.ylabel("$\hat{N}_{e}$")
     plt.ylim(ymin, min([ymax, 3 * nb]))
     plt.axhline(nb, color="k", lw=0.3)
-    #pylab.setp(bp['boxes'], linewidth=1.0, color="k")
-    #pylab.setp(bp['caps'], linewidth=1.0, color="k")
-    #pylab.setp(bp['fliers'], linewidth=1.0, color="k")
     plt.savefig("output/lt-comp-%s-%s-%d.png" % (corr_name, strat, nb))
 
 
@@ -487,8 +486,10 @@ def compare_correction_ci(model, N0, all_snps, all_indivs):
     f, axs = pylab.subplots(len(all_snps), len(all_indivs),
                             sharex=True, sharey=True,
                             figsize=(20, 20))
+    if len(all_snps) == 1:
+        axs = [axs]
     if len(all_indivs) == 1:
-        axs = [[x] for x in axs]  # This is ridiculous
+        axs = [[x] for x in axs]  # This is ridiculous, and wrong
     bname = get_bname(model)
     Nb = Nbs[(model, N0)]
 
@@ -820,6 +821,7 @@ cis = [("BuTrout", "bulltrout", 90), ("BuTrout", "bulltrout", 180),
 #do_table_ci(cis, 200, 50)
 
 compare_correction_ci('bulltrout', 180, [100, 200], [50])
+compare_correction_ci('bulltrout', 180, [100], [25, 100])
 
 #for cohort in cohorts:
 #    do_nb(cohort, [100], "")
