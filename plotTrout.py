@@ -11,8 +11,6 @@ import matplotlib
 matplotlib.use('AGG')
 from matplotlib import rc
 rc('font', **{'family': 'sans-serif', 'sans-serif': ['Helvetica']})
-## for Palatino and other serif fonts use:
-#rc('font',**{'family':'serif','serif':['Palatino']})
 rc('text', usetex=True)
 
 import pylab
@@ -25,12 +23,16 @@ from trout import get_bname
 
 pref = sys.argv[1]
 
+print('CHECK ALL PERCENTILES WITH NONES')
 
-def do_nb(cohort, nsnps, pref):
+
+def do_nb(cohort, nsnps, pref, corr_name):
     model = 'bulltrout'
     for N0 in N0s:
         pylab.clf()
-        pylab.title("Nb: %d (N1: %d) - cohort %s" % (Nbs[model, N0], N0, cohort))
+        pylab.title("Nb: %d (N1: %d) - cohort %s - %s" % (Nbs[model, N0],
+                                                          N0, cohort,
+                                                          corr_name))
         box_vals = []
         tops = []
         bottoms = []
@@ -40,10 +42,20 @@ def do_nb(cohort, nsnps, pref):
             for nloci in nlocis:
                 try:
                     vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindiv, nloci, "MSAT")]
+                    for cname, corrections in get_corrs(model, nindivs, vals,
+                                                        ci, r2, sr2, j):
+                        if cname != corr_name:
+                            continue
+                        cvals, cci = corrections
+                        vals = cvals
+                        ci = cci
+                        break
                     if len(ci) > 0:
                         bottom, top = zip(*ci)
-                        tops.append(numpy.percentile(top, 90))
-                        bottoms.append(numpy.percentile(bottom, 10))
+                        tops.append(numpy.percentile([x for x in top if x is
+                                                      not None], 90))
+                        bottoms.append(numpy.percentile([x for x in bottom if
+                                                         x is not None], 10))
                     else:
                         tops.append(None)
                         bottoms.append(None)
@@ -59,8 +71,11 @@ def do_nb(cohort, nsnps, pref):
                     vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindiv, nsnp, "SNP")]
                     if len(ci) > 0:
                         bottom, top = zip(*ci)
-                        tops.append(numpy.percentile(top, 90))
-                        bottoms.append(numpy.percentile(bottom, 10))
+                        tops.append(numpy.percentile([x for x in top
+                                                      if x is not None], 90))
+                        bottoms.append(numpy.percentile([x for x in bottom if
+                                                         x is not None],
+                                                        10))
                     else:
                         tops.append(None)
                         bottoms.append(None)
@@ -80,19 +95,19 @@ def do_nb(cohort, nsnps, pref):
         pylab.ylabel("$\hat{N}_{e}$")
         pylab.ylim(0, Nbs[(model, N0)] * 3)
         pylab.axhline(Nbs[(model, N0)], color="k", lw=0.3)
-        pylab.xticks(range(len(labels)), labels, rotation="vertical")
         sns.boxplot(box_vals, notch=0, sym="")
-        pylab.plot([1 + x for x in range(len(tops))], tops, "rx", ms=20)
-        pylab.plot([1 + x for x in range(len(bottoms))], bottoms, "rx", ms=20)
-        pylab.plot([1 + x for x in range(len(hmeans))], hmeans, "k+", ms=20)
-        pylab.savefig("output/%s%s-%d.png" % (pref, cohort, N0))
+        pylab.xticks(1 + numpy.arange(len(labels)), labels, rotation="vertical")
+        pylab.plot([1 + x for x in range(len(tops))], tops, "r.", ms=20)
+        pylab.plot([1 + x for x in range(len(bottoms))], bottoms, "r.", ms=20)
+        pylab.plot([1 + x for x in range(len(hmeans))], hmeans, "r.", ms=20)
+        pylab.savefig("output/%s%s-%s-%d.png" % (pref, cohort, corr_name, N0))
 
 
-def do_cohort(model, N0, nindiv):
+def do_cohort(model, N0, nindiv, corr_name):
     last = 0.5
     pylab.clf()
-    pylab.title("Nb: %d (N1: %d) - different cohorts - 100 SNPs" %
-                (Nbs[(model, N0)], N0))
+    pylab.title("Nb: %d (N1: %d) - different cohorts - 100 SNPs -%s" %
+                (Nbs[(model, N0)], N0, corr_name))
     box_vals = []
     labels = []
     tops = []
@@ -100,7 +115,16 @@ def do_cohort(model, N0, nindiv):
     hmeans = []
 
     for cohort in cohorts:
+        print(cohort, model, N0)
         vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindiv, 100, "SNP")]
+        for cname, corrections in get_corrs(model, nindivs, vals,
+                                            ci, r2, sr2, j):
+            if cname != corr_name:
+                continue
+            cvals, cci = corrections
+            vals = cvals
+            ci = cci
+            break
         box_vals.append(vals)
         hmeans.append(hmean(vals))
         bottom, top = zip(*ci)
@@ -117,8 +141,8 @@ def do_cohort(model, N0, nindiv):
     pylab.ylim(0, Nbs[(model, N0)] * 3)
     pylab.ylabel("$\hat{N}_{e}$")
     pylab.axhline(Nbs[(model, N0)], color="k", lw=0.3)
-    pylab.xticks(range(len(labels)), labels)
     sns.boxplot(box_vals, notch=0, sym="")
+    pylab.xticks(1 + numpy.arange(len(labels)), labels)
     pylab.plot([1 + x for x in range(len(tops))], tops, "rx")
     pylab.plot([1 + x for x in range(len(bottoms))], bottoms, "rx")
     pylab.plot([1 + x for x in range(len(hmeans))], hmeans, "k+")
@@ -186,7 +210,7 @@ def do_lt_comp(nb, strat, corr_name):
         nb, strat, corr_name))
     for pref, name in NbNames:
         if name == "Restr":
-            print "Ignoring Restr"
+            print("Ignoring Restr")
             continue
         for k, nb2 in Nbs.items():
             model, n0 = k
@@ -194,6 +218,7 @@ def do_lt_comp(nb, strat, corr_name):
                 continue
             elif pref != model:
                 continue
+            print(strat, model, n0)
             vals, ci, r2, sr2, j, ssize = case[strat][(model, n0)][(None, 50, 100, "SNP")]
             for cname, corrections in get_corrs(name, nindivs, vals,
                                                 ci, r2, sr2, j):
@@ -545,7 +570,7 @@ def do_table_ci(modelN0s, nsnps, nindivs, ci_percentile=50.0):
         for v in vals:
             perc_err = abs(v - nb) / nb
             errs.append(perc_err)
-        print bname, model, N0, nb, numpy.median(errs)
+        print(bname, model, N0, nb, numpy.median(errs))
         for has_corr, corrections in get_corrs(bname, nindivs,
                                                vals, ci, r2, sr2, j):
             cvals, cci = corrections
@@ -610,15 +635,15 @@ def do_all_nb_ne():
             allBasics.setdefault(N0, []).append(basics)
             allNbComps.setdefault(N0, []).append(nbcomps)
             allNbs.setdefault(N0, []).append(nbs)
-    print "naive", in_naive
-    print "corr", in_corrs
+    print("naive", in_naive)
+    print("corr", in_corrs)
     basicMeans = []
     basicStds = []
     compMeans = []
     compStds = []
     N0s = [180, 361, 722]
     for N0 in N0s:
-        print "NbSTD", N0, numpy.std(allNbs[N0])
+        print("NbSTD", N0, numpy.std(allNbs[N0]))
         meanBasic = numpy.mean(allBasics[N0])
         meanComp = numpy.mean(allNbComps[N0])
         stdBasic = numpy.std(allBasics[N0])
@@ -725,7 +750,7 @@ def do_nb_linear(models, name, fun):
     nindivs = 50
     for model, n0 in models:
         nb = Nbs[(model, n0)]
-        print model, n0, case["Newb"][(model, n0)].keys()
+        print(model, n0, case["Newb"][(model, n0)].keys())
         vals, ci, r2, sr2, j, ssize = case["Newb"][(model, n0)][(None, nindivs, 100, "SNP")]
         vals, ci = fun(model, nindivs, vals, ci)
         if len(vals) == 0:
@@ -781,6 +806,13 @@ def do_nb_linear(models, name, fun):
 #do_lt_comp(200, "Newb")
 #do_lt_comp(200, "All")
 case = load_file(pref, 40)
+
+
+#do_nb(cohort, [100], "", 'None')
+do_nb('Newb', nsnps, "allsnps-", 'None')
+do_cohort("bulltrout", 361, 50)
+do_cohort("bulltrout", 180, 50)
+
 #linear = [("bullt2", 305), ("bullt2", 610), ("bullt2", 915), ("bullt2", 1220),
 #          ("bullt2", 1525), ("bullt2", 1830), ("bullt2", 2440),
 #          ("bullt2", 3050), ("bullt2", 4575), ("bullt2", 6100)]
@@ -824,12 +856,7 @@ compare_correction_ci('bulltrout', 361, [100, 200], [50], "50inds")
 compare_correction_ci('bulltrout', 180, [100, 200], [50], "50inds")
 compare_correction_ci('bulltrout', 180, [100], [25, 50, 100], "100snps")
 
-#for cohort in cohorts:
-#    do_nb(cohort, [100], "")
-#    do_nb(cohort, nsnps, "allsnps-")
 #
-#do_cohort("bulltrout", 361, 50)
-#do_cohort("bulltrout", 180, 50)
 #
 #do_rel("bulltrout", 361, 50)
 ##do_rel("bulltrout", 180, 50)
