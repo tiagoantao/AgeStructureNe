@@ -1,5 +1,33 @@
 import ConfigParser
 
+meta = {
+    "bighorn"    : {'name': 'Bighorn sheep'},
+    "bison"      : {'name': ''},
+    "bottlenose" : {'name': 'Bottlenose dolphin'},
+    "btrout"     : {'name': ''},
+    "bullt2"     : {'name': ''},
+    "bulltrout"  : {'name': ''},
+    "bullpred"   : {'name': ''},
+    "cod"        : {'name': ''},
+    "emperor"    : {'name': ''},
+    "fraley"     : {'name': ''},
+    "grizzly"    : {'name': 'Grizzly bear'},
+    "lake"       : {'name': 'Lake trout'},
+    "lturtle"    : {'name': ''},
+    "mcrab"      : {'name': ''},
+    "mosquito"   : {'name': ''},
+    "primrose"   : {'name': ''},
+    "sagebrush"  : {'name': ''},
+    "sagegrouse" : {'name': ''},
+    "sardine"    : {'name': 'Sardine'},
+    "seaweed"    : {'name': ''},
+    "shepard"    : {'name': ''},
+    "snake"      : {'name': ''},
+    "sparrow"    : {'name': ''},
+    "surchin"    : {'name': 'Sea urchin'},
+    "wfrog"      : {'name': ''},
+}
+
 ages = {
     "bighorn"    : 16,
     "bison"      : 20,
@@ -388,19 +416,21 @@ def getAgeFecund(cfg):
                 break
     return tuple(ages)
 
+
 def calcHarmonic(lst):
     #Negatives are converted to infs (LDNe)
-    myLst = map(lambda x: x<0 and float("inf") or x, lst)
+    myLst = map(lambda x: x < 0 and float("inf") or x, lst)
     try:
-        return 1.0*len(lst)/reduce(lambda x,y:1.0/y+x,myLst,0.0)
+        return 1.0 * len(lst) / reduce(lambda x, y: 1.0 / y + x, myLst, 0.0)
     except ZeroDivisionError:
         return None
+
 
 def getNonGenStats(f):
     l = f.readline()
     stats = []
-    while l!= "":
-        toks = l.rstrip().split(" ")
+    while l !=  '':
+        toks = l.rstrip().split(' ')
         try:
             gender = int(toks[3])
             stats.append({

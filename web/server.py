@@ -1,5 +1,10 @@
+import sys
+sys.path.append('..')
+
 from flask import *
 app = Flask(__name__)
+
+import myUtils
 
 
 # Note: need to annotante number of loci (MSAT, SNP)
@@ -11,12 +16,12 @@ def config():
 
 @app.route('/models')
 def show_models():
-    pass
+    return render_template('models.html', meta=myUtils.meta)
 
 
-@app.route('/model')
-def do_model():
-    pass
+@app.route('/model/<key>')
+def do_model(key):
+    return key
 
 
 @app.route('/simulations')
@@ -31,7 +36,7 @@ def show_analysis():
 
 @app.route('/')
 def index():
-        return render_template('index.html')
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
