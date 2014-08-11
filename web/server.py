@@ -1,16 +1,10 @@
-import flask
-app = flask.Flask(__name__)
+from flask import *
+app = Flask(__name__)
 
 
 # Note: need to annotante number of loci (MSAT, SNP)
 
 
-@app.route('/')
-def index():
-    return flask.url_for('models')
-
-
-@app.route('/config')
 def config():
     pass
 
@@ -34,5 +28,10 @@ def show_simulations():
 def show_analysis():
     pass
 
+
+@app.route('/')
+def index():
+        return render_template('index.html')
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
