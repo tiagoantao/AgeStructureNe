@@ -865,7 +865,7 @@ do_nb_linear(linear, "None",
              functools.partial(lambda model, nindivs, x, y: (x, y)))
 #do_nb_linear(linear, "LogQuad",
 #             functools.partial(correct_logquad, abc=[log_a, log_b, log_c]))
-do_nb_linear(linear, "NbNe", functools.partial(correct_ci, bname='NbNe'))
+do_nb_linear(linear, "NbNe", functools.partial(correct_ci))
 
 #do_nb(cohort, [100], "", 'None')
 do_nb('Newb', nsnps, "allsnps-", 'None')
