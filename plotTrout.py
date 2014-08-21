@@ -557,8 +557,6 @@ def compare_correction_ci(model, N0, all_snps, all_indivs, suff):
         top_y = 3 * Nb
         for corr_name, corrections in get_corrs(bname, nindivs, vals, ci, r2,
                                                 sr2, j):
-            if corr_name in ['Log0.4', 'Log0.5', 'Log0.7', 'Log0.8']:
-                continue
             cvals, cci = corrections
             corr_names.append(corr_name)
             tops, bottoms = zip(*cci)
@@ -865,25 +863,31 @@ linear = [("bullt2", 305), ("bullt2", 610), ("bullt2", 915), ("bullt2", 1220),
           ("bullt2", 3050), ("bullt2", 4575), ("bullt2", 6100)]
 do_nb_linear(linear, "None",
              functools.partial(lambda model, nindivs, x, y: (x, y)))
-do_nb_linear(linear, "LogQuad",
-             functools.partial(correct_logquad, abc=[log_a, log_b, log_c]))
+#do_nb_linear(linear, "LogQuad",
+#             functools.partial(correct_logquad, abc=[log_a, log_b, log_c]))
+do_nb_linear(linear, "NbNe", functools.partial(correct_ci, bname='NbNe'))
 
 #do_nb(cohort, [100], "", 'None')
 do_nb('Newb', nsnps, "allsnps-", 'None')
-do_nb('Newb', nsnps, "allsnps-", 'LogQuad')
+#do_nb('Newb', nsnps, "allsnps-", 'LogQuad')
+do_nb('Newb', nsnps, "allsnps-", 'NbNe')
 do_cohort("bulltrout", 180, 50, 'None')
 do_cohort("bulltrout", 361, 50, 'None')
-do_cohort("bulltrout", 180, 50, 'LogQuad')
-do_cohort("bulltrout", 361, 50, 'LogQuad')
+#do_cohort("bulltrout", 180, 50, 'LogQuad')
+#do_cohort("bulltrout", 361, 50, 'LogQuad')
+do_cohort("bulltrout", 361, 50, 'NbNe')
+do_cohort("bulltrout", 361, 50, 'NbNe')
 
 ##do_lt_comp(50, "All")
 ##do_lt_comp(100, "All")
 #
 #do_lt_comp(25, "Newb")
 do_lt_comp(50, "Newb", "None")
-do_lt_comp(50, "Newb", "LogQuad")
+#do_lt_comp(50, "Newb", "LogQuad")
+do_lt_comp(50, "Newb", "NbNe")
 do_lt_comp(100, "Newb", "None")
-do_lt_comp(100, "Newb", "LogQuad")
+#do_lt_comp(100, "Newb", "LogQuad")
+do_lt_comp(100, "Newb", "NbNe")
 #
 #do_pcrit("bulltrout", 180, True)
 #do_pcrit("bulltrout", 180, False)
