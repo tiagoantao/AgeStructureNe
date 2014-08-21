@@ -2,10 +2,17 @@
 <form>
     Replicates <input name="reps" size="3"><br>
     N1 <input name="N1" size="5"><br>
+    Number of cyles <input name="cycles" size="4"><br>
+    Burn-in <input name="burnin" size="3"><br>
     Maximum number of Microsatellites <input name="mMSATs" size="3"><br>
     Maximum number of SNPs<input name="mSNPs" size="5"><br>
     <input type="submit"><br>
 </form>
+
+Cycle can be a year, month, etc. Depending on the species.<br>
+The simulation will do (Number of cycles), of with a certain fraction will be
+a burn-in, for example: if you put 200 cycles with 50 of burn-in, there will
+be 150 cycles of data that will be analysed.
 
 <h2>Life Table</h2>
 <table border=1>
@@ -27,5 +34,4 @@
 
 </table>
 
-Cycle can be a year, month, etc. Depending on the species.
 Count is the number of individuals in a non-stochastic model.

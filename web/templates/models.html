@@ -1,3 +1,3 @@
-{% for model in meta %}
-<a href='/model/{{model}}'>{{model}}</a><br>
+{% for model, vars in meta.items() %}
+<a href='/model/{{model}}'>{{vars['name'], model}}</a><br>
 {% endfor %}

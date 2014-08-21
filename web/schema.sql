@@ -6,4 +6,7 @@ create table projects (
     model text not null,
     N1 integer not null,
     max_snps integer not null,
-    max_mstats integer not null)
+    max_mstats integer not null,
+    replicates integer not null,
+    max_cycles integer not null,
+    burn_in integer not null)

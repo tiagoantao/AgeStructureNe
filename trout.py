@@ -30,12 +30,20 @@ cuts = [0.45, 0.4, 0.35, 0.3, 0.25]
 
 realNbs = {}
 
-corrs = {"BuTrout": 0.77,
-         "Restricted": 0.77,
-         "BuLong": 0.78,
-         "BuPred": 0.65,
-         "WCT-S": 0.69,
-         "WCT-F": 0.71}
+nb_corrs = {"BuTrout": 0.77,
+            "Restricted": 0.77,
+            "BuLong": 0.78,
+            "BuPred": 0.65,
+            "WCT-S": 0.69,
+            "WCT-F": 0.71}
+
+log_a = 0.15458222
+log_b = -0.671991958
+log_c = 0.799127
+
+corrs = {}
+for sp, nbne in nb_corrs.items():
+    corrs[sp] = 1 / (1.26 - 0.323 * nbne)
 
 pcrits = [None, 0.021, 0.035, 0.05, 0.1]
 
@@ -146,7 +154,7 @@ def correct_ci(bname, nindivs, vals, ci, r2=None, fixed=None,
     return cvals, cci
 
 
-def correct_logquad(bname, vals, ci, abc,
+def correct_logquad(bname, nindivs, vals, ci, abc,
                     r2=None, sr2=None, j=None, jcorr=None, cut=0.025):
     a, b, c = abc
     cvals = []
@@ -158,10 +166,14 @@ def correct_logquad(bname, vals, ci, abc,
             bot, top = ci[i]
         else:
             bot, top = patch_ci(r2[i], sr2[i], j[i] * jcorr, cut)
+        if val >= 100000:
+            # Not correcting
+            cvals.append(val)
+            cci.append((bot, top))
+            continue
         lval = math.log10(val)
         corr = a * lval * lval + b * lval + c
         corr = 1 - corr
-        #print val, val*corr, lval, corr, "X"
         diff = val - val * corr
         cvals.append(val * corr)
         bdiff = bot - diff if bot is not None else None
@@ -177,57 +189,65 @@ def get_corrs(bname, nindivs, vals, ci, r2, sr2, j):
                                   sr2=sr2, j=j)),
             ("0.9", correct_ci(bname, nindivs, vals, ci, fixed=0.9)),
             ("Int0.9", correct_ci(bname, nindivs, vals, ci, fixed=-0.9)),
-            #("LogQuad", correct_logquad(bname, vals, ci,
+            #("LogQuad", correct_logquad(bname, nindivs, vals, ci,
             #                            [-0.17599607, 0.75649721, 0.07641839]))]
-            #("LogQuad2", correct_logquad(bname, vals, ci,
+            #("LogQuad2", correct_logquad(bname, nindivs, vals, ci,
             #                             [0.144624, -0.654859, 0.8009])),
-            ("LogQuad", correct_logquad(bname, vals, ci,
-                                        [0.15458222, -0.671991958,
-                                         0.799127])),
-            ("Log0.05", correct_logquad(bname, vals, ci,
-                                        [0.15458222, -0.671991958,
-                                         0.799127], r2=r2, sr2=sr2,
+            ("Log0.001", correct_logquad(bname, nindivs, vals, ci,
+                                        [log_a, log_b,
+                                         log_c], r2=r2, sr2=sr2,
+                                        j=j, jcorr=0.001)),
+            ("Log0.01", correct_logquad(bname, nindivs, vals, ci,
+                                        [log_a, log_b,
+                                         log_c], r2=r2, sr2=sr2,
+                                        j=j, jcorr=0.01)),
+            ("Log0.05", correct_logquad(bname, nindivs, vals, ci,
+                                        [log_a, log_b,
+                                         log_c], r2=r2, sr2=sr2,
                                         j=j, jcorr=0.05)),
-            ("Log0.1", correct_logquad(bname, vals, ci,
-                                       [0.15458222, -0.671991958,
-                                        0.799127], r2=r2, sr2=sr2,
+            ("Log0.1", correct_logquad(bname, nindivs, vals, ci,
+                                       [log_a, log_b,
+                                        log_c], r2=r2, sr2=sr2,
                                        j=j, jcorr=0.1)),
-            ("Log0.2", correct_logquad(bname, vals, ci,
-                                       [0.15458222, -0.671991958,
-                                        0.799127], r2=r2, sr2=sr2,
+            ("Log0.2", correct_logquad(bname, nindivs, vals, ci,
+                                       [log_a, log_b,
+                                        log_c], r2=r2, sr2=sr2,
                                        j=j, jcorr=0.2)),
-            ("Log0.2-90", correct_logquad(bname, vals, ci,
-                                          [0.15458222, -0.671991958,
-                                           0.799127], r2=r2, sr2=sr2,
-                                          j=j, jcorr=0.2, cut=0.05)),
-            ("Log0.3", correct_logquad(bname, vals, ci,
-                                       [0.15458222, -0.671991958,
-                                        0.799127], r2=r2, sr2=sr2,
+            #("Log0.2-90", correct_logquad(bname, nindivs, vals, ci,
+            #                              [log_a, log_b,
+            #                               log_c], r2=r2, sr2=sr2,
+            #                              j=j, jcorr=0.2, cut=0.05)),
+            ("Log0.3", correct_logquad(bname, nindivs, vals, ci,
+                                       [log_a, log_b,
+                                        log_c], r2=r2, sr2=sr2,
                                        j=j, jcorr=0.3)),
-            ("Log0.4", correct_logquad(bname, vals, ci,
-                                       [0.15458222, -0.671991958,
-                                        0.799127], r2=r2, sr2=sr2,
+            ("Log0.4", correct_logquad(bname, nindivs, vals, ci,
+                                       [log_a, log_b,
+                                        log_c], r2=r2, sr2=sr2,
                                        j=j, jcorr=0.4)),
-            ("Log0.5", correct_logquad(bname, vals, ci,
-                                       [0.15458222, -0.671991958,
-                                        0.799127], r2=r2, sr2=sr2,
+            ("Log0.5", correct_logquad(bname, nindivs, vals, ci,
+                                       [log_a, log_b,
+                                        log_c], r2=r2, sr2=sr2,
                                        j=j, jcorr=0.5)),
-            ("Log0.6", correct_logquad(bname, vals, ci,
-                                       [0.15458222, -0.671991958,
-                                        0.799127], r2=r2, sr2=sr2,
+            ("Log0.6", correct_logquad(bname, nindivs, vals, ci,
+                                       [log_a, log_b,
+                                        log_c], r2=r2, sr2=sr2,
                                        j=j, jcorr=0.6)),
-            ("Log0.7", correct_logquad(bname, vals, ci,
-                                       [0.15458222, -0.671991958,
-                                        0.799127], r2=r2, sr2=sr2,
+            ("Log0.7", correct_logquad(bname, nindivs, vals, ci,
+                                       [log_a, log_b,
+                                        log_c], r2=r2, sr2=sr2,
                                        j=j, jcorr=0.7)),
-            ("Log0.8", correct_logquad(bname, vals, ci,
-                                       [0.15458222, -0.671991958,
-                                        0.799127], r2=r2, sr2=sr2,
+            ("Log0.8", correct_logquad(bname, nindivs, vals, ci,
+                                       [log_a, log_b,
+                                        log_c], r2=r2, sr2=sr2,
                                        j=j, jcorr=0.8)),
-            ("Log0.9", correct_logquad(bname, vals, ci,
-                                       [0.15458222, -0.671991958,
-                                        0.799127], r2=r2, sr2=sr2,
+            ("Log0.9", correct_logquad(bname, nindivs, vals, ci,
+                                       [log_a, log_b,
+                                        log_c], r2=r2, sr2=sr2,
                                        j=j, jcorr=0.9)),
+            ("LogQuad", correct_logquad(bname, nindivs, vals, ci,
+                                        [log_a, log_b,
+                                         log_c])),
             ]
 
 

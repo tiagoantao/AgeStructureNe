@@ -1,31 +1,7 @@
-<h1>{{myUtils.meta[model]['name'], model}}</h1><br>
-<form>
-    Replicates <input name="reps" size="3"><br>
-    N1 <input name="N1" size="5"><br>
-    Maximum number of Microsatellites <input name="mMSATs" size="3"><br>
-    Maximum number of SNPs<input name="mSNPs" size="5"><br>
-    <input type="submit"><br>
-</form>
-
-<h2>Life Table</h2>
+<h1>Projects</h1>
 <table border=1>
-    <tr><td>Cycle</td><td colspan="2">Survival</td><td colspan="2">Fecundity</td>
-    <td colspan="2">Count</td><td colspan="2">lx?<td></tr>
-    <tr><td>&nbsp;</td><td>Female</td><td>Male</td><td>Female</td><td>Male</td>
-    <td>Female</td><td>Male</td><td>Female</td><td>Male</td></tr>
-
-    {% for i in range(myUtils.ages[model]) %}
-    <tr>
-        <td>{{i + 1}}</td>
-        <td>{{ + ([1] + myUtils.survivalFemale[model] + [0])[i]}}</td>
-        <td>{{ + ([1] + myUtils.survivalMale[model] + [0])[i]}}</td>
-        <td>{{ + ([0] + myUtils.fecFemale[model])[i]}}</td>
-        <td>{{ + ([0] + myUtils.fecMale[model])[i]}}</td>
-    </tr>
-    {% endfor %}
-
+    <tr><td>Name</td><td>Model</td><td>Replicates</td>
+        <td>Max cycles</td><td>Burn-in</td>
+        <td>N1</td><td>Max SNPs</td><td>Max MSATs<td></tr>
 
 </table>
-
-Cycle can be a year, month, etc. Depending on the species.
-Count is the number of individuals in a non-stochastic model.

@@ -51,13 +51,18 @@ def show_models():
     return render_template('models.html', meta=myUtils.meta)
 
 
-@app.route('/model/<key>')
-def do_model(key):
-    return key
+@app.route('/model/<model>')
+def create_project(model):
+    return render_template('create_project.html', model=model, myUtils=myUtils)
 
 
-@app.route('/simulations')
-def show_simulations():
+@app.route('/projects')
+def show_projects():
+    return render_template('show_projects.html')
+
+
+@app.route('/simulate')
+def simulate():
     pass
 
 
