@@ -11,19 +11,26 @@ nsnps = [100, 200, 400]
 N0s = [90, 180, 361, 722]  # , 1805]
 Nbs = {('bulltrout', 90): 25, ('bulltrout', 180): 50, ('bulltrout', 361): 100,
        ('bulltrout', 722): 200,  # 1805: 500,
-       ('restricted', 90): 25, ('restricted', 180): 50, ('restricted', 361): 100,
-       ('restricted', 722): 200,
+       ('restricted', 90): 25, ('restricted', 180): 50,
+       ('restricted', 361): 100, ('restricted', 722): 200,
        ('bullpred', 193): 50, ('bullpred', 387): 100, ('bullpred', 775): 200,
        ('bullt2', 305): 5, ('bullt2', 610): 10, ('bullt2', 915): 15,
        ('bullt2', 1220): 20,
        ('bullt2', 1525): 25, ('bullt2', 1830): 30, ('bullt2', 2440): 40,
        ('bullt2', 3050): 50, ('bullt2', 4575): 75, ('bullt2', 6100): 100,
-       # "btrout-1619": 50, "btrout-6476": 200,
+       ('btrout', 1619): 50, ('btrout', 6476): 200,
        ('shepard', 518): 50, ('shepard', 1036): 100,
-       ('fraley', 641): 50, ('fraley', 1282): 100}
-#       "lake-18": 50, "lake-72": 200}
+       ('fraley', 641): 50, ('fraley', 1282): 100,
+       ('wfrog', 600): 100,
+       ('mosquito', 436): 100,
+       ('seaweed', 70): 100,
+       ('sagegrouse', 28): 100,
+       ('lake', 18): 50, ('lake', 36): 100
+       }
 NbNames = [("bulltrout", "BuTrout"), ("bullpred", "BuPred"), ("bullt2", "BuLong"),
-           ("shepard", "WCT-S"), ("fraley", "WCT-F"), ('restricted', "Restr")]
+           ("shepard", "WCT-S"), ("fraley", "WCT-F"), ('restricted', "Restr"),
+           ('mosquito', 'Mosq'), ('grizzly', 'Griz'), ('wfrog', 'WFrog')
+           ('sagegrouse', 'SGrouse'), ('seaweed', 'Sweed')]
 Nes = {90: 32.3, 180: 64.7, 361: 129.4, 722: 258.8}
 cohorts = ["All",  "Newb", "c2c", "c3c"]
 cuts = [0.45, 0.4, 0.35, 0.3, 0.25]
@@ -39,6 +46,7 @@ nb_corrs = {"BuTrout": 0.77,
             'WFrog': 0.599,
             'Griz': 1.153,
             'Mosq': 0.267,
+            'Sweed': 1.261,
             'SGrouse': 1.694}
 
 log_a = 0.15458222

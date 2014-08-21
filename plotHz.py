@@ -8,7 +8,7 @@ matplotlib.use('AGG')
 import pylab
 
 if len(sys.argv) < 4:
-    print "python %s title baseDir models..." % (sys.argv[0],)
+    print("python %s title baseDir models..." % (sys.argv[0],))
     sys.exit(-1)
 
 title = sys.argv[1]
@@ -37,7 +37,8 @@ for model in models:
             f.close()
             cnt = 0
             for l in ls:
-                res = map(lambda x: float(x), l.rstrip().replace("\t", " ").split(" "))
+                res = map(lambda x: float(x),
+                          l.rstrip().replace("\t", " ").split(" "))
                 all_sims[model][rep].append(sum(res) / len(res))
                 if cnt == 200:
                     bla = res
@@ -46,7 +47,7 @@ for model in models:
                 else:
                     allLs[cnt].extend(res)
                 cnt += 1
-            #last line
+            # last line
             if start:
                 h_dist[model] = []
             h_dist[model].extend(bla)
@@ -62,7 +63,8 @@ for model in models:
         meanHz = my[gen]
         for cut in cuts:
             if cut < currMean and cut > meanHz:
-                hzf.write("<tr><td>%s</td><td>%.2f</td><td>%d</td></tr>\n" % (model, cut, gen))
+                hzf.write("<tr><td>%s</td><td>%.2f</td><td>%d</td></tr>\n" %
+                          (model, cut, gen))
                 hztf.write("%s\t%.2f\t%d\n" % (model, cut, gen))
         currMean = meanHz
     pylab.plot(my, label=model.split("-")[0])

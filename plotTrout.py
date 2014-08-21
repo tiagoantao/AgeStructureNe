@@ -307,6 +307,9 @@ def do_bias():
 
 def do_hz(model, ltype, loc, N1s):
     title = "%s %s" % (model, ltype)
+    print('python plotHz.py "%s" data/trout %s' %
+              (title, " ".join([str(N1) + model + "-" + str(loc)
+                                for N1 in N1s])))
     os.system('python plotHz.py "%s" data/trout %s' %
               (title, " ".join([str(N1) + model + "-" + str(loc)
                                 for N1 in N1s])))
@@ -807,25 +810,29 @@ def do_nb_linear(models, name, fun):
 #do_robin_nb_ne()
 #do_all_nb_ne()
 #do_ld_progress("bulltrout", [180, 361, 722])
-#try:
-#    os.remove("output/hz-cut.html")
-#except OSError:
-#    pass  # OK
-#for loc, ltype in [(0, "MSAT"), (100, "SNP")]:
-#    do_hz("bulltrout", ltype, loc, [180, 361, 722])
-#    do_hz("bullpred", ltype, loc, [193, 387, 775])
-#    do_hz("bullt2", ltype, loc, [3050, 6100])
-#    if ltype == "SNP":
-#        do_hz("bulltrout", ltype, loc, [90])
-#        do_hz("restricted", ltype, loc, [90, 180, 361, 722])
-#        do_hz("btrout", ltype, loc, [1619, 6476])
-#        do_hz("shepard", ltype, loc, [518, 1036])
-#        do_hz("fraley", ltype, loc, [641, 1282])
-#        do_hz("lake", ltype, loc, [18, 72])
-#        do_hz("bullt2", ltype, loc, [305, 610, 915, 1220, 1525,
-#                                     1830, 2440, 3050, 4575, 6100])
-#shutil.move("hz-cut.html", "output/hz-cut.html")
-#shutil.move("hz-cut.txt", "output/hz-cut.txt")
+try:
+    os.remove("output/hz-cut.html")
+except OSError:
+    pass  # OK
+for loc, ltype in [(0, "MSAT"), (100, "SNP")]:
+    do_hz("bulltrout", ltype, loc, [180, 361, 722])
+    do_hz("bullpred", ltype, loc, [193, 387, 775])
+    do_hz("bullt2", ltype, loc, [3050, 6100])
+    if ltype == "SNP":
+        do_hz("bulltrout", ltype, loc, [90])
+        do_hz("restricted", ltype, loc, [90, 180, 361, 722])
+        do_hz("btrout", ltype, loc, [1619, 6476])
+        do_hz("shepard", ltype, loc, [518, 1036])
+        do_hz("fraley", ltype, loc, [641, 1282])
+        do_hz("lake", ltype, loc, [18, 36])
+        do_hz("wfrog", ltype, loc, [600])
+        do_hz("grizzly", ltype, loc, [23, 46])
+        do_hz("sagegrouse", ltype, loc, [28])
+        do_hz("seaweed", ltype, loc, [70])
+        do_hz("bullt2", ltype, loc, [305, 610, 915, 1220, 1525,
+                                     1830, 2440, 3050, 4575, 6100])
+shutil.move("hz-cut.html", "output/hz-cut.html")
+shutil.move("hz-cut.txt", "output/hz-cut.txt")
 #
 do_hz_comp("bulltrout", 180)
 do_hz_comp("bulltrout", 361)
@@ -875,7 +882,7 @@ do_cohort("bulltrout", 180, 50, 'None')
 do_cohort("bulltrout", 361, 50, 'None')
 #do_cohort("bulltrout", 180, 50, 'LogQuad')
 #do_cohort("bulltrout", 361, 50, 'LogQuad')
-do_cohort("bulltrout", 361, 50, 'NbNe')
+do_cohort("bulltrout", 180, 50, 'NbNe')
 do_cohort("bulltrout", 361, 50, 'NbNe')
 
 ##do_lt_comp(50, "All")

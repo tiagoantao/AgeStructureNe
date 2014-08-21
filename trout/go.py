@@ -16,13 +16,13 @@ gens = 1000
 
 # loci, indivs
 sampleStratsLoci = False, [(10, 50), (15, 50), (25, 50), (50, 50), (100, 50)]
-sampleStratsLoci = False, [(15, 50)]
+sampleStratsLoci = False, []
 sampleStratsLociSNP = True, [(100, 50), (200, 50), (400, 50)]
 sampleStratsLociSNP = True, []
 sampleStratsIndivs = False, [(15, 15), (15, 25), (15, 50), (15, 100)]
 sampleStratsIndivs = False, []
 sampleStratsIndivsSNP = True, [(100, 15), (100, 25), (100, 50), (100, 100)]
-sampleStratsIndivsSNP = True, []
+sampleStratsIndivsSNP = True, [(100, 50)]
 
 myd = {"DDIR": DDIR, "MODEL": model,
        "AGECOND": agecond, "AGEDESC": agedesc, "GENS": gens}
