@@ -788,7 +788,7 @@ def do_nb_linear(models, name, fun):
         print(model, n0, case["Newb"][(model, n0)].keys())
         vals, ci, r2, sr2, j, ssize = \
             case["Newb"][(model, n0)][(None, nindivs, 100, "SNP")]
-        vals, ci = fun(model, nindivs, vals, ci)
+        vals, ci = fun(get_bname(model), nindivs, vals, ci)
         if len(vals) == 0:
             continue
         bottom, top = zip(*ci)
