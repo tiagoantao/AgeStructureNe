@@ -21,15 +21,15 @@ Nbs = {('bulltrout', 90): 25, ('bulltrout', 180): 50, ('bulltrout', 361): 100,
        ('btrout', 1619): 50, ('btrout', 6476): 200,
        ('shepard', 518): 50, ('shepard', 1036): 100,
        ('fraley', 641): 50, ('fraley', 1282): 100,
-       ('wfrog', 600): 100,
-       ('mosquito', 436): 100,
-       ('seaweed', 70): 100,
-       ('sagegrouse', 28): 100,
+       ('wfrog', 600): 100, ('wfrog', 300): 50, ('wfrog', 150): 25,
+       ('mosquito', 110): 25,
+       ('seaweed', 70): 100, ('seaweed', 35): 50,
+       ('sagegrouse', 28): 100, ('sagegrouse', 14): 50,
        ('lake', 18): 50, ('lake', 36): 100
        }
 NbNames = [("bulltrout", "BuTrout"), ("bullpred", "BuPred"), ("bullt2", "BuLong"),
            ("shepard", "WCT-S"), ("fraley", "WCT-F"), ('restricted', "Restr"),
-           ('mosquito', 'Mosq'), ('grizzly', 'Griz'), ('wfrog', 'WFrog')
+           ('mosquito', 'Mosq'), ('grizzly', 'Griz'), ('wfrog', 'WFrog'),
            ('sagegrouse', 'SGrouse'), ('seaweed', 'Sweed')]
 Nes = {90: 32.3, 180: 64.7, 361: 129.4, 722: 258.8}
 cohorts = ["All",  "Newb", "c2c", "c3c"]

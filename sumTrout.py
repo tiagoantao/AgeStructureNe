@@ -3,8 +3,8 @@ import sys
 import myUtils
 
 if len(sys.argv) not in [3]:
-    print "Do not forget to run plotHz"
-    print "python %s varConfFile prefix" % (sys.argv[0], )
+    print("Do not forget to run plotHz")
+    print("python %s varConfFile prefix" % sys.argv[0])
     sys.exit(-1)
 
 confFile = sys.argv[1]
@@ -138,8 +138,8 @@ f = open("output/hz-cut.txt")
 for l in f:
     toks = l.rstrip().split("\t")
     model, cut, gen = toks[0], float(toks[1]), int(toks[2])
-    #Taking the cut from SNP
-    #Should get a different one for MSATs
+    # Taking the cut from SNP
+    # Should get a different one for MSATs
     model, marker = model.split("-")
     if marker == "0":  # msat
         continue
@@ -147,8 +147,8 @@ for l in f:
     modelCuts[model] = gen
 f.close()
 for cut, modelCuts in allCuts.items():
-    #print cut
-    #print modelCuts.keys()
+    print(cut)
+    print(modelCuts.keys())
     w = open("output/%s-%d.txt" % (pref, cut * 100), "w")
     doHz(w, modelCuts)
     w.close()

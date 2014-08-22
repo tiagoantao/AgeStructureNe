@@ -230,7 +230,7 @@ def do_lt_comp(nb, strat, corr_name):
             continue
         for k, nb2 in Nbs.items():
             model, n0 = k
-            if nb2 != nb:
+            if nb2 != nb or n0 < 50:
                 continue
             elif pref != model:
                 continue
@@ -825,10 +825,11 @@ for loc, ltype in [(0, "MSAT"), (100, "SNP")]:
         do_hz("shepard", ltype, loc, [518, 1036])
         do_hz("fraley", ltype, loc, [641, 1282])
         do_hz("lake", ltype, loc, [18, 36])
-        do_hz("wfrog", ltype, loc, [600])
+        do_hz("wfrog", ltype, loc, [600, 300, 150])
         do_hz("grizzly", ltype, loc, [23, 46])
-        do_hz("sagegrouse", ltype, loc, [28])
-        do_hz("seaweed", ltype, loc, [70])
+        do_hz("sagegrouse", ltype, loc, [28, 14])
+        do_hz("seaweed", ltype, loc, [70, 35])
+        do_hz("mosquito", ltype, loc, [436, 218, 110])
         do_hz("bullt2", ltype, loc, [305, 610, 915, 1220, 1525,
                                      1830, 2440, 3050, 4575, 6100])
 shutil.move("hz-cut.html", "output/hz-cut.html")
@@ -893,7 +894,7 @@ do_lt_comp(50, "Newb", "None")
 #do_lt_comp(50, "Newb", "LogQuad")
 do_lt_comp(50, "Newb", "NbNe")
 do_lt_comp(100, "Newb", "None")
-#do_lt_comp(100, "Newb", "LogQuad")
+do_lt_comp(100, "Newb", "LogQuad")
 do_lt_comp(100, "Newb", "NbNe")
 #
 #do_pcrit("bulltrout", 180, True)
