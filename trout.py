@@ -22,8 +22,11 @@ Nbs = {('bulltrout', 90): 25, ('bulltrout', 180): 50, ('bulltrout', 361): 100,
        ('shepard', 518): 50, ('shepard', 1036): 100,
        ('fraley', 641): 50, ('fraley', 1282): 100,
        ('wfrog', 600): 100, ('wfrog', 300): 50, ('wfrog', 150): 25,
-       ('mosquito', 110): 25,
+       ('mosquito', 110): 25, ('mosquito', 176): 40,
+       ('mosquito', 218): 50, ('mosquito', 436): 100,
        ('seaweed', 70): 100, ('seaweed', 35): 50,
+       ('synseaweed', 89): 20, ('synseaweed', 178): 40,
+       ('synseaweed', 219): 50,
        ('sagegrouse', 28): 100, ('sagegrouse', 14): 50,
        ('lake', 18): 50, ('lake', 36): 100
        }
@@ -46,7 +49,9 @@ nb_corrs = {"BuTrout": 0.77,
             'WFrog': 0.599,
             'Griz': 1.153,
             'Mosq': 0.267,
+            'SynMosq': 0.267,
             'Sweed': 1.261,
+            'SynSweed': 1.261,
             'SGrouse': 1.694}
 
 log_a = 0.15458222
