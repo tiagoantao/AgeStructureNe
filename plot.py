@@ -17,7 +17,7 @@ rc('text', usetex=True)
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from trout import N0s, Nbs, nindivs, nlocis, cohorts, NbNames, cuts, load_file
+from trout import Nbs, nindivs, nlocis, cohorts, NbNames, cuts, load_file
 from trout import pcrits, dataDir, realNbs, Nes, get_corrs, correct_ci, nsnps
 from trout import get_bname
 
@@ -29,8 +29,7 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
     model = 'bulltrout'
     bname = get_bname(model)
     fig.suptitle("Nb: %d (N1: %d) - cohort %s - %s" % (Nbs[model, N0],
-                                                        N0, cohort,
-                                                        corr_name))
+                                                       N0, cohort, corr_name))
     box_vals = []
     tops = []
     bottoms = []
@@ -40,8 +39,7 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
         for nloci in nlocis:
             try:
                 vals, ci, r2, sr2, j, ssize = \
-                    case[cohort][(model, N0)][(None, nindiv,
-                                                nloci, "MSAT")]
+                    case[cohort][(model, N0)][(None, nindiv, nloci, "MSAT")]
                 for cname, corrections in get_corrs(bname, nindiv, vals,
                                                     ci, r2, sr2, j):
                     if cname != corr_name:
@@ -53,10 +51,10 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
                 if len(ci) > 0:
                     bottom, top = zip(*ci)
                     tops.append(np.percentile([x if x is not None else
-                                                100000 for x in top], 90))
+                                               100000 for x in top], 90))
                     bottoms.append(np.percentile([x if x is not None
-                                                    else 0.1 for x
-                                                    in bottom], 10))
+                                                  else 0.1 for x
+                                                  in bottom], 10))
                 else:
                     tops.append(None)
                     bottoms.append(None)
@@ -81,10 +79,10 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
                 if len(ci) > 0:
                     bottom, top = zip(*ci)
                     tops.append(np.percentile([x if x is not None else
-                                                100000 for x in top], 90))
+                                               100000 for x in top], 90))
                     bottoms.append(np.percentile([x if x is not None
-                                                    else 0.1 for x in
-                                                    bottom], 10))
+                                                  else 0.1 for x in
+                                                  bottom], 10))
                 else:
                     tops.append(None)
                     bottoms.append(None)
@@ -111,14 +109,14 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
     ax.plot([1 + x for x in range(len(tops))], tops, "r.", ms=20)
     ax.plot([1 + x for x in range(len(bottoms))], bottoms, "r.", ms=20)
     ax.plot([1 + x for x in range(len(hmeans))], hmeans, "r.", ms=20)
-    #pylab.savefig("output/%s%s-%s-%d.png" % (pref, cohort, corr_name, N0))
+    #fig.savefig("output/%s%s-%s-%d.png" % (pref, cohort, corr_name, N0))
     return fig
 
 
-def do_cohort(model, N0, nindiv, corr_name):
+def do_cohort(case, model, N0, nindiv, corr_name):
     last = 0.5
-    pylab.clf()
-    pylab.title("Nb: %d (N1: %d) - different cohorts - 100 SNPs -%s" %
+    fig, ax = plt.subplots()
+    fig.suptitle("Nb: %d (N1: %d) - different cohorts - 100 SNPs -%s" %
                 (Nbs[(model, N0)], N0, corr_name))
     box_vals = []
     labels = []
@@ -131,7 +129,7 @@ def do_cohort(model, N0, nindiv, corr_name):
         print(cohort, model, N0)
         vals, ci, r2, sr2, j, ssize = \
             case[cohort][(model, N0)][(None, nindiv, 100, "SNP")]
-        for cname, corrections in get_corrs(bname, nindivs, vals,
+        for cname, corrections in get_corrs(bname, nindiv, vals,
                                             ci, r2, sr2, j):
             if cname != corr_name:
                 continue
@@ -142,31 +140,34 @@ def do_cohort(model, N0, nindiv, corr_name):
         box_vals.append(vals)
         hmeans.append(hmean(vals))
         bottom, top = zip(*ci)
+        top = [100000 if x is None else x for x in top]
+        bottom = [100000 if x is None else x for x in bottom]
         tops.append(np.percentile(top, 90))
         bottoms.append(np.percentile(bottom, 10))
         labels.append("%s" % cohort)
         if cohort == cohorts[-1]:
             pos = len(labels) + 0.5
-            pylab.axvline(pos, color="k", lw=0.2)
-            pylab.text(last + (pos - last) / 2, 0, "%d Indivs" % nindiv,
-                       ha="center", va="bottom", size="small",
-                       rotation="horizontal")
+            ax.axvline(pos, color="k", lw=0.2)
+            ax.text(last + (pos - last) / 2, 0, "%d Indivs" % nindiv,
+                    ha="center", va="bottom", size="small",
+                    rotation="horizontal")
             last = pos
-    pylab.ylim(0, Nbs[(model, N0)] * 3)
-    pylab.ylabel("$\hat{N}_{e}$")
-    pylab.axhline(Nbs[(model, N0)], color="k", lw=0.3)
+    ax.set_ylim(0, Nbs[(model, N0)] * 3)
+    ax.set_ylabel("$\hat{N}_{e}$")
+    ax.axhline(Nbs[(model, N0)], color="k", lw=0.3)
     sns.boxplot(box_vals, notch=0, sym="")
-    pylab.xticks(1 + np.arange(len(labels)), labels)
-    pylab.plot([1 + x for x in range(len(tops))], tops, "rx")
-    pylab.plot([1 + x for x in range(len(bottoms))], bottoms, "rx")
-    pylab.plot([1 + x for x in range(len(hmeans))], hmeans, "k+")
-    pylab.savefig("output/cohort-%s-%s-%d.png" % (model, corr_name, N0))
+    ax.set_xticks(1 + np.arange(len(labels)))
+    ax.set_xticklabels(labels)
+    ax.plot([1 + x for x in range(len(tops))], tops, "rx")
+    ax.plot([1 + x for x in range(len(bottoms))], bottoms, "rx")
+    ax.plot([1 + x for x in range(len(hmeans))], hmeans, "k+")
+    #fig.savefig("output/cohort-%s-%s-%d.png" % (model, corr_name, N0))
 
 
-def do_rel(model, N0, nindiv):
-    pylab.clf()
+def do_rel(case, model, N0, nindiv):
+    fig, ax = plt.subplots()
     cohort = "All"
-    pylab.title("Nb: %d (N1: %d) - 20pc related individuals - cohort %s" %
+    fig.suptitle("Nb: %d (N1: %d) - 20pc related individuals - cohort %s" %
                 (Nbs[(model, N0)], N0, cohort))
     box_vals = []
     labels = []
@@ -183,20 +184,21 @@ def do_rel(model, N0, nindiv):
     box_vals.append(vals)
     labels.append("SNP-100")
     sns.boxplot(box_vals, notch=0, sym="")
-    pylab.ylim(0, Nbs[(model, N0)] * 3)
-    pylab.ylabel("$\hat{N}_{e}$")
-    pylab.axhline(Nbs[(model, N0)], color="k", lw=0.3)
-    pylab.xticks(range(len(labels)), labels)
-    pylab.savefig("output/rel-%s-%d.png" % (model, N0))
+    ax.set_ylim(0, Nbs[(model, N0)] * 3)
+    ax.set_ylabel("$\hat{N}_{e}$")
+    ax.axhline(Nbs[(model, N0)], color="k", lw=0.3)
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels)
+    #fig.savefig("output/rel-%s-%d.png" % (model, N0))
 
 
-def do_nb_comp():
-    pylab.clf()
+def do_nb_comp(case):
+    fig, ax = plt.subplots()
     box_vals = []
     labels = []
     n0s = Nbs.keys()
     n0s.sort()
-    pylab.title("Nb comparison - 100 SNPs - 50 indivs")
+    fig.suptitle("Nb comparison - 100 SNPs - 50 indivs")
     for model, n0 in n0s:
         if type(n0) != int:
             continue
@@ -205,10 +207,10 @@ def do_nb_comp():
             case["Newb"][(model, n0)][(None, 50, 100, "SNP")]
         labels.append(str(nb))
         box_vals.append(vals)
-    pylab.xticks(range(len(labels)), labels)
-    pylab.ylabel("$\hat{N}_{e}$")
+    ax.set_xticks(range(len(labels)), labels)
+    ax.set_ylabel("$\hat{N}_{e}$")
     sns.boxplot(box_vals, notch=0, sym="")
-    pylab.savefig("output/nb-comp.png")
+    #fig.savefig("output/nb-comp.png")
 
 
 def do_lt_comp(case, nb, strat, corr_name):
@@ -272,7 +274,7 @@ def do_lt_comp(case, nb, strat, corr_name):
     return fig
 
 
-def do_bias():
+def do_bias(case):
     n0s = Nbs.keys()
     n0s.sort()
     sampling = "Newb"
@@ -308,8 +310,8 @@ def do_bias():
 def do_hz(model, ltype, loc, N1s):
     title = "%s %s" % (model, ltype)
     print('python plotHz.py "%s" data/trout %s' %
-              (title, " ".join([str(N1) + model + "-" + str(loc)
-                                for N1 in N1s])))
+          (title, " ".join([str(N1) + model + "-" + str(loc)
+                            for N1 in N1s])))
     os.system('python plotHz.py "%s" data/trout %s' %
               (title, " ".join([str(N1) + model + "-" + str(loc)
                                 for N1 in N1s])))
@@ -321,20 +323,19 @@ def do_hz(model, ltype, loc, N1s):
         os.remove("ahz-%d%s-%d.eps" % (N1, model, loc))
 
 
-def do_hz_comp(model, N0):
+def do_hz_comp(pref, mydir, model, N0):
     snps = [100]  # , 200, 400]
     cohort = "Newb"
     cutCase = {}
     for cut in cuts:
         cutCase[cut] = {}
-        case = load_file(pref, cut * 100)
+        case = load_file(pref, cut * 100, mydir)
         for nsnp in snps:
             vals, ci, r2, sr2, j, ssize = case[cohort][
                 (model, N0)][(None, 50, nsnp, "SNP")]
             cutCase[cut][nsnp] = vals, ci, r2, sr2, j, ssize
-    pylab.clf()
-    pylab.title("Hz comparison: %s - %d " % (model, N0))
-    pylab.suptitle("Newb sampled - SNPs - 50 individuals")
+    fig, ax = plt.subplots()
+    fig.suptitle("Hz comparison: %s - %d - Newb - SNPs - 50 indivs " % (model, N0))
     box = []
     cnt = 0
     labels = []
@@ -343,12 +344,14 @@ def do_hz_comp(model, N0):
     hmeans = []
 
     for cut in cuts:
-        # pylab.text(cnt, 0, str(cut), rotation="vertical")
+        # ax.text(cnt, 0, str(cut), rotation="vertical")
         cases = cutCase[cut]
         for nsnp in snps:
             vals, ci, r2, sr2, j, ssize = cases[nsnp]
             hmeans.append(hmean(vals))
             bottom, top = zip(*ci)
+            top = [100000 if x is None else x for x in top]
+            bottom = [100000 if x is None else x for x in bottom]
             tops.append(np.percentile(top, 90))
             bottoms.append(np.percentile(bottom, 10))
             # labels.append(str(nsnp))
@@ -356,17 +359,18 @@ def do_hz_comp(model, N0):
             box.append(vals)
             cnt += 1
     sns.boxplot(box, notch=0, sym="",)
-    pylab.ylabel("$\hat{N}_{e}$")
-    pylab.plot([1 + x for x in range(len(tops))], tops, "rx")
-    pylab.plot([1 + x for x in range(len(bottoms))], bottoms, "rx")
-    pylab.plot([1 + x for x in range(len(hmeans))], hmeans, "k+")
-    pylab.axhline(Nbs[(model, N0)], color="k", lw=0.3)
-    pylab.ylim(0, Nbs[(model, N0)] * 3)
-    pylab.xticks(1 + np.arange(len(labels)), labels)
-    pylab.savefig("output/hz-comp-%s-%d.png" % (model, N0))
+    ax.set_ylabel("$\hat{N}_{e}$")
+    ax.plot([1 + x for x in range(len(tops))], tops, "rx")
+    ax.plot([1 + x for x in range(len(bottoms))], bottoms, "rx")
+    ax.plot([1 + x for x in range(len(hmeans))], hmeans, "k+")
+    ax.axhline(Nbs[(model, N0)], color="k", lw=0.3)
+    ax.set_ylim(0, Nbs[(model, N0)] * 3)
+    ax.set_xticks(1 + np.arange(len(labels)))
+    ax.set_xticklabels(labels)
+    #fig.savefig("output/hz-comp-%s-%d.png" % (model, N0))
 
 
-def do_pcrit(model, N0, isSNP):
+def do_pcrit(case, model, N0, isSNP):
     if isSNP:
         markers = [100, 200, 400]
         marker_name = 'SNP'
@@ -385,9 +389,9 @@ def do_pcrit(model, N0, isSNP):
             except KeyError:
                 vals, ci, r2, sr2, j, ssize = [], [], [], [], [], []
             sampCase[nmarkers][pcrit] = vals, ci, r2, sr2, j, ssize
-    pylab.clf()
-    pylab.title("pcrit comparison: %s - %d " % (model, N0))
-    pylab.suptitle("Newb sampled - %ss - 50 individuals" % marker_name)
+    fig, ax = plt.subplots()
+    fig.suptitle("pcrit : %s - %d - Newb - %ss - 50 individuals" % (
+        model, N0, marker_name))
     box = []
     cnt = 0
     labels = []
@@ -396,7 +400,7 @@ def do_pcrit(model, N0, isSNP):
     hmeans = []
 
     for nmarkers in markers:
-        pylab.text(1 + cnt, 0, str(nmarkers) + " %ss" % marker_name, rotation="vertical", ha="left", va="bottom")
+        ax.text(1 + cnt, 0, str(nmarkers) + " %ss" % marker_name, rotation="vertical", ha="left", va="bottom")
         critCases = sampCase[nmarkers]
         for pcrit in pcrits:
             vals, ci, r2, sr2, j, ssize = critCases[pcrit]
@@ -415,14 +419,15 @@ def do_pcrit(model, N0, isSNP):
             box.append(vals)
             cnt += 1
     sns.boxplot(box, notch=0, sym="",)
-    pylab.plot([1 + x for x in range(len(tops))], tops, "r.")
-    pylab.plot([1 + x for x in range(len(bottoms))], bottoms, "r.")
-    pylab.plot([1 + x for x in range(len(hmeans))], hmeans, "k.")
-    pylab.ylabel("$\hat{N}_{e}$")
-    pylab.ylim(0, Nbs[(model, N0)] * 2)
-    pylab.axhline(Nbs[(model, N0)], color="k", lw=2)
-    pylab.xticks(1 + np.arange(len(labels)), labels, rotation="vertical")
-    pylab.savefig("output/pcrit-%s-%d.png" % (marker_name, N0))
+    ax.plot([1 + x for x in range(len(tops))], tops, "r.")
+    ax.plot([1 + x for x in range(len(bottoms))], bottoms, "r.")
+    ax.plot([1 + x for x in range(len(hmeans))], hmeans, "k.")
+    ax.set_ylabel("$\hat{N}_{e}$")
+    ax.set_ylim(0, Nbs[(model, N0)] * 2)
+    ax.axhline(Nbs[(model, N0)], color="k", lw=2)
+    ax.set_xticks(1 + np.arange(len(labels)))
+    ax.set_xticklabels(labels, rotation="vertical")
+    #fig.savefig("output/pcrit-%s-%d.png" % (marker_name, N0))
 
 
 def _do_window(lst):
@@ -437,10 +442,9 @@ def do_ld_progress(model, N0s):
     strat = "Newb"
 
     for N0 in N0s:
-        pylab.clf()
-        pylab.title("LDNe estimates %s %d (%d)" %
-                    (model, N0, Nbs[(model, N0)]))
-
+        fig, ax = plt.subplots()
+        fig.suptitle("LDNe estimates %s %d (%d)" %
+                     (model, N0, Nbs[(model, N0)]))
         for nsnp in nsnps:
             vals = []
             rep = 0
@@ -461,11 +465,11 @@ def do_ld_progress(model, N0s):
                 pass
                 # We are done
             if rep > 0:
-                pylab.plot(_do_window(map(lambda x: x / rep, vals)),
-                           label=str(nsnp))
-        pylab.ylim(1.0 * Nbs[(model, N0)], 1.5 * Nbs[(model, N0)])
-        pylab.legend()
-        pylab.savefig("output/ldne-%d.png" % N0)
+                ax.plot(_do_window(map(lambda x: x / rep, vals)),
+                        label=str(nsnp))
+        ax.set_ylim(1.0 * Nbs[(model, N0)], 1.5 * Nbs[(model, N0)])
+        ax.legend()
+        #fig.savefig("output/ldne-%d.png" % N0)
 
 
 def fetch_nes(model, N0, rep, strat):
@@ -487,10 +491,10 @@ def do_nb_ne(model, N0, rep):
     in_naive, in_corr = 0, 0
     start_year, vals = realNbs[model, N0][rep]
     nes, cis = fetch_nes(model, N0, rep, "Newb")
-    pylab.clf()
-    pylab.title("%s N1: %d Nb: %d Ne: %.2f" % (model, N0,
-                                               Nbs[(model, N0)], Nes[N0]))
-    pylab.plot(vals[start_year:start_year + points], "+")
+    fig, ax = plt.subplots()
+    fig.suptitle("%s N1: %d Nb: %d Ne: %.2f" % (model, N0,
+                                                Nbs[(model, N0)], Nes[N0]))
+    ax.plot(vals[start_year:start_year + points], "+")
     shift = 1
     myNes = nes[start_year + shift:start_year + shift + 100]
     myCis = cis[start_year + shift:start_year + shift + 100]
@@ -505,15 +509,15 @@ def do_nb_ne(model, N0, rep):
                 vals[start_year + i] <= cci[i][1] and cci[i][1] < 100000:
             in_corr += 1
         cerrs.append((cvals[i] - cci[i][0], cci[i][1] - cvals[i]))
-    pylab.errorbar(np.array(range(len(cis20))) + 0.1, nes20, fmt="+",
-                   yerr=zip(*errs), mec="red", color="red")
-    pylab.errorbar(range(len(cis20)), cvals, fmt="+", yerr=zip(*cerrs),
-                   mec="green", color="green")
-    pylab.axhline(Nbs[(model, N0)])
-    pylab.axhline(Nes[N0])
-    pylab.savefig("output/nb-ne-%s-%d-%d.png" % (model, N0, rep))
+    ax.errorbar(np.array(range(len(cis20))) + 0.1, nes20, fmt="+",
+                yerr=zip(*errs), mec="red", color="red")
+    ax.errorbar(range(len(cis20)), cvals, fmt="+", yerr=zip(*cerrs),
+                mec="green", color="green")
+    ax.axhline(Nbs[(model, N0)])
+    ax.axhline(Nes[N0])
+    #fig.savefig("output/nb-ne-%s-%d-%d.png" % (model, N0, rep))
 
-    pylab.clf()
+    fig, ax = plt.subplots()
     median = np.median(myNes)
     median = Nbs[(model, N0)]
     ne = Nes[N0]
@@ -527,20 +531,19 @@ def do_nb_ne(model, N0, rep):
         hm = 2.0 / (1 / vals[i] + 1 / ne)
         harmcomps.append(abs(myNes[i] - hm))
         necomps.append(abs(myNes[i] - ne))
-    pylab.plot(basics, "g")
-    pylab.plot(nbcomps, "r")
-    pylab.plot(necomps, "b")
-    pylab.plot(harmcomps, "k")
-    pylab.savefig("output/nb-ne-diff-%s-%d-%d.png" % (model, N0, rep))
+    ax.plot(basics, "g")
+    ax.plot(nbcomps, "r")
+    ax.plot(necomps, "b")
+    ax.plot(harmcomps, "k")
+    #fig.savefig("output/nb-ne-diff-%s-%d-%d.png" % (model, N0, rep))
     #print model, N0, rep, sum(basics) / len(basics), sum(nbcomps) / len(nbcomps), len(basics), len(nbcomps)
     return median, basics, nbcomps, necomps, harmcomps, vals, in_naive, in_corr
 
 
-def compare_correction_ci(model, N0, all_snps, all_indivs, suff):
+def compare_correction_ci(case, model, N0, all_snps, all_indivs, suff):
     cohort = "Newb"
-    f, axs = pylab.subplots(len(all_snps), len(all_indivs),
-                            sharex=True, sharey=True,
-                            figsize=(20, 20))
+    f, axs = plt.subplots(len(all_snps), len(all_indivs),
+                          sharex=True, sharey=True, figsize=(20, 20))
     if len(all_snps) == 1:
         axs = [axs]
     if len(all_indivs) == 1:
@@ -565,8 +568,8 @@ def compare_correction_ci(model, N0, all_snps, all_indivs, suff):
             tops, bottoms = zip(*cci)
             top_box_vals.append(tops)
             bottom_box_vals.append(bottoms)
-            aboveTop = len([x for x in tops if x < Nb])
-            belowBottom = len([x for x in bottoms if x > Nb])
+            aboveTop = len([x for x in tops if x is not None and x < Nb])
+            belowBottom = len([x for x in bottoms if x is None or x > Nb])
             ax.text(i + 1, top_y, "%.1f" % (100 * aboveTop / len(tops)),
                     va='top', ha='center', rotation='vertical',
                     backgroundcolor='white')
@@ -586,8 +589,7 @@ def compare_correction_ci(model, N0, all_snps, all_indivs, suff):
         for j, n_indivs in enumerate(all_indivs):
             plot_case(axs[i][j], n_indivs, n_snps)
     f.tight_layout()
-    pylab.savefig("output/compare-correction-%s-%d-%s.png" % (model,
-                                                              N0, suff))
+    #fig.savefig("output/compare-correction-%s-%d-%s.png" % (model, N0, suff))
 
 
 def do_table_ci(case, dir_pref, modelN0s, nsnps, nindivs, ci_percentile=50.0):
@@ -692,18 +694,16 @@ def do_all_nb_ne():
         basicStds.append(stdBasic)
         compMeans.append(meanComp)
         compStds.append(stdComp)
-    pylab.clf()
-    fig, ax = pylab.subplots()
+    fig, ax = plt.subplots()
     width = 0.35
     ind = np.arange(len(N0s))
-    basicRects = pylab.bar(ind, basicMeans, width, color="r", yerr=basicStds)
-    compRects = pylab.bar(ind + width, compMeans, width,
-                          color="y", yerr=compStds)
-    pylab.legend((basicRects, compRects),
-                 ("$\hat{N}_{e} - \\bar{N}_{b}$", "$\hat{N}_{e} - N_{b}$"))
+    basicRects = ax.bar(ind, basicMeans, width, color="r", yerr=basicStds)
+    compRects = ax.bar(ind + width, compMeans, width, color="y", yerr=compStds)
+    ax.legend((basicRects, compRects),
+              ("$\hat{N}_{e} - \\bar{N}_{b}$", "$\hat{N}_{e} - N_{b}$"))
     ax.set_xticks(ind + width)
     ax.set_xticklabels([str(x) for x in N0s])
-    pylab.savefig("output/nb-err.png")
+    #fig.savefig("output/nb-err.png")
 
 
 def do_robin_nb_ne():
@@ -733,37 +733,36 @@ def do_robin_nb_ne():
         neComps = [x for sl in allNeComps[N0] for x in sl]
         harmComps = [x for sl in allHarmComps[N0] for x in sl]
 
-        pylab.clf()
-
+        fig = plt.figure()
         tops = {"X": 0, "Y": 0}
         stats = []
 
         def plotCase(case, tops):
-            pylab.hist(case, 50)
-            ymin, ymax = pylab.ylim()
-            xmin, xmax = pylab.xlim()
+            ax.hist(case, 50)
+            ymin, ymax = ax.get_ylim()
+            xmin, xmax = ax.get_xlim()
             if tops["Y"] < ymax:
                 tops["Y"] = ymax
             if tops["X"] < xmax:
                 tops["X"] = xmax
             return np.mean(case), np.std(case)
 
-        pylab.subplot(2, 2, 1)
+        ax = fig.subplot(2, 2, 1)
         stats.append(plotCase(meanBasics, tops))
 
-        pylab.subplot(2, 2, 2)
+        ax = fig.subplot(2, 2, 2)
         stats.append(plotCase(meanComps, tops))
 
-        pylab.subplot(2, 2, 3)
+        ax = fig.subplot(2, 2, 3)
         stats.append(plotCase(neComps, tops))
 
-        pylab.subplot(2, 2, 4)
+        ax = fig.subplot(2, 2, 4)
         stats.append(plotCase(harmComps, tops))
 
         for i in range(4):
-            pylab.subplot(2, 2, i + 1)
-            pylab.xlim(0, tops["X"])
-            pylab.ylim(0, tops["Y"])
+            ax = fig.subplot(2, 2, i + 1)
+            ax.set_xlim(0, tops["X"])
+            ax.set_ylim(0, tops["Y"])
             if i == 0:
                 text = "$\hat{N}_{e} - \\bar{N}_{b}$"
             elif i == 1:
@@ -773,17 +772,17 @@ def do_robin_nb_ne():
             elif i == 3:
                 text = "$\hat{N}_{e} - HM(\hat{N}_{e}, N_b)$"
 
-            pylab.text(tops["X"], tops["Y"], text, va="bottom", ha="right")
-            pylab.text(tops["X"], tops["Y"],
-                       "%.2f (%.2f)" % tuple(stats[i]), va="top", ha="right")
-        pylab.figtext(0.02, 0.5, "bulltrout N1: %d Nb: %d Ne: %.2f" %
-                      (N0, Nbs[(model, N0)], Nes[N0]),
+            ax.text(tops["X"], tops["Y"], text, va="bottom", ha="right")
+            ax.text(tops["X"], tops["Y"],
+                    "%.2f (%.2f)" % tuple(stats[i]), va="top", ha="right")
+        fig.text(0.02, 0.5, "bulltrout N1: %d Nb: %d Ne: %.2f" %
+                 (N0, Nbs[(model, N0)], Nes[N0]),
                       rotation="vertical", ha="left", va="center")
-        pylab.savefig("output/nb-robin-%d.png" % N0)
+        #fig.savefig("output/nb-robin-%d.png" % N0)
 
 
-def do_nb_linear(models, name, fun):
-    pylab.clf()
+def do_nb_linear(case, models, name, fun):
+    fig, ax = plt.subplots()
     nbs = []
     pes = []
     tops = []
@@ -805,47 +804,13 @@ def do_nb_linear(models, name, fun):
     # pylab.yscale('log')
     sns.boxplot(tops, notch=0, sym="")
     sns.boxplot(bottoms)
-    pylab.xticks(1 + np.arange(len(nbs)), [str(nb) for nb in nbs])
-    pylab.ylim(0, max(nbs))
-    pylab.savefig("output/nb-linear-%s.png" % name)
+    ax.set_xticks(1 + np.arange(len(nbs)))
+    ax.set_xticklabels([str(nb) for nb in nbs])
+    ax.set_ylim(0, max(nbs))
+    #fig.savefig("output/nb-linear-%s.png" % name)
 
 
 def old_main():
-    #load_nb(pref)
-    #do_robin_nb_ne()
-    #do_all_nb_ne()
-    #do_ld_progress("bulltrout", [180, 361, 722])
-    do_hz_comp("bulltrout", 180)
-    do_hz_comp("bulltrout", 361)
-    #
-    #case = load_file(pref, 45)
-    #do_lt_comp(200, "Newb")
-    #do_lt_comp(200, "All")
-    case = load_file(pref, 40)
-
-    cis = [("BuTrout", "bulltrout", 90), ("BuTrout", "bulltrout", 180),
-        ("BuTrout", "bulltrout", 361), ("BuTrout", "bulltrout", 722),
-        ("Restricted", "restricted", 90), ("Restricted", "restricted", 180),
-        ("Restricted", "restricted", 361), ("Restricted", "restricted", 722),
-        ("WCT-S", "shepard", 518), ("WCT-S", "shepard", 1036),
-        ("WCT-F", "fraley", 641), ("WCT-F", "fraley", 1282),
-        ("BuLong", "bullt2", 305), ("BuLong", "bullt2", 610),
-        ("BuLong", "bullt2", 915), ("BuLong", "bullt2", 1220),
-        ("BuLong", "bullt2", 1525), ("BuLong", "bullt2", 2440),
-        ("BuLong", "bullt2", 3050), ("BuLong", "bullt2", 4575),
-        ("BuLong", "bullt2", 6100),
-        ("BuPred", "bullpred", 193), ("BuPred", "bullpred", 387)]
-
-    do_table_ci(cis, 100, 50)
-    do_table_ci(cis, 100, 50, 20)
-    do_table_ci(cis, 100, 25)
-    do_table_ci(cis, 200, 50)
-
-
-    compare_correction_ci('bulltrout', 361, [100, 200], [50], "50inds")
-    compare_correction_ci('bulltrout', 180, [100, 200], [50], "50inds")
-    compare_correction_ci('bulltrout', 180, [100], [25, 50, 100], "100snps")
-
     linear = [("bullt2", 305), ("bullt2", 610), ("bullt2", 915), ("bullt2", 1220),
             ("bullt2", 1525), ("bullt2", 1830), ("bullt2", 2440),
             ("bullt2", 3050), ("bullt2", 4575), ("bullt2", 6100)]
@@ -854,40 +819,3 @@ def old_main():
     #do_nb_linear(linear, "LogQuad",
     #             functools.partial(correct_logquad, abc=[log_a, log_b, log_c]))
     do_nb_linear(linear, "NbNe", functools.partial(correct_ci))
-
-    #do_nb(cohort, [100], "", 'None')
-    do_nb('Newb', nsnps, "allsnps-", 'None')
-    #do_nb('Newb', nsnps, "allsnps-", 'LogQuad')
-    do_nb('Newb', nsnps, "allsnps-", 'NbNe')
-    do_cohort("bulltrout", 180, 50, 'None')
-    do_cohort("bulltrout", 361, 50, 'None')
-    #do_cohort("bulltrout", 180, 50, 'LogQuad')
-    #do_cohort("bulltrout", 361, 50, 'LogQuad')
-    do_cohort("bulltrout", 180, 50, 'NbNe')
-    do_cohort("bulltrout", 361, 50, 'NbNe')
-
-    ##do_lt_comp(50, "All")
-    ##do_lt_comp(100, "All")
-    #
-    #do_lt_comp(25, "Newb")
-    do_lt_comp(50, "Newb", "None")
-    #do_lt_comp(50, "Newb", "LogQuad")
-    do_lt_comp(50, "Newb", "NbNe")
-    do_lt_comp(100, "Newb", "None")
-    do_lt_comp(100, "Newb", "LogQuad")
-    do_lt_comp(100, "Newb", "NbNe")
-    #
-    #do_pcrit("bulltrout", 180, True)
-    #do_pcrit("bulltrout", 180, False)
-    do_pcrit("bulltrout", 361, True)
-    do_pcrit("bulltrout", 361, False)
-
-
-    do_rel("bulltrout", 361, 50)
-
-    #
-    #
-    ##do_rel("bulltrout", 180, 50)
-    #
-    #do_nb_comp()
-    #do_bias()
