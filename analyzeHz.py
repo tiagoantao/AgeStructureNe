@@ -5,9 +5,6 @@ import shutil
 import sys
 
 
-pref = sys.argv[1]
-
-
 def do_hz(model, ltype, loc, N1s):
     title = "%s %s" % (model, ltype)
     print('python plotHz.py "%s" data/trout %s' %
@@ -43,6 +40,7 @@ for loc, ltype in [(0, "MSAT"), (100, "SNP")]:
         do_hz("grizzly", ltype, loc, [23, 46])
         do_hz("sagegrouse", ltype, loc, [28, 14])
         do_hz("seaweed", ltype, loc, [70, 35])
+        do_hz("synseaweed", ltype, loc, [89, 178, 219])
         do_hz("mosquito", ltype, loc, [436, 218, 110])
         do_hz("bullt2", ltype, loc, [305, 610, 915, 1220, 1525,
                                      1830, 2440, 3050, 4575, 6100])

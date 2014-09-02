@@ -33,7 +33,8 @@ Nbs = {('bulltrout', 90): 25, ('bulltrout', 180): 50, ('bulltrout', 361): 100,
 NbNames = [("bulltrout", "BuTrout"), ("bullpred", "BuPred"), ("bullt2", "BuLong"),
            ("shepard", "WCT-S"), ("fraley", "WCT-F"), ('restricted', "Restr"),
            ('mosquito', 'Mosq'), ('grizzly', 'Griz'), ('wfrog', 'WFrog'),
-           ('sagegrouse', 'SGrouse'), ('seaweed', 'Sweed')]
+           ('sagegrouse', 'SGrouse'), ('seaweed', 'Sweed'),
+           ('synseaweed', 'SynSweed')]
 Nes = {90: 32.3, 180: 64.7, 361: 129.4, 722: 258.8}
 cohorts = ["All",  "Newb", "c2c", "c3c"]
 cuts = [0.45, 0.4, 0.35, 0.3, 0.25]
@@ -49,7 +50,6 @@ nb_corrs = {"BuTrout": 0.77,
             'WFrog': 0.599,
             'Griz': 1.153,
             'Mosq': 0.267,
-            'SynMosq': 0.267,
             'Sweed': 1.261,
             'SynSweed': 1.261,
             'SGrouse': 1.694}
@@ -65,11 +65,11 @@ for sp, nbne in nb_corrs.items():
 pcrits = [None, 0.021, 0.035, 0.05, 0.1]
 
 
-def load_file(pref, cut=None):
+def load_file(pref, cut=None, mydir='.'):
     if cut is None:
-        f = open("output/%s.txt" % pref)
+        f = open("%s/output/%s.txt" % (mydir, pref))
     else:
-        f = open("output/%s-%d.txt" % (pref, cut))
+        f = open("%s/output/%s-%d.txt" % (mydir, pref, cut))
     case = {}
     f.readline()
     f.readline()
@@ -112,11 +112,14 @@ def load_nb(pref):
     f.close()
 
 
-def get_ldne(sr2, r2):
+def get_ldne(nindivs, sr2, r2):
     if nindivs < 30:
         #r2l = 0.0018 + 0.907 / nindivs + 4.44 / nindivs ** 2
         myr2 = r2 - sr2
-        ldne = (.308 + math.sqrt(.308 ** 2 - 2.08 * myr2)) / (2 * myr2)
+        try:
+            ldne = (.308 + math.sqrt(.308 ** 2 - 2.08 * myr2)) / (2 * myr2)
+        except ValueError:
+            return None
     else:
         #r2l = 1 / nindivs + 3.19 / nindivs ** 2
         myr2 = r2 - sr2
@@ -127,11 +130,11 @@ def get_ldne(sr2, r2):
     return ldne if ldne > 0 else 100000
 
 
-def patch_ci(r2, sr2, j, cut=0.025):
+def patch_ci(nindivs, r2, sr2, j, cut=0.025):
     b = chi2.isf(cut, j)
     t = chi2.isf(1 - cut, j)
     r2b, r2t = j * r2 / b, j * r2 / t
-    return get_ldne(sr2, r2b), get_ldne(sr2, r2t)
+    return get_ldne(nindivs, sr2, r2b), get_ldne(nindivs, sr2, r2t)
 
 
 def correct_ci(bname, nindivs, vals, ci, r2=None, fixed=None,
@@ -151,7 +154,7 @@ def correct_ci(bname, nindivs, vals, ci, r2=None, fixed=None,
         # We are going to patch the CIs with r2
         ci = []
         for i in range(len(r2)):
-            ci.append(patch_ci(r2[i], sr2[i], j[i] * jcorr))
+            ci.append(patch_ci(nindivs, r2[i], sr2[i], j[i] * jcorr))
     for i in range(len(ci)):
         bot, top = ci[i]
         if my_corr < 0:
@@ -278,9 +281,9 @@ def get_corrs(bname, nindivs, vals, ci, r2, sr2, j):
             #                           [log_a, log_b,
             #                            log_c], r2=r2, sr2=sr2,
             #                           j=j, jcorr=0.9)),
-            #("LogQuad", correct_logquad(bname, nindivs, vals, ci,
-            #                            [log_a, log_b,
-            #                             log_c])),
+            ("LogQuad", correct_logquad(bname, nindivs, vals, ci,
+                                        [log_a, log_b,
+                                         log_c])),
             ]
 
 

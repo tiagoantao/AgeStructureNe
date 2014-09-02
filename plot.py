@@ -14,107 +14,105 @@ from matplotlib import rc
 rc('font', **{'family': 'sans-serif', 'sans-serif': ['Helvetica']})
 rc('text', usetex=True)
 
-import pylab
 import seaborn as sns
 import matplotlib.pyplot as plt
 
 from trout import N0s, Nbs, nindivs, nlocis, cohorts, NbNames, cuts, load_file
 from trout import pcrits, dataDir, realNbs, Nes, get_corrs, correct_ci, nsnps
-from trout import get_bname, correct_logquad, log_a, log_b, log_c
+from trout import get_bname
 
 pref = sys.argv[1]
 
-print('CHECK ALL PERCENTILES WITH NONES')
 
-
-def do_nb(cohort, nsnps, pref, corr_name):
+def do_nb(case, cohort, N0, nsnps, pref, corr_name):
+    fig, ax = plt.subplots()
     model = 'bulltrout'
     bname = get_bname(model)
-    for N0 in N0s:
-        pylab.clf()
-        pylab.title("Nb: %d (N1: %d) - cohort %s - %s" % (Nbs[model, N0],
-                                                          N0, cohort,
-                                                          corr_name))
-        box_vals = []
-        tops = []
-        bottoms = []
-        labels = []
-        hmeans = []
-        for nindiv in nindivs:
-            for nloci in nlocis:
-                try:
-                    vals, ci, r2, sr2, j, ssize = \
-                        case[cohort][(model, N0)][(None, nindiv,
-                                                   nloci, "MSAT")]
-                    for cname, corrections in get_corrs(bname, nindivs, vals,
-                                                        ci, r2, sr2, j):
-                        if cname != corr_name:
-                            continue
-                        cvals, cci = corrections
-                        vals = cvals
-                        ci = cci
-                        break
-                    if len(ci) > 0:
-                        bottom, top = zip(*ci)
-                        tops.append(np.percentile([x if x is not None else
-                                                   100000 for x in top], 90))
-                        bottoms.append(np.percentile([x if x is not None
-                                                      else 0.1 for x
-                                                      in bottom], 10))
-                    else:
-                        tops.append(None)
-                        bottoms.append(None)
-                except KeyError:
-                    vals = []
+    fig.suptitle("Nb: %d (N1: %d) - cohort %s - %s" % (Nbs[model, N0],
+                                                        N0, cohort,
+                                                        corr_name))
+    box_vals = []
+    tops = []
+    bottoms = []
+    labels = []
+    hmeans = []
+    for nindiv in nindivs:
+        for nloci in nlocis:
+            try:
+                vals, ci, r2, sr2, j, ssize = \
+                    case[cohort][(model, N0)][(None, nindiv,
+                                                nloci, "MSAT")]
+                for cname, corrections in get_corrs(bname, nindiv, vals,
+                                                    ci, r2, sr2, j):
+                    if cname != corr_name:
+                        continue
+                    cvals, cci = corrections
+                    vals = cvals
+                    ci = cci
+                    break
+                if len(ci) > 0:
+                    bottom, top = zip(*ci)
+                    tops.append(np.percentile([x if x is not None else
+                                                100000 for x in top], 90))
+                    bottoms.append(np.percentile([x if x is not None
+                                                    else 0.1 for x
+                                                    in bottom], 10))
+                else:
                     tops.append(None)
                     bottoms.append(None)
-                box_vals.append(vals)
-                hmeans.append(hmean([x for x in vals if x > 0]))
-                labels.append("%dMS" % nloci)
-            for nsnp in nsnps:
-                try:
-                    vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindiv, nsnp, "SNP")]
-                    for cname, corrections in get_corrs(bname, nindivs, vals,
-                                                        ci, r2, sr2, j):
-                        if cname != corr_name:
-                            continue
-                        cvals, cci = corrections
-                        vals = cvals
-                        ci = cci
-                        break
-                    if len(ci) > 0:
-                        bottom, top = zip(*ci)
-                        tops.append(np.percentile([x if x is not None else
-                                                   100000 for x in top], 90))
-                        bottoms.append(np.percentile([x if x is not None
-                                                      else 0.1 for x in
-                                                      bottom], 10))
-                    else:
-                        tops.append(None)
-                        bottoms.append(None)
+            except KeyError:
+                vals = []
+                tops.append(None)
+                bottoms.append(None)
+            box_vals.append(vals)
+            hmeans.append(hmean([x for x in vals if x > 0]))
+            labels.append("%dMS" % nloci)
+        for nsnp in nsnps:
+            try:
+                vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindiv, nsnp, "SNP")]
+                for cname, corrections in get_corrs(bname, nindiv, vals,
+                                                    ci, r2, sr2, j):
+                    if cname != corr_name:
+                        continue
+                    cvals, cci = corrections
+                    vals = cvals
+                    ci = cci
+                    break
+                if len(ci) > 0:
+                    bottom, top = zip(*ci)
+                    tops.append(np.percentile([x if x is not None else
+                                                100000 for x in top], 90))
+                    bottoms.append(np.percentile([x if x is not None
+                                                    else 0.1 for x in
+                                                    bottom], 10))
+                else:
+                    tops.append(None)
+                    bottoms.append(None)
 
-                except KeyError:
-                    vals = []
-                    tops.append(None)
-                    bottoms.append(None)
-                box_vals.append(vals)
-                hmeans.append(hmean([x for x in vals if x > 0]))
-                #Check above
-                labels.append("%d" % nsnp)
-            pos = len(labels)
-            pylab.axvline(pos + 0.5, color="k", lw=0.2)
-            pylab.text(pos - 0.5, 0, "%d Indivs" % nindiv,
-                       ha="center", va="bottom", size="small",
-                       rotation="horizontal")
-        pylab.ylabel("$\hat{N}_{e}$")
-        pylab.ylim(0, Nbs[(model, N0)] * 3)
-        pylab.axhline(Nbs[(model, N0)], color="k", lw=0.3)
-        sns.boxplot(box_vals, notch=0, sym="")
-        pylab.xticks(1 + np.arange(len(labels)), labels, rotation="vertical")
-        pylab.plot([1 + x for x in range(len(tops))], tops, "r.", ms=20)
-        pylab.plot([1 + x for x in range(len(bottoms))], bottoms, "r.", ms=20)
-        pylab.plot([1 + x for x in range(len(hmeans))], hmeans, "r.", ms=20)
-        pylab.savefig("output/%s%s-%s-%d.png" % (pref, cohort, corr_name, N0))
+            except KeyError:
+                vals = []
+                tops.append(None)
+                bottoms.append(None)
+            box_vals.append(vals)
+            hmeans.append(hmean([x for x in vals if x > 0]))
+            #Check above
+            labels.append("%d" % nsnp)
+        pos = len(labels)
+        ax.axvline(pos + 0.5, color="k", lw=0.2)
+        ax.text(pos - 0.5, 0, "%d Indivs" % nindiv,
+                ha="center", va="bottom", size="small",
+                rotation="horizontal")
+    ax.set_ylabel("$\hat{N}_{e}$")
+    ax.set_ylim(0, Nbs[(model, N0)] * 3)
+    ax.axhline(Nbs[(model, N0)], color="k", lw=0.3)
+    sns.boxplot(box_vals, notch=0, sym="")
+    ax.set_xticks(1 + np.arange(len(labels)))
+    ax.set_xticklabels(labels, rotation="vertical")
+    ax.plot([1 + x for x in range(len(tops))], tops, "r.", ms=20)
+    ax.plot([1 + x for x in range(len(bottoms))], bottoms, "r.", ms=20)
+    ax.plot([1 + x for x in range(len(hmeans))], hmeans, "r.", ms=20)
+    #pylab.savefig("output/%s%s-%s-%d.png" % (pref, cohort, corr_name, N0))
+    return fig
 
 
 def do_cohort(model, N0, nindiv, corr_name):
@@ -213,20 +211,20 @@ def do_nb_comp():
     pylab.savefig("output/nb-comp.png")
 
 
-def do_lt_comp(nb, strat, corr_name):
-    f, ax = plt.subplots()
+def do_lt_comp(case, nb, strat, corr_name):
+    fig, ax = plt.subplots()
+    nindiv = 50
     tops = []
     box_vals = []
     bottoms = []
     hmeans = []
     labels = []
-    n0s = Nbs.keys()
+    n0s = list(Nbs.keys())
     n0s.sort()
     ax.set_title("Nb: %d - %s sampled - 100 SNPs - 50 indivs - %s corr" % (
         nb, strat, corr_name))
     for pref, name in NbNames:
         if name == "Restr":
-            print("Ignoring Restr")
             continue
         for k, nb2 in Nbs.items():
             model, n0 = k
@@ -234,10 +232,9 @@ def do_lt_comp(nb, strat, corr_name):
                 continue
             elif pref != model:
                 continue
-            print(strat, model, n0)
             vals, ci, r2, sr2, j, ssize = \
                 case[strat][(model, n0)][(None, 50, 100, "SNP")]
-            for cname, corrections in get_corrs(name, nindivs, vals,
+            for cname, corrections in get_corrs(name, nindiv, vals,
                                                 ci, r2, sr2, j):
                 if cname != corr_name:
                     continue
@@ -245,12 +242,13 @@ def do_lt_comp(nb, strat, corr_name):
                 vals = cvals
                 ci = cci
                 break
-
             hmeans.append(hmean(vals))
             try:
                 top, bottom = zip(*ci)
             except ValueError:
                 top, bottom = [], []
+            top = [100000 if x is None else x for x in top]
+            bottom = [100000 if x is None else x for x in bottom]
             labels.append(name)
             try:
                 tops.append(np.percentile(top, 90))
@@ -261,15 +259,17 @@ def do_lt_comp(nb, strat, corr_name):
                 box_vals.append([])
                 bottoms.append(None)
     sns.violinplot(box_vals, notch=0, sym="", ax=ax, alpha=0.9)
-    pylab.xticks(range(1, 1 + len(labels)), labels)
     ax.plot([1 + x for x in range(len(tops))], tops, 'r.', ms=20)
     ax.plot([1 + x for x in range(len(bottoms))], bottoms, "r.", ms=20)
     ax.plot([1 + x for x in range(len(hmeans))], hmeans, "k.", ms=20)
-    ymin, ymax = pylab.ylim()
+    ymin, ymax = ax.get_ylim()
     plt.ylabel("$\hat{N}_{e}$")
     plt.ylim(ymin, min([ymax, 3 * nb]))
     plt.axhline(nb, color="k", lw=0.3)
-    plt.savefig("output/lt-comp-%s-%s-%d.png" % (corr_name, strat, nb))
+    ax.set_xticks(range(1, 1 + len(labels)))
+    ax.set_xticklabels(labels)
+    #plt.savefig("output/lt-comp-%s-%s-%d.png" % (corr_name, strat, nb))
+    return fig
 
 
 def do_bias():
@@ -590,13 +590,13 @@ def compare_correction_ci(model, N0, all_snps, all_indivs, suff):
                                                               N0, suff))
 
 
-def do_table_ci(modelN0s, nsnps, nindivs, ci_percentile=50.0):
+def do_table_ci(case, dir_pref, modelN0s, nsnps, nindivs, ci_percentile=50.0):
     cohort = "Newb"
     thres = 10
-    w = open("output/table-ci-%d-%d-%.1f.txt" % (nsnps,
-                                                 nindivs, ci_percentile), "w")
-    print >>w, 'Standard deviations problematic because of infinites'
-    print >>w, "Corr Model Nb N1 J median mean stdDev percTopCI meanTopCI stdDevTopCI aboveTop probTop medianTopErr percBotCI meanBotCI stdDevBotCI belowBot probBot medianBotErr"
+    w = open(dir_pref + "/table-ci-%d-%d-%.1f.txt" % (
+        nsnps, nindivs, ci_percentile), "w")
+    w.write('Standard deviations problematic because of infinites\n')
+    w.write("Corr Model Nb N1 J median mean stdDev percTopCI meanTopCI stdDevTopCI aboveTop probTop medianTopErr percBotCI meanBotCI stdDevBotCI belowBot probBot medianBotErr\n")
     for bname, model, N0 in modelN0s:
         nb = Nbs[(model, N0)]
         vals, ci, r2, sr2, j, ssize = \
@@ -617,14 +617,14 @@ def do_table_ci(modelN0s, nsnps, nindivs, ci_percentile=50.0):
                 tops, bottoms = zip(*cci)
                 topProb = botProb = 0
                 for bottom in bottoms:
-                    if bottom > nb or bottom is None:
+                    if bottom is None or bottom > nb:
                         botProb += 1
                         botErr[0] += 1
                         botErr[1] += bottom - nb if bottom is not None else nb
                         if bottom is None or bottom - nb > thres or True:
                             probBot += 1
                 for top in tops:
-                    if top < nb or top > 100000 or top is None:
+                    if top is None or top < nb or top > 100000:
                         topProb += 1
                         if top is None:
                             top = 100000
@@ -653,9 +653,12 @@ def do_table_ci(modelN0s, nsnps, nindivs, ci_percentile=50.0):
                 probBot *= 100
             else:
                 topMedian = botMedian = topProb = botProb = topMean = botMean = topStd = botStd = probBot = probTop = "NA"
-            print >>w, has_corr, bname, nb, N0, np.median(j), np.median(cvals), np.mean(cvals), np.std(cvals),
-            print >>w, topMedian, topMean, topStd, topProb, probTop, np.median(topErr[1]),
-            print >>w, botMedian, botMean, botStd, botProb, probBot, np.median(botErr[1])
+            w.write(' '.join([str(x) for x in [has_corr, bname, nb, N0, np.median(j),
+                              np.median(cvals), np.mean(cvals), np.std(cvals),
+                              topMedian, topMean, topStd, topProb, probTop,
+                              np.median(topErr[1]), botMedian, botMean,
+                              botStd, botProb, probBot, np.median(botErr[1])]]))
+            w.write('\n')
     w.close()
 
 
@@ -806,108 +809,85 @@ def do_nb_linear(models, name, fun):
     pylab.ylim(0, max(nbs))
     pylab.savefig("output/nb-linear-%s.png" % name)
 
-#load_nb(pref)
-#do_robin_nb_ne()
-#do_all_nb_ne()
-#do_ld_progress("bulltrout", [180, 361, 722])
-try:
-    os.remove("output/hz-cut.html")
-except OSError:
-    pass  # OK
-for loc, ltype in [(0, "MSAT"), (100, "SNP")]:
-    do_hz("bulltrout", ltype, loc, [180, 361, 722])
-    do_hz("bullpred", ltype, loc, [193, 387, 775])
-    do_hz("bullt2", ltype, loc, [3050, 6100])
-    if ltype == "SNP":
-        do_hz("bulltrout", ltype, loc, [90])
-        do_hz("restricted", ltype, loc, [90, 180, 361, 722])
-        do_hz("btrout", ltype, loc, [1619, 6476])
-        do_hz("shepard", ltype, loc, [518, 1036])
-        do_hz("fraley", ltype, loc, [641, 1282])
-        do_hz("lake", ltype, loc, [18, 36])
-        do_hz("wfrog", ltype, loc, [600, 300, 150])
-        do_hz("grizzly", ltype, loc, [23, 46])
-        do_hz("sagegrouse", ltype, loc, [28, 14])
-        do_hz("seaweed", ltype, loc, [70, 35])
-        do_hz("mosquito", ltype, loc, [436, 218, 110])
-        do_hz("bullt2", ltype, loc, [305, 610, 915, 1220, 1525,
-                                     1830, 2440, 3050, 4575, 6100])
-shutil.move("hz-cut.html", "output/hz-cut.html")
-shutil.move("hz-cut.txt", "output/hz-cut.txt")
-#
-do_hz_comp("bulltrout", 180)
-do_hz_comp("bulltrout", 361)
-#
-#case = load_file(pref, 45)
-#do_lt_comp(200, "Newb")
-#do_lt_comp(200, "All")
-case = load_file(pref, 40)
 
-cis = [("BuTrout", "bulltrout", 90), ("BuTrout", "bulltrout", 180),
-       ("BuTrout", "bulltrout", 361), ("BuTrout", "bulltrout", 722),
-       ("Restricted", "restricted", 90), ("Restricted", "restricted", 180),
-       ("Restricted", "restricted", 361), ("Restricted", "restricted", 722),
-       ("WCT-S", "shepard", 518), ("WCT-S", "shepard", 1036),
-       ("WCT-F", "fraley", 641), ("WCT-F", "fraley", 1282),
-       ("BuLong", "bullt2", 305), ("BuLong", "bullt2", 610),
-       ("BuLong", "bullt2", 915), ("BuLong", "bullt2", 1220),
-       ("BuLong", "bullt2", 1525), ("BuLong", "bullt2", 2440),
-       ("BuLong", "bullt2", 3050), ("BuLong", "bullt2", 4575),
-       ("BuLong", "bullt2", 6100),
-       ("BuPred", "bullpred", 193), ("BuPred", "bullpred", 387)]
+def old_main():
+    #load_nb(pref)
+    #do_robin_nb_ne()
+    #do_all_nb_ne()
+    #do_ld_progress("bulltrout", [180, 361, 722])
+    do_hz_comp("bulltrout", 180)
+    do_hz_comp("bulltrout", 361)
+    #
+    #case = load_file(pref, 45)
+    #do_lt_comp(200, "Newb")
+    #do_lt_comp(200, "All")
+    case = load_file(pref, 40)
 
-do_table_ci(cis, 100, 50)
-do_table_ci(cis, 100, 50, 20)
-do_table_ci(cis, 100, 25)
-do_table_ci(cis, 200, 50)
+    cis = [("BuTrout", "bulltrout", 90), ("BuTrout", "bulltrout", 180),
+        ("BuTrout", "bulltrout", 361), ("BuTrout", "bulltrout", 722),
+        ("Restricted", "restricted", 90), ("Restricted", "restricted", 180),
+        ("Restricted", "restricted", 361), ("Restricted", "restricted", 722),
+        ("WCT-S", "shepard", 518), ("WCT-S", "shepard", 1036),
+        ("WCT-F", "fraley", 641), ("WCT-F", "fraley", 1282),
+        ("BuLong", "bullt2", 305), ("BuLong", "bullt2", 610),
+        ("BuLong", "bullt2", 915), ("BuLong", "bullt2", 1220),
+        ("BuLong", "bullt2", 1525), ("BuLong", "bullt2", 2440),
+        ("BuLong", "bullt2", 3050), ("BuLong", "bullt2", 4575),
+        ("BuLong", "bullt2", 6100),
+        ("BuPred", "bullpred", 193), ("BuPred", "bullpred", 387)]
+
+    do_table_ci(cis, 100, 50)
+    do_table_ci(cis, 100, 50, 20)
+    do_table_ci(cis, 100, 25)
+    do_table_ci(cis, 200, 50)
 
 
-compare_correction_ci('bulltrout', 361, [100, 200], [50], "50inds")
-compare_correction_ci('bulltrout', 180, [100, 200], [50], "50inds")
-compare_correction_ci('bulltrout', 180, [100], [25, 50, 100], "100snps")
+    compare_correction_ci('bulltrout', 361, [100, 200], [50], "50inds")
+    compare_correction_ci('bulltrout', 180, [100, 200], [50], "50inds")
+    compare_correction_ci('bulltrout', 180, [100], [25, 50, 100], "100snps")
 
-linear = [("bullt2", 305), ("bullt2", 610), ("bullt2", 915), ("bullt2", 1220),
-          ("bullt2", 1525), ("bullt2", 1830), ("bullt2", 2440),
-          ("bullt2", 3050), ("bullt2", 4575), ("bullt2", 6100)]
-do_nb_linear(linear, "None",
-             functools.partial(lambda model, nindivs, x, y: (x, y)))
-#do_nb_linear(linear, "LogQuad",
-#             functools.partial(correct_logquad, abc=[log_a, log_b, log_c]))
-do_nb_linear(linear, "NbNe", functools.partial(correct_ci))
+    linear = [("bullt2", 305), ("bullt2", 610), ("bullt2", 915), ("bullt2", 1220),
+            ("bullt2", 1525), ("bullt2", 1830), ("bullt2", 2440),
+            ("bullt2", 3050), ("bullt2", 4575), ("bullt2", 6100)]
+    do_nb_linear(linear, "None",
+                functools.partial(lambda model, nindivs, x, y: (x, y)))
+    #do_nb_linear(linear, "LogQuad",
+    #             functools.partial(correct_logquad, abc=[log_a, log_b, log_c]))
+    do_nb_linear(linear, "NbNe", functools.partial(correct_ci))
 
-#do_nb(cohort, [100], "", 'None')
-do_nb('Newb', nsnps, "allsnps-", 'None')
-#do_nb('Newb', nsnps, "allsnps-", 'LogQuad')
-do_nb('Newb', nsnps, "allsnps-", 'NbNe')
-do_cohort("bulltrout", 180, 50, 'None')
-do_cohort("bulltrout", 361, 50, 'None')
-#do_cohort("bulltrout", 180, 50, 'LogQuad')
-#do_cohort("bulltrout", 361, 50, 'LogQuad')
-do_cohort("bulltrout", 180, 50, 'NbNe')
-do_cohort("bulltrout", 361, 50, 'NbNe')
+    #do_nb(cohort, [100], "", 'None')
+    do_nb('Newb', nsnps, "allsnps-", 'None')
+    #do_nb('Newb', nsnps, "allsnps-", 'LogQuad')
+    do_nb('Newb', nsnps, "allsnps-", 'NbNe')
+    do_cohort("bulltrout", 180, 50, 'None')
+    do_cohort("bulltrout", 361, 50, 'None')
+    #do_cohort("bulltrout", 180, 50, 'LogQuad')
+    #do_cohort("bulltrout", 361, 50, 'LogQuad')
+    do_cohort("bulltrout", 180, 50, 'NbNe')
+    do_cohort("bulltrout", 361, 50, 'NbNe')
 
-##do_lt_comp(50, "All")
-##do_lt_comp(100, "All")
-#
-#do_lt_comp(25, "Newb")
-do_lt_comp(50, "Newb", "None")
-#do_lt_comp(50, "Newb", "LogQuad")
-do_lt_comp(50, "Newb", "NbNe")
-do_lt_comp(100, "Newb", "None")
-do_lt_comp(100, "Newb", "LogQuad")
-do_lt_comp(100, "Newb", "NbNe")
-#
-#do_pcrit("bulltrout", 180, True)
-#do_pcrit("bulltrout", 180, False)
-do_pcrit("bulltrout", 361, True)
-do_pcrit("bulltrout", 361, False)
+    ##do_lt_comp(50, "All")
+    ##do_lt_comp(100, "All")
+    #
+    #do_lt_comp(25, "Newb")
+    do_lt_comp(50, "Newb", "None")
+    #do_lt_comp(50, "Newb", "LogQuad")
+    do_lt_comp(50, "Newb", "NbNe")
+    do_lt_comp(100, "Newb", "None")
+    do_lt_comp(100, "Newb", "LogQuad")
+    do_lt_comp(100, "Newb", "NbNe")
+    #
+    #do_pcrit("bulltrout", 180, True)
+    #do_pcrit("bulltrout", 180, False)
+    do_pcrit("bulltrout", 361, True)
+    do_pcrit("bulltrout", 361, False)
 
 
-do_rel("bulltrout", 361, 50)
+    do_rel("bulltrout", 361, 50)
 
-#
-#
-##do_rel("bulltrout", 180, 50)
-#
-#do_nb_comp()
-#do_bias()
+    #
+    #
+    ##do_rel("bulltrout", 180, 50)
+    #
+    #do_nb_comp()
+    #do_bias()

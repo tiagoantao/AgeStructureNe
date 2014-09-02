@@ -12,7 +12,10 @@ agecond = sys.argv[5]
 DDIR = "../data/trout"
 # N1modelAgeIndivsLoci-rep
 
-gens = 1000
+if model.endswith('mosquito'):
+    gens = 5000
+else:
+    gens = 1000
 
 # loci, indivs
 sampleStratsLoci = False, [(10, 50), (15, 50), (25, 50), (50, 50), (100, 50)]

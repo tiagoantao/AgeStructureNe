@@ -137,7 +137,7 @@ Trout studies
 python nb3.py trout/var.conf > output/trt-nb3.txt 2> output/trt-nb.txt
 
 Heterozygosity levels on the simulations need to be computed BEFORE the main
-study is done. Do:
+study is done. After hz do:
 
 python sumTrout.py trout/var.conf trt
 
@@ -145,15 +145,12 @@ Errors starting with err can be ignored. There will be an exception at the
 end.
 
 Run:
+python analyzeHz.py
 
-python plotTrout.py trt
-
-This will fail. Re-run both commands in order again:
-
+No do:
 python sumTrout.py trout/var.conf trt
 
-python plotTrout.py trt
-
+Notebooks are now ready to be used.
 
 And now all should be fine (again, ignore the err messages). This is
 convoluted but works!
