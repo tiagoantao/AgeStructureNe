@@ -40,7 +40,7 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
             try:
                 vals, ci, r2, sr2, j, ssize = \
                     case[cohort][(model, N0)][(None, nindiv, nloci, "MSAT")]
-                for cname, corrections in get_corrs(bname, nindiv, vals,
+                for cname, corrections in get_corrs(N0, bname, nindiv, vals,
                                                     ci, r2, sr2, j):
                     if cname != corr_name:
                         continue
@@ -68,7 +68,7 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
         for nsnp in nsnps:
             try:
                 vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindiv, nsnp, "SNP")]
-                for cname, corrections in get_corrs(bname, nindiv, vals,
+                for cname, corrections in get_corrs(N0, bname, nindiv, vals,
                                                     ci, r2, sr2, j):
                     if cname != corr_name:
                         continue
@@ -129,7 +129,7 @@ def do_cohort(case, model, N0, nindiv, corr_name):
         print(cohort, model, N0)
         vals, ci, r2, sr2, j, ssize = \
             case[cohort][(model, N0)][(None, nindiv, 100, "SNP")]
-        for cname, corrections in get_corrs(bname, nindiv, vals,
+        for cname, corrections in get_corrs(N0, bname, nindiv, vals,
                                             ci, r2, sr2, j):
             if cname != corr_name:
                 continue
@@ -164,13 +164,15 @@ def do_cohort(case, model, N0, nindiv, corr_name):
     #fig.savefig("output/cohort-%s-%s-%d.png" % (model, corr_name, N0))
 
 
-def do_rel(case, model, N0, nindiv):
+def do_rel(case, model, N0, nindiv, corr_name):
     fig, ax = plt.subplots()
-    cohort = "All"
-    fig.suptitle("Nb: %d (N1: %d) - 20pc related individuals - cohort %s" %
-                (Nbs[(model, N0)], N0, cohort))
+    cohort = "Newb"
+    fig.suptitle("Nb: %d (N1: %d) - 20pc related individuals - cohort %s - %s"
+                 % (Nbs[(model, N0)], N0, cohort, corr_name))
     box_vals = []
     labels = []
+    bname = get_bname(model)
+
     # vals, ci, r2, sr2, j, ssize = case[cohort][N0][(None, nindiv, 15, "MSAT-rel")]
     # box_vals.append(vals)
     # labels.append("MSAT-15-rel")
@@ -178,16 +180,30 @@ def do_rel(case, model, N0, nindiv):
     # box_vals.append(vals)
     # labels.append("MSAT-15")
     vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindiv, 100, "SNP-rel")]
+    for cname, corrections in get_corrs(N0, bname, nindiv, vals, ci, r2, sr2, j):
+        if cname != corr_name:
+            continue
+        cvals, cci = corrections
+        vals = cvals
+        ci = cci
+        break
     box_vals.append(vals)
     labels.append("SNP-100-rel")
     vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindiv, 100, "SNP")]
+    for cname, corrections in get_corrs(N0, bname, nindiv, vals, ci, r2, sr2, j):
+        if cname != corr_name:
+            continue
+        cvals, cci = corrections
+        vals = cvals
+        ci = cci
+        break
     box_vals.append(vals)
     labels.append("SNP-100")
     sns.boxplot(box_vals, notch=0, sym="")
     ax.set_ylim(0, Nbs[(model, N0)] * 3)
     ax.set_ylabel("$\hat{N}_{e}$")
     ax.axhline(Nbs[(model, N0)], color="k", lw=0.3)
-    ax.set_xticks(range(len(labels)))
+    ax.set_xticks(1 + np.arange(len(labels)))
     ax.set_xticklabels(labels)
     #fig.savefig("output/rel-%s-%d.png" % (model, N0))
 
@@ -236,7 +252,7 @@ def do_lt_comp(case, nb, strat, corr_name):
                 continue
             vals, ci, r2, sr2, j, ssize = \
                 case[strat][(model, n0)][(None, 50, 100, "SNP")]
-            for cname, corrections in get_corrs(name, nindiv, vals,
+            for cname, corrections in get_corrs(N0, name, nindiv, vals,
                                                 ci, r2, sr2, j):
                 if cname != corr_name:
                     continue
@@ -543,7 +559,7 @@ def do_nb_ne(model, N0, rep):
 def compare_correction_ci(case, model, N0, all_snps, all_indivs, suff):
     cohort = "Newb"
     f, axs = plt.subplots(len(all_snps), len(all_indivs),
-                          sharex=True, sharey=True, figsize=(20, 20))
+                          sharex=True, sharey=True, figsize=(30, 20))
     if len(all_snps) == 1:
         axs = [axs]
     if len(all_indivs) == 1:
@@ -561,7 +577,7 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs, suff):
         ax.axhline(Nb)
         i = 0
         top_y = 3 * Nb
-        for corr_name, corrections in get_corrs(bname, nindivs, vals, ci, r2,
+        for corr_name, corrections in get_corrs(N0, bname, nindivs, vals, ci, r2,
                                                 sr2, j):
             cvals, cci = corrections
             corr_names.append(corr_name)
@@ -594,11 +610,10 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs, suff):
 
 def do_table_ci(case, dir_pref, modelN0s, nsnps, nindivs, ci_percentile=50.0):
     cohort = "Newb"
-    thres = 10
     w = open(dir_pref + "/table-ci-%d-%d-%.1f.txt" % (
         nsnps, nindivs, ci_percentile), "w")
     w.write('Standard deviations problematic because of infinites\n')
-    w.write("Corr Model Nb N1 J median mean stdDev percTopCI meanTopCI stdDevTopCI aboveTop probTop medianTopErr percBotCI meanBotCI stdDevBotCI belowBot probBot medianBotErr\n")
+    w.write("Corr Model Nb N1 J median mean stdDev percTopCI meanTopCI stdDevTopCI aboveTop medianTopErr percBotCI meanBotCI stdDevBotCI belowBot medianBotErr\n")
     for bname, model, N0 in modelN0s:
         nb = Nbs[(model, N0)]
         vals, ci, r2, sr2, j, ssize = \
@@ -608,13 +623,11 @@ def do_table_ci(case, dir_pref, modelN0s, nsnps, nindivs, ci_percentile=50.0):
             perc_err = abs(v - nb) / nb
             errs.append(perc_err)
         print(bname, model, N0, nb, np.median(errs))
-        for has_corr, corrections in get_corrs(bname, nindivs,
+        for has_corr, corrections in get_corrs(N0, bname, nindivs,
                                                vals, ci, r2, sr2, j):
             cvals, cci = corrections
             topErr = [0, 0.0]
             botErr = [0, 0.0]
-            probTop = 0
-            probBot = 0
             if len(ci) > 0:
                 tops, bottoms = zip(*cci)
                 topProb = botProb = 0
@@ -623,8 +636,6 @@ def do_table_ci(case, dir_pref, modelN0s, nsnps, nindivs, ci_percentile=50.0):
                         botProb += 1
                         botErr[0] += 1
                         botErr[1] += bottom - nb if bottom is not None else nb
-                        if bottom is None or bottom - nb > thres or True:
-                            probBot += 1
                 for top in tops:
                     if top is None or top < nb or top > 100000:
                         topProb += 1
@@ -633,8 +644,6 @@ def do_table_ci(case, dir_pref, modelN0s, nsnps, nindivs, ci_percentile=50.0):
                         if top < nb:
                             topErr[0] += 1
                             topErr[1] += nb - top
-                            if nb - top > thres or top is None:
-                                probTop += 1
                 topMean = np.mean([x for x in tops if x is not None])
                 botMean = np.mean([x for x in bottoms if x is not None])
                 topMedian = np.percentile([x if x is not None else 100000
@@ -649,17 +658,13 @@ def do_table_ci(case, dir_pref, modelN0s, nsnps, nindivs, ci_percentile=50.0):
                 botProb /= len(bottoms)
                 topProb *= 100
                 botProb *= 100
-                probTop /= len(tops)
-                probBot /= len(bottoms)
-                probTop *= 100
-                probBot *= 100
             else:
-                topMedian = botMedian = topProb = botProb = topMean = botMean = topStd = botStd = probBot = probTop = "NA"
+                topMedian = botMedian = topProb = botProb = topMean = botMean = topStd = botStd = "NA"
             w.write(' '.join([str(x) for x in [has_corr, bname, nb, N0, np.median(j),
                               np.median(cvals), np.mean(cvals), np.std(cvals),
-                              topMedian, topMean, topStd, topProb, probTop,
+                              topMedian, topMean, topStd, topProb,
                               np.median(topErr[1]), botMedian, botMean,
-                              botStd, botProb, probBot, np.median(botErr[1])]]))
+                              botStd, botProb, np.median(botErr[1])]]))
             w.write('\n')
     w.close()
 
@@ -777,7 +782,7 @@ def do_robin_nb_ne():
                     "%.2f (%.2f)" % tuple(stats[i]), va="top", ha="right")
         fig.text(0.02, 0.5, "bulltrout N1: %d Nb: %d Ne: %.2f" %
                  (N0, Nbs[(model, N0)], Nes[N0]),
-                      rotation="vertical", ha="left", va="center")
+                 rotation="vertical", ha="left", va="center")
         #fig.savefig("output/nb-robin-%d.png" % N0)
 
 
@@ -811,11 +816,12 @@ def do_nb_linear(case, models, name, fun):
 
 
 def old_main():
-    linear = [("bullt2", 305), ("bullt2", 610), ("bullt2", 915), ("bullt2", 1220),
-            ("bullt2", 1525), ("bullt2", 1830), ("bullt2", 2440),
-            ("bullt2", 3050), ("bullt2", 4575), ("bullt2", 6100)]
+    linear = [("bullt2", 305), ("bullt2", 610), ("bullt2", 915),
+              ("bullt2", 1220), ("bullt2", 1525), ("bullt2", 1830),
+              ("bullt2", 2440), ("bullt2", 3050), ("bullt2", 4575),
+              ("bullt2", 6100)]
     do_nb_linear(linear, "None",
-                functools.partial(lambda model, nindivs, x, y: (x, y)))
+                 functools.partial(lambda model, nindivs, x, y: (x, y)))
     #do_nb_linear(linear, "LogQuad",
     #             functools.partial(correct_logquad, abc=[log_a, log_b, log_c]))
     do_nb_linear(linear, "NbNe", functools.partial(correct_ci))
