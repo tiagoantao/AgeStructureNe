@@ -145,7 +145,7 @@ Errors starting with err can be ignored. There will be an exception at the
 end.
 
 Run:
-python analyzeHz.py
+python analyzeHz.py trout
 
 No do:
 python sumTrout.py trout/var.conf trt

@@ -35,8 +35,6 @@ for rep in range(reps, repe):
     print("REP", rep)
     myd["rep"] = rep
     if agedesc in ["c2c", "c3c"]:
-        if model not in ["180bulltrout", "361bulltrout"]:
-            continue
         myd["thres"] = 0.011
         myd["nindivs"] = 50
         myd["nloci"] = 15
@@ -67,11 +65,10 @@ for rep in range(reps, repe):
                 if isMSAT:
                     os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivs.py "{AGECOND}" {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 100|python ../ne2.py {thres} > ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-{rep} 2> ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-{rep}.r2'.format(**myd))
                 else:
-                    pass
-                    #os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivs.py "{AGECOND}" {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ne2.py {thres} > ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep} 2> ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep}.r2'.format(**myd))
+                    os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivs.py "{AGECOND}" {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ne2.py {thres} > ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep} 2> ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep}.r2'.format(**myd))
                 # related individuals
                 #if nindivs == 50:
-                if True:
+                if False:
                     if isMSAT:
                         os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivsRelated.py 20 {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 100|python ../ne2.py {thres} > ldout/{MODEL}All{nindivs}{nloci}-rel-{rep} 2> ldout/{MODEL}All{nindivs}{nloci}-rel-{rep}.r2'.format(**myd))
                     else:
