@@ -18,8 +18,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from trout import Nbs, nindivs, nlocis, cohorts, NbNames, cuts, load_file
-from trout import pcrits, dataDir, realNbs, Nes, get_corrs, correct_ci, nsnps
+from trout import pcrits, dataDir, realNbs, get_corrs, correct_ci, nsnps
 from trout import get_bname
+Nes = None # Wrong for now
 
 pref = sys.argv[1]
 

@@ -8,52 +8,51 @@ dataDir = "trout"
 nindivs = [15, 25, 50, 100]
 nlocis = [15, 100]
 nsnps = [100, 200, 400]
-N0s = [90, 180, 361, 722]  # , 1805]
-Nbs = {('bulltrout', 90): 26.2, ('bulltrout', 180): 51.6,
-       ('bulltrout', 361): 102.2,
-       ('bulltrout', 722): 202.6,  # 1805: 500,
-       ('restricted', 90): 25, ('restricted', 180): 50,
-       ('restricted', 361): 100, ('restricted', 722): 200,
-       ('bullpred', 193): 50, ('bullpred', 387): 100, ('bullpred', 775): 200,
-       ('bullt2', 305): 5, ('bullt2', 610): 10, ('bullt2', 915): 15,
-       ('bullt2', 1220): 20,
-       ('bullt2', 1525): 25, ('bullt2', 1830): 30, ('bullt2', 2440): 40,
-       ('bullt2', 3050): 50, ('bullt2', 4575): 75, ('bullt2', 6100): 100,
-       ('btrout', 1619): 50, ('btrout', 6476): 200,
-       ('shepard', 518): 50, ('shepard', 1036): 100,
-       ('fraley', 641): 50, ('fraley', 1282): 100,
-       ('wfrog', 600): 100, ('wfrog', 300): 50, ('wfrog', 150): 25,
-       ('mosquito', 110): 25, ('mosquito', 176): 40,
-       ('mosquito', 218): 50, ('mosquito', 436): 100,
-       ('seaweed', 70): 100, ('seaweed', 35): 50,
-       ('synseaweed', 89): 20, ('synseaweed', 178): 40,
-       ('synseaweed', 219): 50,
-       ('sagegrouse', 28): 100, ('sagegrouse', 14): 50,
-       ('lake', 18): 50, ('lake', 36): 100
+#N0s = [90, 180, 361, 722]  # , 1805]
+Nbs = {('bulltrout', 86): 25, ('bulltrout', 174): 50,
+       ('bulltrout', 353): 100, ('bulltrout', 713): 200,
+       ('bullpred', 189): 50, ('bullpred', 381): 100, ('bullpred', 765): 200,
+       ('bullt2', 606): 10, ('bullt2', 1214): 20,
+       ('bullt2', 1822): 30, ('bullt2', 2433): 40,
+       ('bullt2', 3040): 50, ('bullt2', 4565): 75, ('bullt2', 6090): 100,
+       ('shepard', 513): 50, ('shepard', 1030): 100,
+       ('fraley', 637): 50, ('fraley', 1278): 100,
+       ('wfrog', 597): 100, ('wfrog', 297): 50, ('wfrog', 148): 25,
+       ('mosquito', 102): 25, ('mosquito', 167): 40,
+       ('mosquito', 210): 50, ('mosquito', 428): 100,
+       ('synseaweed', 81): 20, ('synseaweed', 164): 40,
+       ('synseaweed', 207): 50,
+       #('sagegrouse', 28): 100, ('sagegrouse', 14): 50,
        }
 NbNames = [("bulltrout", "BuTrout"), ("bullpred", "BuPred"), ("bullt2", "BuLong"),
            ("shepard", "WCT-S"), ("fraley", "WCT-F"), ('restricted', "Restr"),
            ('mosquito', 'Mosq'), ('grizzly', 'Griz'), ('wfrog', 'WFrog'),
            ('sagegrouse', 'SGrouse'), ('seaweed', 'Sweed'),
            ('synseaweed', 'SynSweed')]
-Nes = {90: 32.8, 180: 65.2, 361: 130.3, 722: 259.8}
+#Nes = {90: 32.8, 180: 65.2, 361: 130.3, 722: 259.8}
 cohorts = ["All",  "Newb", "c2c", "c3c"]
 cuts = [0.45, 0.4, 0.35, 0.3, 0.25]
 
 realNbs = {}
 
-nb_corrs = {"BuTrout": {90: 0.79879, 180: 0.7914, 361: 0.7843, 722: 0.7798},
-            "Restricted": 0.77,
-            "BuLong": 0.78,
-            "BuPred": 0.65,
-            "WCT-S": 0.69,
-            "WCT-F": 0.71,
-            'WFrog': 0.599,
-            'Griz': 1.153,
-            'Mosq': 0.267,
-            'Sweed': 1.261,
-            'SynSweed': 1.261,
-            'SGrouse': 1.694}
+nb_corrs = {"BuTrout": {86: 0.7993630573, 174: 0.7908082409,
+                        353: 0.7849293564, 713: 0.7798129384},
+            "BuLong": {606: 0.78125, 1214: 0.78125, 1822: 0.78125,
+                       2433: 0.7797270955, 3040: 0.7800312012,
+                       4565: 0.7796257796, 6090: 0.7788161994
+                       },
+            "BuPred": {189: 0.6622516556, 381: 0.6602902375,
+                       765: 0.6585446164
+                       },
+            "WCT-S": {513: 0.702247191, 1030: 0.700280112},
+            "WCT-F": {637: 0.7132667618, 1278: 0.7117437722},
+            'WFrog': {148: 0.5966587112, 297: 0.596889952, 597: 0.5976119403},
+            'Mosq': {102: 0.2835990888, 167: 0.2835990888,
+                     210: 0.2773763202, 428: 0.2735229759
+                     },
+            'SynSweed': {81: 1.3673469388, 164: 1.3468013468, 207: 1.336},
+            #'SGrouse': 1.694,
+            }
 
 log_a = 0.15458222
 log_b = -0.671991958
@@ -61,12 +60,9 @@ log_c = 0.799127
 
 corrs = {}
 for sp, nbne in nb_corrs.items():
-    if type(nbne) == dict:
-        corrs[sp] = {}
-        for N1, mcorr in nbne.items():
-            corrs[sp][N1] = 1 / (1.26 - 0.323 * mcorr)
-    else:
-        corrs[sp] = 1 / (1.26 - 0.323 * nbne)
+    corrs[sp] = {}
+    for N1, mcorr in nbne.items():
+        corrs[sp][N1] = 1 / (1.26 - 0.323 * mcorr)
 
 pcrits = [None, 0.021, 0.035, 0.05, 0.1]
 
@@ -149,9 +145,7 @@ def correct_ci(N0, bname, nindivs, vals, ci, r2=None, fixed=None,
     cci = []
     diffs = []
     if fixed is None:
-        my_corr = corrs[bname]
-        if type(my_corr) == dict:
-            my_corr = my_corr[N0]
+        my_corr = corrs[bname][N0]
     else:
         my_corr = fixed
     for v in vals:
