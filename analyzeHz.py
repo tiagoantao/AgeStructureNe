@@ -27,10 +27,10 @@ try:
     os.remove("output/hz-cut.html")
 except OSError:
     pass  # OK
-for loc, ltype in [(50, "MSAT"), (100, "SNP")]:
-    do_hz("bulltrout", ltype, loc, [86, 174, 353, 713])
-    do_hz("bullpred", ltype, loc, [189, 381, 765])
-    do_hz("bullt2", ltype, loc, [3040, 6090])
+for loc, ltype in [(0, "MSAT"), (100, "SNP")]:
+    #do_hz("bulltrout", ltype, loc, [86, 174, 353, 713])
+    #do_hz("bullpred", ltype, loc, [189, 381, 765])
+    #do_hz("bullt2", ltype, loc, [3040, 6090])
     if ltype == "SNP":
         do_hz("bulltrout", ltype, loc, [86, 174, 353, 713])
         #do_hz("restricted", ltype, loc, [90, 180, 361, 722])
