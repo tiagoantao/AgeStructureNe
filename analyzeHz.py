@@ -10,8 +10,8 @@ project = sys.argv[1]
 def do_hz(model, ltype, loc, N1s):
     title = "%s %s" % (model, ltype)
     print('python plotHz.py "%s" data/%s %s' %
-          (title, " ".join([str(N1) + model + "-" + str(loc)
-                            for N1 in N1s])))
+          (title, project, " ".join([str(N1) + model + "-" + str(loc)
+                                    for N1 in N1s])))
     os.system('python plotHz.py "%s" data/%s %s' %
               (title, project, " ".join([str(N1) + model + "-" + str(loc)
                                          for N1 in N1s])))
