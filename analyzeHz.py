@@ -34,6 +34,7 @@ for loc, ltype in [(0, "MSAT"), (100, "SNP")]:
     if ltype == "SNP":
         do_hz("bulltrout", ltype, loc, [86, 174, 353, 713])
         #do_hz("restricted", ltype, loc, [90, 180, 361, 722])
+        do_hz("bullpred", ltype, loc, [189, 381, 765])
         #do_hz("btrout", ltype, loc, [1619, 6476])
         do_hz("shepard", ltype, loc, [513, 1030])
         do_hz("fraley", ltype, loc, [637, 1278])
