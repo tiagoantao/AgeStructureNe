@@ -1,6 +1,7 @@
 from __future__ import division
 
 import functools
+import math
 import os
 import shutil
 import sys
@@ -20,7 +21,7 @@ import matplotlib.pyplot as plt
 from trout import Nbs, nindivs, nlocis, cohorts, NbNames, cuts, load_file
 from trout import pcrits, dataDir, realNbs, get_corrs, correct_ci, nsnps
 from trout import get_bname
-Nes = None # Wrong for now
+Nes = None  # Wrong for now
 
 pref = sys.argv[1]
 
@@ -609,21 +610,25 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs, suff):
     #fig.savefig("output/compare-correction-%s-%d-%s.png" % (model, N0, suff))
 
 
-def do_table_ci(case, dir_pref, modelN0s, nsnps, nindivs, ci_percentile=50.0):
+def do_table_ci(Nbs, case, dir_pref, modelN0s, nsnps,
+                nindivs, ci_percentile=50.0, flex_nb=False):
     cohort = "Newb"
     w = open(dir_pref + "/table-ci-%d-%d-%.1f.txt" % (
         nsnps, nindivs, ci_percentile), "w")
     w.write('Standard deviations problematic because of infinites\n')
     w.write("Corr Model Nb N1 J median mean stdDev percTopCI meanTopCI stdDevTopCI aboveTop medianTopErr percBotCI meanBotCI stdDevBotCI belowBot medianBotErr\n")
+    medians = {}
     for bname, model, N0 in modelN0s:
-        nb = Nbs[(model, N0)]
+        nb_ = Nbs[(model, N0)]
+        if flex_nb:
+            top_nb = nb_ + 2 * math.sqrt(nb_ / 2)
+            bottom_nb = nb_ - 2 * math.sqrt(nb_ / 2)
+        else:
+            top_nb = nb_
+            bottom_nb = nb_
         vals, ci, r2, sr2, j, ssize = \
             case[cohort][(model, N0)][(None, nindivs, nsnps, "SNP")]
-        errs = []
-        for v in vals:
-            perc_err = abs(v - nb) / nb
-            errs.append(perc_err)
-        print(bname, model, N0, nb, np.median(errs))
+        print(bname, model, N0, top_nb, nb_, bottom_nb)
         for has_corr, corrections in get_corrs(N0, bname, nindivs,
                                                vals, ci, r2, sr2, j):
             cvals, cci = corrections
@@ -633,18 +638,18 @@ def do_table_ci(case, dir_pref, modelN0s, nsnps, nindivs, ci_percentile=50.0):
                 tops, bottoms = zip(*cci)
                 topProb = botProb = 0
                 for bottom in bottoms:
-                    if bottom is None or bottom > nb:
+                    if bottom is None or bottom > top_nb:
                         botProb += 1
                         botErr[0] += 1
-                        botErr[1] += bottom - nb if bottom is not None else nb
+                        botErr[1] += bottom - top_nb if bottom is not None else top_nb
                 for top in tops:
-                    if top is None or top < nb or top > 100000:
+                    if top is None or top < bottom_nb or top > 100000:
                         topProb += 1
                         if top is None:
                             top = 100000
-                        if top < nb:
+                        if top < bottom_nb:
                             topErr[0] += 1
-                            topErr[1] += nb - top
+                            topErr[1] += bottom_nb - top
                 topMean = np.mean([x for x in tops if x is not None])
                 botMean = np.mean([x for x in bottoms if x is not None])
                 topMedian = np.percentile([x if x is not None else 100000
@@ -661,13 +666,16 @@ def do_table_ci(case, dir_pref, modelN0s, nsnps, nindivs, ci_percentile=50.0):
                 botProb *= 100
             else:
                 topMedian = botMedian = topProb = botProb = topMean = botMean = topStd = botStd = "NA"
-            w.write(' '.join([str(x) for x in [has_corr, bname, nb, N0, np.median(j),
+            w.write(' '.join([str(x) for x in [has_corr, bname, nb_, N0, np.median(j),
                               np.median(cvals), np.mean(cvals), np.std(cvals),
                               topMedian, topMean, topStd, topProb,
                               np.median(topErr[1]), botMedian, botMean,
                               botStd, botProb, np.median(botErr[1])]]))
             w.write('\n')
+            if has_corr == 'NbNe':
+                medians[(model, N0)] = nb_, np.median(cvals)
     w.close()
+    return medians
 
 
 def do_all_nb_ne():
