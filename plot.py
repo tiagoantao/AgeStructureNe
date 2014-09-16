@@ -164,6 +164,7 @@ def do_cohort(case, model, N0, nindiv, corr_name):
     ax.plot([1 + x for x in range(len(bottoms))], bottoms, "rx")
     ax.plot([1 + x for x in range(len(hmeans))], hmeans, "k+")
     #fig.savefig("output/cohort-%s-%s-%d.png" % (model, corr_name, N0))
+    return fig
 
 
 def do_rel(case, model, N0, nindiv, corr_name):
@@ -208,6 +209,7 @@ def do_rel(case, model, N0, nindiv, corr_name):
     ax.set_xticks(1 + np.arange(len(labels)))
     ax.set_xticklabels(labels)
     #fig.savefig("output/rel-%s-%d.png" % (model, N0))
+    return fig
 
 
 def do_nb_comp(case):
@@ -604,6 +606,7 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs, suff):
             plot_case(axs[i, j], n_indivs, n_snps)
     f.tight_layout()
     #fig.savefig("output/compare-correction-%s-%d-%s.png" % (model, N0, suff))
+    return fig
 
 
 def do_table_ci(Nbs, case, dir_pref, modelN0s, nsnps,
@@ -803,7 +806,7 @@ def do_nb_linear(case, models, name, fun):
         print(model, n0, case["Newb"][(model, n0)].keys())
         vals, ci, r2, sr2, j, ssize = \
             case["Newb"][(model, n0)][(None, nindivs, 100, "SNP")]
-        vals, ci = fun(get_bname(model), nindivs, vals, ci)
+        vals, ci = fun(n0, get_bname(model), nindivs, vals, ci)
         if len(vals) == 0:
             continue
         bottom, top = zip(*ci)
