@@ -254,7 +254,7 @@ def do_lt_comp(case, nb, strat, corr_name):
                 continue
             vals, ci, r2, sr2, j, ssize = \
                 case[strat][(model, n0)][(None, 50, 100, "SNP")]
-            for cname, corrections in get_corrs(N0, name, nindiv, vals,
+            for cname, corrections in get_corrs(n0, name, nindiv, vals,
                                                 ci, r2, sr2, j):
                 if cname != corr_name:
                     continue
