@@ -803,10 +803,10 @@ def do_nb_linear(case, models, name, fun):
     nindivs = 50
     for model, n0 in models:
         nb = Nbs[(model, n0)]
-        print(model, n0, case["Newb"][(model, n0)].keys())
         vals, ci, r2, sr2, j, ssize = \
             case["Newb"][(model, n0)][(None, nindivs, 100, "SNP")]
-        vals, ci = fun(n0, get_bname(model), nindivs, vals, ci)
+        vals, ci = fun(n0, get_bname(model), nindivs, vals, ci,
+                       r2=r2, sr2=sr2, j=j)
         if len(vals) == 0:
             continue
         bottom, top = zip(*ci)
