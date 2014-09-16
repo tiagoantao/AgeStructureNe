@@ -108,9 +108,9 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
     sns.boxplot(box_vals, notch=0, sym="")
     ax.set_xticks(1 + np.arange(len(labels)))
     ax.set_xticklabels(labels, rotation="vertical")
-    ax.plot([1 + x for x in range(len(tops))], tops, "r.", ms=20)
-    ax.plot([1 + x for x in range(len(bottoms))], bottoms, "r.", ms=20)
-    ax.plot([1 + x for x in range(len(hmeans))], hmeans, "r.", ms=20)
+    #ax.plot([1 + x for x in range(len(tops))], tops, "r.", ms=20)
+    #ax.plot([1 + x for x in range(len(bottoms))], bottoms, "r.", ms=20)
+    #ax.plot([1 + x for x in range(len(hmeans))], hmeans, "r.", ms=20)
     #fig.savefig("output/%s%s-%s-%d.png" % (pref, cohort, corr_name, N0))
     return fig
 
@@ -279,9 +279,9 @@ def do_lt_comp(case, nb, strat, corr_name):
                 box_vals.append([])
                 bottoms.append(None)
     sns.violinplot(box_vals, notch=0, sym="", ax=ax, alpha=0.9)
-    ax.plot([1 + x for x in range(len(tops))], tops, 'r.', ms=20)
-    ax.plot([1 + x for x in range(len(bottoms))], bottoms, "r.", ms=20)
-    ax.plot([1 + x for x in range(len(hmeans))], hmeans, "k.", ms=20)
+    #ax.plot([1 + x for x in range(len(tops))], tops, 'r.', ms=20)
+    #ax.plot([1 + x for x in range(len(bottoms))], bottoms, "r.", ms=20)
+    #ax.plot([1 + x for x in range(len(hmeans))], hmeans, "k.", ms=20)
     ymin, ymax = ax.get_ylim()
     plt.ylabel("$\hat{N}_{e}$")
     plt.ylim(ymin, min([ymax, 3 * nb]))
@@ -560,12 +560,8 @@ def do_nb_ne(model, N0, rep):
 
 def compare_correction_ci(case, model, N0, all_snps, all_indivs, suff):
     cohort = "Newb"
-    f, axs = plt.subplots(len(all_snps), len(all_indivs),
+    f, axs = plt.subplots(len(all_snps), len(all_indivs), squeeze=False,
                           sharex=True, sharey=True, figsize=(30, 20))
-    if len(all_snps) == 1:
-        axs = [axs]
-    if len(all_indivs) == 1:
-        axs = [[x] for x in axs]  # This is ridiculous, silly
     bname = get_bname(model)
     Nb = Nbs[(model, N0)]
 
@@ -590,10 +586,10 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs, suff):
             belowBottom = len([x for x in bottoms if x is None or x > Nb])
             ax.text(i + 1, top_y, "%.1f" % (100 * aboveTop / len(tops)),
                     va='top', ha='center', rotation='vertical',
-                    backgroundcolor='white')
+                    backgroundcolor='white', size='xx-large')
             ax.text(i + 1, 0, "%.1f" % (100 * belowBottom / len(bottoms)),
                     va='bottom', ha='center', rotation='vertical',
-                    backgroundcolor='white')
+                    backgroundcolor='white', size='xx-large')
             i += 1
         sns.boxplot(top_box_vals, ax=ax)
         sns.boxplot(bottom_box_vals, ax=ax)
@@ -605,7 +601,7 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs, suff):
                 ha='left', size='xx-large')
     for i, n_snps in enumerate(all_snps):
         for j, n_indivs in enumerate(all_indivs):
-            plot_case(axs[i][j], n_indivs, n_snps)
+            plot_case(axs[i, j], n_indivs, n_snps)
     f.tight_layout()
     #fig.savefig("output/compare-correction-%s-%d-%s.png" % (model, N0, suff))
 
