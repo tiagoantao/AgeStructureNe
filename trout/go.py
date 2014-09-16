@@ -18,7 +18,7 @@ else:
     gens = 1000
 
 # loci, indivs
-sampleStratsMSAT = False, [)]
+sampleStratsMSAT = False, []
 sampleStratsSNP = True, [(100, 50)]
 #fig2
 #sampleStratsMSAT = False, [(15, 15), (15, 25), (15, 50), (15, 100),
