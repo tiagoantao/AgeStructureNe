@@ -566,6 +566,8 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs):
                           sharex=True, sharey=True, figsize=(30, 20))
     bname = get_bname(model)
     Nb = Nbs[(model, N0)]
+    top_flex_nb = Nb + 2 * math.sqrt(Nb / 2)
+    bottom_flex_nb = Nb - 2 * math.sqrt(Nb / 2)
 
     def plot_case(ax, nindivs, nsnps):
         case[cohort][(model, N0)][(None, nindivs, nsnps, "SNP")]
@@ -586,12 +588,22 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs):
             bottom_box_vals.append(bottoms)
             aboveTop = len([x for x in tops if x is not None and x < Nb])
             belowBottom = len([x for x in bottoms if x is None or x > Nb])
-            ax.text(i + 1, top_y, "%.1f" % (100 * aboveTop / len(tops)),
-                    va='top', ha='center', rotation='vertical',
-                    backgroundcolor='white', size='xx-large')
-            ax.text(i + 1, 0, "%.1f" % (100 * belowBottom / len(bottoms)),
-                    va='bottom', ha='center', rotation='vertical',
-                    backgroundcolor='white', size='xx-large')
+            ax.text(i + 1.1, top_y, "%.1f" % (100 * aboveTop / len(tops)),
+                    va='top', ha='left', rotation='vertical',
+                    backgroundcolor='white', size=24)
+            ax.text(i + 1.1, 0, "%.1f" % (100 * belowBottom / len(bottoms)),
+                    va='bottom', ha='left', rotation='vertical',
+                    backgroundcolor='white', size=24)
+            aboveFlexTop = len([x for x in tops if x is not None and x <
+                                bottom_flex_nb])
+            belowFlexBottom = len([x for x in bottoms if x is None or x >
+                                   top_flex_nb])
+            ax.text(i + 0.9, top_y, "%.1f" % (100 * aboveFlexTop / len(tops)),
+                    va='top', ha='right', rotation='vertical',
+                    backgroundcolor='white', size=24)
+            ax.text(i + 0.9, 0, "%.1f" % (100 * belowFlexBottom / len(bottoms)),
+                    va='bottom', ha='right', rotation='vertical',
+                    backgroundcolor='white', size=24)
             i += 1
         sns.boxplot(top_box_vals, ax=ax)
         sns.boxplot(bottom_box_vals, ax=ax)
@@ -599,8 +611,8 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs):
         ax.set_xticks(ind + 1)
         ax.set_xticklabels(corr_names, rotation="vertical")
         ax.set_ylim(0, top_y)
-        ax.text(1, 0, 'inds=%d snps=%d' % (nindivs, nsnps),
-                ha='left', size='xx-large')
+        ax.text(1, Nb, 'inds=%d snps=%d' % (nindivs, nsnps),
+                ha='right', va='center', size=36, rotation='vertical')
     for i, n_snps in enumerate(all_snps):
         for j, n_indivs in enumerate(all_indivs):
             try:
