@@ -560,7 +560,7 @@ def do_nb_ne(model, N0, rep):
     return median, basics, nbcomps, necomps, harmcomps, vals, in_naive, in_corr
 
 
-def compare_correction_ci(case, model, N0, all_snps, all_indivs, suff):
+def compare_correction_ci(case, model, N0, all_snps, all_indivs):
     cohort = "Newb"
     f, axs = plt.subplots(len(all_snps), len(all_indivs), squeeze=False,
                           sharex=True, sharey=True, figsize=(30, 20))
@@ -603,10 +603,13 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs, suff):
                 ha='left', size='xx-large')
     for i, n_snps in enumerate(all_snps):
         for j, n_indivs in enumerate(all_indivs):
-            plot_case(axs[i, j], n_indivs, n_snps)
+            try:
+                plot_case(axs[i, j], n_indivs, n_snps)
+            except KeyError:
+                pass  # Might be ok for Nb < sample size
     f.tight_layout()
     #fig.savefig("output/compare-correction-%s-%d-%s.png" % (model, N0, suff))
-    return fig
+    return f
 
 
 def do_table_ci(Nbs, case, dir_pref, modelN0s, nsnps,
