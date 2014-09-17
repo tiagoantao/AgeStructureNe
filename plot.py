@@ -611,11 +611,11 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs):
         sns.boxplot(bottom_box_vals, ax=ax)
         ind = np.arange(len(corr_names))
         ax.set_xticks(ind + 1)
-        ax.set_xticklabels(corr_names, rotation="vertical", size=12)
+        ax.set_xticklabels(corr_names, rotation="vertical", size=24)
         ax.set_ylim(0, top_y)
         yticks = [0, Nb / 2, Nb, 2 * Nb, 3 * Nb]
         ax.set_yticks(yticks)
-        ax.set_yticklabels([str(x) for x in yticks], size=12)
+        ax.set_yticklabels([str(x) for x in yticks], size=24)
         ax.text(1, Nb, 'inds=%d snps=%d' % (nindivs, nsnps),
                 ha='right', va='center', size=36, rotation='vertical')
     for i, n_snps in enumerate(all_snps):
