@@ -577,6 +577,8 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs):
         top_box_vals = []
         corr_names = []
         ax.axhline(Nb)
+        ax.axhline(top_flex_nb)
+        ax.axhline(bottom_flex_nb)
         i = 0
         top_y = 3 * Nb
         for corr_name, corrections in get_corrs(N0, bname, nindivs, vals, ci, r2,
@@ -588,20 +590,20 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs):
             bottom_box_vals.append(bottoms)
             aboveTop = len([x for x in tops if x is not None and x < Nb])
             belowBottom = len([x for x in bottoms if x is None or x > Nb])
-            ax.text(i + 1.1, top_y, "%.1f" % (100 * aboveTop / len(tops)),
+            ax.text(i + 1.05, top_y, "%.1f" % (100 * aboveTop / len(tops)),
                     va='top', ha='left', rotation='vertical',
                     backgroundcolor='white', size=24)
-            ax.text(i + 1.1, 0, "%.1f" % (100 * belowBottom / len(bottoms)),
+            ax.text(i + 1.05, 0, "%.1f" % (100 * belowBottom / len(bottoms)),
                     va='bottom', ha='left', rotation='vertical',
                     backgroundcolor='white', size=24)
             aboveFlexTop = len([x for x in tops if x is not None and x <
                                 bottom_flex_nb])
             belowFlexBottom = len([x for x in bottoms if x is None or x >
                                    top_flex_nb])
-            ax.text(i + 0.9, top_y, "%.1f" % (100 * aboveFlexTop / len(tops)),
+            ax.text(i + 0.95, top_y, "%.1f" % (100 * aboveFlexTop / len(tops)),
                     va='top', ha='right', rotation='vertical',
                     backgroundcolor='white', size=24)
-            ax.text(i + 0.9, 0, "%.1f" % (100 * belowFlexBottom / len(bottoms)),
+            ax.text(i + 0.95, 0, "%.1f" % (100 * belowFlexBottom / len(bottoms)),
                     va='bottom', ha='right', rotation='vertical',
                     backgroundcolor='white', size=24)
             i += 1
