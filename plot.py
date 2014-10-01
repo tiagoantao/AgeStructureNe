@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 
 from trout import Nbs, nindivs, nlocis, cohorts, NbNames, cuts, load_file
 from trout import pcrits, dataDir, realNbs, get_corrs, correct_ci, nsnps
-from trout import get_bname
+from trout import get_bname, nb_corrs
 Nes = None  # Wrong for now
 
 pref = sys.argv[1]
@@ -243,6 +243,7 @@ def do_lt_comp(case, nb, strat, corr_name):
     labels = []
     n0s = list(Nbs.keys())
     n0s.sort()
+    ratios = []
     ax.set_title("Nb: %d - %s sampled - 100 SNPs - 50 indivs - %s corr" % (
         nb, strat, corr_name))
     for pref, name in NbNames:
@@ -264,6 +265,7 @@ def do_lt_comp(case, nb, strat, corr_name):
                 vals = cvals
                 ci = cci
                 break
+            ratios.append(nb_corrs[name][n0])
             hmeans.append(hmean(vals))
             try:
                 top, bottom = zip(*ci)
@@ -285,9 +287,11 @@ def do_lt_comp(case, nb, strat, corr_name):
     #ax.plot([1 + x for x in range(len(bottoms))], bottoms, "r.", ms=20)
     #ax.plot([1 + x for x in range(len(hmeans))], hmeans, "k.", ms=20)
     ymin, ymax = ax.get_ylim()
-    plt.ylabel("$\hat{N}_{e}$")
-    plt.ylim(ymin, min([ymax, 3 * nb]))
-    plt.axhline(nb, color="k", lw=0.3)
+    ax.set_ylabel("$\hat{N}_{e}$")
+    ax.set_ylim(ymin, min([ymax, 3 * nb]))
+    for i, ratio in enumerate(ratios):
+        ax.text(i + 1, 3 * nb, '%.2f' % ratio, ha='center', va='top')
+    ax.axhline(nb, color="k", lw=0.3)
     ax.set_xticks(range(1, 1 + len(labels)))
     ax.set_xticklabels(labels)
     #plt.savefig("output/lt-comp-%s-%s-%d.png" % (corr_name, strat, nb))
