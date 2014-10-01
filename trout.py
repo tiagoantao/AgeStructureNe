@@ -21,7 +21,7 @@ Nbs = {('bulltrout', 86): 25, ('bulltrout', 174): 50,
        ('mosquito', 102): 25, ('mosquito', 167): 40,
        ('mosquito', 210): 50, ('mosquito', 428): 100,
        ('synseaweed', 81): 20, ('synseaweed', 164): 40,
-       ('synseaweed', 207): 50,
+       ('synseaweed', 207): 50, ('synseaweed', 222),
        #('sagegrouse', 28): 100, ('sagegrouse', 14): 50,
        }
 NbNames = [("bulltrout", "BuTrout"), ("bullpred", "BuPred"), ("bullt2", "BuLong"),
@@ -50,7 +50,8 @@ nb_corrs = {"BuTrout": {86: 0.7993630573, 174: 0.7908082409,
             'Mosq': {102: 0.2835990888, 167: 0.2835990888,
                      210: 0.2773763202, 428: 0.2735229759
                      },
-            'SynSweed': {81: 1.3673469388, 164: 1.3468013468, 207: 1.336},
+            'SynSweed': {81: 1.3673469388, 164: 1.3468013468, 207: 1.336,
+                         422: 1.309},
             #'SGrouse': 1.694,
             }
 
