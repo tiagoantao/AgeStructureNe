@@ -18,6 +18,7 @@ else:
 myDir = varConfFile.split("/")[0]
 
 lexec = Executor.Local(-multiprocessing.cpu_count())
+#lexec = Executor.Local(-10)
 
 N0, sampCohort, sampSize, sampSNP, numGens, reps, dataDir = myUtils.getVarConf(varConfFile)
 

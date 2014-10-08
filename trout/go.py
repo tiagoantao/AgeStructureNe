@@ -12,17 +12,20 @@ agecond = sys.argv[5]
 DDIR = "../data/trout"
 # N1modelAgeIndivsLoci-rep
 
-gens = 1000
+if model.endswith('mosquito'):
+    gens = 5000
+else:
+    gens = 1000
 
 # loci, indivs
-sampleStratsLoci = False, [(10, 50), (15, 50), (25, 50), (50, 50), (100, 50)]
-sampleStratsLoci = False, []
-sampleStratsLociSNP = True, [(100, 50), (200, 50), (400, 50)]
-sampleStratsLociSNP = True, []
-sampleStratsIndivs = False, [(15, 15), (15, 25), (15, 50), (15, 100)]
-sampleStratsIndivs = False, []
-sampleStratsIndivsSNP = True, [(100, 15), (100, 25), (100, 50), (100, 100)]
-sampleStratsIndivsSNP = True, [(100, 50)]
+sampleStratsMSAT = False, []
+sampleStratsSNP = True, [(100, 50)]
+#fig2
+#sampleStratsMSAT = False, [(15, 15), (15, 25), (15, 50), (15, 100),
+#                           (100, 15), (100, 25), (100, 50), (100, 100)]
+#sampleStratsIndivsSNP = True, [(100, 15), (100, 25), (100, 50), (100, 100),
+#                               (200, 15), (200, 25), (200, 50), (200, 100),
+#                               (400, 15), (400, 25), (400, 50), (400, 100)]
 
 myd = {"DDIR": DDIR, "MODEL": model,
        "AGECOND": agecond, "AGEDESC": agedesc, "GENS": gens}
@@ -32,8 +35,6 @@ for rep in range(reps, repe):
     print("REP", rep)
     myd["rep"] = rep
     if agedesc in ["c2c", "c3c"]:
-        if model not in ["180bulltrout", "361bulltrout"]:
-            continue
         myd["thres"] = 0.011
         myd["nindivs"] = 50
         myd["nloci"] = 15
@@ -48,7 +49,7 @@ for rep in range(reps, repe):
         myd["nloci"] = 100
         os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivs.py "{AGECOND}" {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ne2.py {thres} > ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep} 2> ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep}.r2'.format(**myd))
     else:
-        for isSNP, strat in [sampleStratsLociSNP, sampleStratsIndivsSNP, sampleStratsLoci, sampleStratsIndivs]:
+        for isSNP, strat in [sampleStratsSNP, sampleStratsMSAT]:
             isMSAT = not isSNP
             for nloci, nindivs in strat:
                 print(nloci, nindivs, isSNP)
