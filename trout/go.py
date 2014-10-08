@@ -12,7 +12,7 @@ agecond = sys.argv[5]
 DDIR = "../data/trout"
 # N1modelAgeIndivsLoci-rep
 
-if model.endswith('mosquito'):
+if model.endswith('mosquito') or model.endswith('weed'):
     gens = 5000
 else:
     gens = 1000
@@ -73,7 +73,7 @@ for rep in range(reps, repe):
                         os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivsRelated.py 20 {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 100|python ../ne2.py {thres} > ldout/{MODEL}All{nindivs}{nloci}-rel-{rep} 2> ldout/{MODEL}All{nindivs}{nloci}-rel-{rep}.r2'.format(**myd))
                     else:
                         os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivsRelated.py 20 {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ne2.py {thres} > ldout/{MODEL}All{nindivs}{nloci}-snp-rel-{rep} 2> ldout/{MODEL}All{nindivs}{nloci}-snp-rel-{rep}.r2'.format(**myd))
-                # Thresholds
+                # pcrit Thresholds
                 #if nindivs == 50 and isSNP:
                 if False:
                     for thres in [0.021, 0.035, 0.05, 0.1]:

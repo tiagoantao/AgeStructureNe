@@ -43,7 +43,7 @@ for loc, ltype in [(0, "MSAT"), (100, "SNP")]:
         #do_hz("grizzly", ltype, loc, [23, 46])
         #do_hz("sagegrouse", ltype, loc, [28, 14])
         #do_hz("seaweed", ltype, loc, [70, 35])
-        do_hz("synseaweed", ltype, loc, [81, 164, 207])
+        do_hz("synseaweed", ltype, loc, [81, 164, 207, 422])
         do_hz("mosquito", ltype, loc, [102, 167, 210, 428])
         do_hz("bullt2", ltype, loc, [606, 1214, 1822, 2433, 3040, 4565, 6090])
 shutil.move("hz-cut.html", "output/hz-cut.html")

@@ -66,7 +66,7 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
                 bottoms.append(None)
             box_vals.append(vals)
             hmeans.append(hmean([x for x in vals if x > 0]))
-            labels.append("%dMS" % nloci)
+            labels.append("%d MSAT" % nloci)
         for nsnp in nsnps:
             try:
                 vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindiv, nsnp, "SNP")]
@@ -96,11 +96,11 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
             box_vals.append(vals)
             hmeans.append(hmean([x for x in vals if x > 0]))
             #Check above
-            labels.append("%d" % nsnp)
+            labels.append("%d SNP" % nsnp)
         pos = len(labels)
         ax.axvline(pos + 0.5, color="k", lw=0.2)
-        ax.text(pos - 0.5, 0, "%d Indivs" % nindiv,
-                ha="center", va="bottom", size="small",
+        ax.text(pos, Nbs[(model, N0)] * 3, "%d Indivs" % nindiv,
+                ha="right", va="top", size="large",
                 rotation="horizontal")
     ax.set_ylabel("$\hat{N}_{e}$")
     ax.set_ylim(0, Nbs[(model, N0)] * 3)
@@ -244,8 +244,9 @@ def do_lt_comp(case, nb, strat, corr_name):
     n0s = list(Nbs.keys())
     n0s.sort()
     ratios = []
-    ax.set_title("Nb: %d - %s sampled - 100 SNPs - 50 indivs - %s corr" % (
-        nb, strat, corr_name))
+    #ax.set_title("Nb: %d - %s sampled - 100 SNPs - 50 indivs - %s corr" % (
+    #    nb, strat, corr_name))
+    ax.set_title("Nb=%d - Correction: %s" % (nb, corr_name))
     for pref, name in NbNames:
         if name == "Restr":
             continue
