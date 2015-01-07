@@ -27,11 +27,12 @@ pref = sys.argv[1]
 
 
 def do_nb(case, cohort, N0, nsnps, pref, corr_name):
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(16, 9))
     model = 'bulltrout'
     bname = get_bname(model)
     fig.suptitle("Nb: %d (N1: %d) - cohort %s - %s" % (Nbs[model, N0],
-                                                       N0, cohort, corr_name))
+                                                       N0, cohort, corr_name),
+                 fontsize=18)
     box_vals = []
     tops = []
     bottoms = []
@@ -100,26 +101,31 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
         pos = len(labels)
         ax.axvline(pos + 0.5, color="k", lw=0.2)
         ax.text(pos, Nbs[(model, N0)] * 3, "%d Indivs" % nindiv,
-                ha="right", va="top", size="large",
+                ha="right", va="top", fontsize=16,
                 rotation="horizontal")
-    ax.set_ylabel("$\hat{N}_{e}$")
-    ax.set_ylim(0, Nbs[(model, N0)] * 3)
-    ax.axhline(Nbs[(model, N0)], color="k", lw=0.3)
+    ax.set_ylabel("$\hat{N}_{e}$", fontsize=16)
+    nb = Nbs[(model, N0)]
+    ax.set_ylim(0, nb * 3)
+    ax.axhline(nb, color="k", lw=0.3)
     sns.boxplot(box_vals, notch=0, sym="")
     ax.set_xticks(1 + np.arange(len(labels)))
-    ax.set_xticklabels(labels, rotation="vertical")
+    ax.set_xticklabels(labels, rotation="vertical", fontsize=14)
     #ax.plot([1 + x for x in range(len(tops))], tops, "r.", ms=20)
     #ax.plot([1 + x for x in range(len(bottoms))], bottoms, "r.", ms=20)
     #ax.plot([1 + x for x in range(len(hmeans))], hmeans, "r.", ms=20)
     #fig.savefig("output/%s%s-%s-%d.png" % (pref, cohort, corr_name, N0))
+    yticks = [0, nb // 2, nb, 2 * nb, 3 * nb]
+    ax.set_yticks(yticks)
+    ax.set_yticklabels([str(y) for y in yticks], fontsize=14)
     return fig
 
 
 def do_cohort(case, model, N0, nindiv, corr_name):
     last = 0.5
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(16, 9))
+    nb = Nbs[(model, N0)]
     fig.suptitle("Nb: %d (N1: %d) - different cohorts - 100 SNPs -%s" %
-                (Nbs[(model, N0)], N0, corr_name))
+                (nb, N0, corr_name), fontsize=18)
     box_vals = []
     labels = []
     tops = []
@@ -128,7 +134,6 @@ def do_cohort(case, model, N0, nindiv, corr_name):
     bname = get_bname(model)
 
     for cohort in cohorts:
-        print(cohort, model, N0)
         vals, ci, r2, sr2, j, ssize = \
             case[cohort][(model, N0)][(None, nindiv, 100, "SNP")]
         for cname, corrections in get_corrs(N0, bname, nindiv, vals,
@@ -146,7 +151,12 @@ def do_cohort(case, model, N0, nindiv, corr_name):
         bottom = [100000 if x is None else x for x in bottom]
         tops.append(np.percentile(top, 90))
         bottoms.append(np.percentile(bottom, 10))
-        labels.append("%s" % cohort)
+        if cohort == 'c2c':
+            labels.append("2 cohorts")
+        elif cohort == 'c3c':
+            labels.append("3 cohorts")
+        else:
+            labels.append("%s" % cohort)
         if cohort == cohorts[-1]:
             pos = len(labels) + 0.5
             ax.axvline(pos, color="k", lw=0.2)
@@ -154,15 +164,18 @@ def do_cohort(case, model, N0, nindiv, corr_name):
                     ha="center", va="bottom", size="small",
                     rotation="horizontal")
             last = pos
-    ax.set_ylim(0, Nbs[(model, N0)] * 3)
-    ax.set_ylabel("$\hat{N}_{e}$")
-    ax.axhline(Nbs[(model, N0)], color="k", lw=0.3)
+    ax.set_ylim(0, nb * 3)
+    ax.set_ylabel("$\hat{N}_{e}$, fontsize=16")
+    ax.axhline(nb, color="k", lw=0.3)
     sns.boxplot(box_vals, notch=0, sym="")
     ax.set_xticks(1 + np.arange(len(labels)))
-    ax.set_xticklabels(labels)
+    ax.set_xticklabels(labels, fontsize=14)
     ax.plot([1 + x for x in range(len(tops))], tops, "rx")
     ax.plot([1 + x for x in range(len(bottoms))], bottoms, "rx")
     ax.plot([1 + x for x in range(len(hmeans))], hmeans, "k+")
+    yticks = [0, nb // 2, nb, 2 * nb, 3 * nb]
+    ax.set_yticks(yticks)
+    ax.set_yticklabels([str(y) for y in yticks], fontsize=14)
     #fig.savefig("output/cohort-%s-%s-%d.png" % (model, corr_name, N0))
     return fig
 
@@ -234,7 +247,7 @@ def do_nb_comp(case):
 
 
 def do_lt_comp(case, nb, strat, corr_name):
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(16, 9))
     nindiv = 50
     tops = []
     box_vals = []
@@ -246,7 +259,7 @@ def do_lt_comp(case, nb, strat, corr_name):
     ratios = []
     #ax.set_title("Nb: %d - %s sampled - 100 SNPs - 50 indivs - %s corr" % (
     #    nb, strat, corr_name))
-    ax.set_title("Nb=%d - Correction: %s" % (nb, corr_name))
+    ax.set_title("Nb=%d - Correction: %s" % (nb, corr_name), fontsize=18)
     for pref, name in NbNames:
         if name == "Restr":
             continue
@@ -288,13 +301,17 @@ def do_lt_comp(case, nb, strat, corr_name):
     #ax.plot([1 + x for x in range(len(bottoms))], bottoms, "r.", ms=20)
     #ax.plot([1 + x for x in range(len(hmeans))], hmeans, "k.", ms=20)
     ymin, ymax = ax.get_ylim()
-    ax.set_ylabel("$\hat{N}_{e}$")
+    ax.set_ylabel("$\hat{N}_{e}$", fontsize=16)
     ax.set_ylim(ymin, min([ymax, 3 * nb]))
+    yticks = [0, nb // 2, nb, 2 * nb, 3 * nb]
+    ax.set_yticks(yticks)
+    ax.set_yticklabels([str(y) for y in yticks], fontsize=14)
     for i, ratio in enumerate(ratios):
-        ax.text(i + 1, 3 * nb, '%.2f' % ratio, ha='center', va='top')
+        ax.text(i + 1, 3 * nb, '%.2f' % ratio, ha='center', va='top',
+                fontsize=14)
     ax.axhline(nb, color="k", lw=0.3)
     ax.set_xticks(range(1, 1 + len(labels)))
-    ax.set_xticklabels(labels)
+    ax.set_xticklabels(labels, fontsize=16)
     #plt.savefig("output/lt-comp-%s-%s-%d.png" % (corr_name, strat, nb))
     return fig
 
@@ -516,9 +533,10 @@ def do_nb_ne(model, N0, rep):
     in_naive, in_corr = 0, 0
     start_year, vals = realNbs[model, N0][rep]
     nes, cis = fetch_nes(model, N0, rep, "Newb")
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(16, 9))
     fig.suptitle("%s N1: %d Nb: %d Ne: %.2f" % (model, N0,
-                                                Nbs[(model, N0)], Nes[N0]))
+                                                Nbs[(model, N0)], Nes[N0]),
+                 fontsize=18)
     ax.plot(vals[start_year:start_year + points], "+")
     shift = 1
     myNes = nes[start_year + shift:start_year + shift + 100]
@@ -568,7 +586,7 @@ def do_nb_ne(model, N0, rep):
 def compare_correction_ci(case, model, N0, all_snps, all_indivs):
     cohort = "Newb"
     f, axs = plt.subplots(len(all_snps), len(all_indivs), squeeze=False,
-                          sharex=True, sharey=True, figsize=(30, 20))
+                          sharex=True, sharey=True, figsize=(20, 16))
     bname = get_bname(model)
     Nb = Nbs[(model, N0)]
     top_flex_nb = Nb + 2 * math.sqrt(Nb / 2)
@@ -597,20 +615,20 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs):
             belowBottom = len([x for x in bottoms if x is None or x > Nb])
             ax.text(i + 1.05, top_y, "%.1f" % (100 * aboveTop / len(tops)),
                     va='top', ha='left', rotation='vertical',
-                    backgroundcolor='white', size=24)
+                    backgroundcolor='white', size=16)
             ax.text(i + 1.05, 0, "%.1f" % (100 * belowBottom / len(bottoms)),
                     va='bottom', ha='left', rotation='vertical',
-                    backgroundcolor='white', size=24)
+                    backgroundcolor='white', size=16)
             aboveFlexTop = len([x for x in tops if x is not None and x <
                                 bottom_flex_nb])
             belowFlexBottom = len([x for x in bottoms if x is None or x >
                                    top_flex_nb])
             ax.text(i + 0.95, top_y, "%.1f" % (100 * aboveFlexTop / len(tops)),
                     va='top', ha='right', rotation='vertical',
-                    backgroundcolor='white', size=24)
+                    backgroundcolor='white', size=16)
             ax.text(i + 0.95, 0, "%.1f" % (100 * belowFlexBottom / len(bottoms)),
                     va='bottom', ha='right', rotation='vertical',
-                    backgroundcolor='white', size=24)
+                    backgroundcolor='white', size=16)
             i += 1
         sns.boxplot(top_box_vals, ax=ax)
         sns.boxplot(bottom_box_vals, ax=ax)
