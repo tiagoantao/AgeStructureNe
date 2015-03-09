@@ -24,7 +24,7 @@ Nbs = {('bulltrout', 86): 25, ('bulltrout', 174): 50,
        ('synseaweed', 207): 50, ('synseaweed', 422): 100
        #('sagegrouse', 28): 100, ('sagegrouse', 14): 50,
        }
-NbNames = [("bulltrout", "BT-Trout"), ("bullpred", "BT-Pred"),
+NbNames = [("bulltrout", "BT-Std"), ("bullpred", "BT-Pred"),
            ("bullt2", "BT-Long"),
            ("shepard", "WCT-S"), ("fraley", "WCT-F"), ('restricted', "Restr"),
            ('mosquito', 'Mosq'), ('grizzly', 'Griz'), ('wfrog', 'WFrog'),
@@ -36,7 +36,7 @@ cuts = [0.45, 0.4, 0.35, 0.3, 0.25]
 
 realNbs = {}
 
-nb_corrs = {"BT-Trout": {86: 0.7993630573, 174: 0.7908082409,
+nb_corrs = {"BT-Std": {86: 0.7993630573, 174: 0.7908082409,
                          353: 0.7849293564, 713: 0.7798129384},
             "BT-Long": {606: 0.78125, 1214: 0.78125, 1822: 0.78125,
                         2433: 0.7797270955, 3040: 0.7800312012,

@@ -147,7 +147,7 @@ end.
 Run:
 python analyzeHz.py trout
 
-No do:
+Now do:
 python sumTrout.py trout/var.conf trt
 
 Notebooks are now ready to be used.

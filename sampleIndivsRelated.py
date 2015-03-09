@@ -23,7 +23,7 @@ l = stdin.readline()
 currGen = 0
 
 
-def getBrothasAndSistas(sameParents, todo):
+def getSibs(sameParents, todo):
     rels = []
     done_parents = []
     while todo > 0:
@@ -66,7 +66,7 @@ while l != "":
 
     if gen > currGen:
         if currGen >= startGen:
-            relateds = getBrothasAndSistas(sameParents, frac * nindivs)
+            relateds = getSibs(sameParents, frac * nindivs)
             for related in relateds:
                 indivs.remove(related)
             if nindivs:
@@ -87,7 +87,7 @@ while l != "":
     l = stdin.readline()
 
 if currGen <= endGen:
-    relateds = getBrothasAndSistas(sameParents, frac * nindivs)
+    relateds = getSibs(sameParents, frac * nindivs)
     for related in relateds:
         indivs.remove(related)
     if nindivs:

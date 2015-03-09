@@ -65,14 +65,15 @@ for rep in range(reps, repe):
                 if isMSAT:
                     os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivs.py "{AGECOND}" {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 100|python ../ne2.py {thres} > ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-{rep} 2> ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-{rep}.r2'.format(**myd))
                 else:
-                    os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivs.py "{AGECOND}" {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ne2.py {thres} > ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep} 2> ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep}.r2'.format(**myd))
+                    pass
+                    #os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivs.py "{AGECOND}" {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ne2.py {thres} > ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep} 2> ldout/{MODEL}{AGEDESC}{nindivs}{nloci}-snp-{rep}.r2'.format(**myd))
                 # related individuals
                 #if nindivs == 50:
-                if False:
+                if True:
                     if isMSAT:
-                        os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivsRelated.py 20 {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 100|python ../ne2.py {thres} > ldout/{MODEL}All{nindivs}{nloci}-rel-{rep} 2> ldout/{MODEL}All{nindivs}{nloci}-rel-{rep}.r2'.format(**myd))
+                        os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivsRelated.py 20 {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 100|python ../ne2.py {thres} > ldout/{MODEL}Newb{nindivs}{nloci}-rel-{rep} 2> ldout/{MODEL}Newb{nindivs}{nloci}-rel-{rep}.r2'.format(**myd))
                     else:
-                        os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivsRelated.py 20 {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ne2.py {thres} > ldout/{MODEL}All{nindivs}{nloci}-snp-rel-{rep} 2> ldout/{MODEL}All{nindivs}{nloci}-snp-rel-{rep}.r2'.format(**myd))
+                        os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivsRelated.py 20 {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ne2.py {thres} > ldout/{MODEL}Newb{nindivs}{nloci}-snp-rel-{rep} 2> ldout/{MODEL}Newb{nindivs}{nloci}-snp-rel-{rep}.r2'.format(**myd))
                 # pcrit Thresholds
                 #if nindivs == 50 and isSNP:
                 if False:

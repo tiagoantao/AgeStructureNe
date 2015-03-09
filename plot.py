@@ -30,9 +30,11 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
     fig, ax = plt.subplots(figsize=(16, 9))
     model = 'bulltrout'
     bname = get_bname(model)
-    fig.suptitle("Nb: %d (N1: %d) - cohort %s - %s" % (Nbs[model, N0],
-                                                       N0, cohort, corr_name),
-                 fontsize=18)
+    #fig.suptitle("Nb: %d (N1: %d) - cohort %s - %s" % (Nbs[model, N0],
+    #                                                   N0, cohort, corr_name),
+    #             fontsize=18)
+    fig.suptitle("Nb: %d" % Nbs[model, N0], fontsize=32)
+    box_vals = []
     box_vals = []
     tops = []
     bottoms = []
@@ -100,16 +102,16 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
             labels.append("%d SNP" % nsnp)
         pos = len(labels)
         ax.axvline(pos + 0.5, color="k", lw=0.2)
-        ax.text(pos, Nbs[(model, N0)] * 3, "%d Indivs" % nindiv,
-                ha="right", va="top", fontsize=16,
+        ax.text(pos, 0 * Nbs[(model, N0)] * 3, "%d Individuals" % nindiv,
+                ha="right", va="bottom", fontsize=16,
                 rotation="horizontal")
-    ax.set_ylabel("$\hat{N}_{e}$", fontsize=16)
+    ax.set_ylabel("$\hat{N}_{e}$", fontsize=32)
     nb = Nbs[(model, N0)]
     ax.set_ylim(0, nb * 3)
     ax.axhline(nb, color="k", lw=0.3)
     sns.boxplot(box_vals, notch=0, sym="")
     ax.set_xticks(1 + np.arange(len(labels)))
-    ax.set_xticklabels(labels, rotation="vertical", fontsize=14)
+    ax.set_xticklabels(labels, rotation=45, fontsize=14)
     #ax.plot([1 + x for x in range(len(tops))], tops, "r.", ms=20)
     #ax.plot([1 + x for x in range(len(bottoms))], bottoms, "r.", ms=20)
     #ax.plot([1 + x for x in range(len(hmeans))], hmeans, "r.", ms=20)
@@ -124,8 +126,10 @@ def do_cohort(case, model, N0, nindiv, corr_name):
     last = 0.5
     fig, ax = plt.subplots(figsize=(16, 9))
     nb = Nbs[(model, N0)]
-    fig.suptitle("Nb: %d (N1: %d) - different cohorts - 100 SNPs -%s" %
-                (nb, N0, corr_name), fontsize=18)
+    #fig.suptitle("Nb: %d (N1: %d) - different cohorts - 100 SNPs -%s" %
+    #            (nb, N0, corr_name), fontsize=18)
+    fig.suptitle("Nb: %d - different cohorts - 100 SNPs - %s" %
+                (nb, corr_name), fontsize=24)
     box_vals = []
     labels = []
     tops = []
@@ -160,16 +164,16 @@ def do_cohort(case, model, N0, nindiv, corr_name):
         if cohort == cohorts[-1]:
             pos = len(labels) + 0.5
             ax.axvline(pos, color="k", lw=0.2)
-            ax.text(last + (pos - last) / 2, 0, "%d Indivs" % nindiv,
-                    ha="center", va="bottom", size="small",
+            ax.text(last + (pos - last) / 2, 0, "%d Individuals sampled" % nindiv,
+                    ha="center", va="bottom", size=24,
                     rotation="horizontal")
             last = pos
     ax.set_ylim(0, nb * 3)
-    ax.set_ylabel("$\hat{N}_{e}$, fontsize=16")
+    ax.set_ylabel('$\hat{N}_{e}$', fontsize=32)
     ax.axhline(nb, color="k", lw=0.3)
     sns.boxplot(box_vals, notch=0, sym="")
     ax.set_xticks(1 + np.arange(len(labels)))
-    ax.set_xticklabels(labels, fontsize=14)
+    ax.set_xticklabels(labels, fontsize=24)
     ax.plot([1 + x for x in range(len(tops))], tops, "rx")
     ax.plot([1 + x for x in range(len(bottoms))], bottoms, "rx")
     ax.plot([1 + x for x in range(len(hmeans))], hmeans, "k+")
@@ -301,17 +305,19 @@ def do_lt_comp(case, nb, strat, corr_name):
     #ax.plot([1 + x for x in range(len(bottoms))], bottoms, "r.", ms=20)
     #ax.plot([1 + x for x in range(len(hmeans))], hmeans, "k.", ms=20)
     ymin, ymax = ax.get_ylim()
-    ax.set_ylabel("$\hat{N}_{e}$", fontsize=16)
+    ax.set_ylabel("$\hat{N}_{e}$", fontsize=32)
     ax.set_ylim(ymin, min([ymax, 3 * nb]))
     yticks = [0, nb // 2, nb, 2 * nb, 3 * nb]
     ax.set_yticks(yticks)
     ax.set_yticklabels([str(y) for y in yticks], fontsize=14)
     for i, ratio in enumerate(ratios):
-        ax.text(i + 1, 3 * nb, '%.2f' % ratio, ha='center', va='top',
+        ax.text(i + 1, 3 * nb * 0, '%.2f' % ratio, ha='center', va='bottom',
                 fontsize=14)
     ax.axhline(nb, color="k", lw=0.3)
     ax.set_xticks(range(1, 1 + len(labels)))
     ax.set_xticklabels(labels, fontsize=16)
+    ax.set_xlabel('Species', fontsize=24)
+    plt.subplots_adjust(top=0.8)
     #plt.savefig("output/lt-comp-%s-%s-%d.png" % (corr_name, strat, nb))
     return fig
 
@@ -376,7 +382,7 @@ def do_hz_comp(pref, mydir, model, N0):
             vals, ci, r2, sr2, j, ssize = case[cohort][
                 (model, N0)][(None, 50, nsnp, "SNP")]
             cutCase[cut][nsnp] = vals, ci, r2, sr2, j, ssize
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(16, 9))
     fig.suptitle("Hz comparison: %s - %d - Newb - SNPs - 50 indivs " % (model, N0))
     box = []
     cnt = 0
@@ -401,7 +407,8 @@ def do_hz_comp(pref, mydir, model, N0):
             box.append(vals)
             cnt += 1
     sns.boxplot(box, notch=0, sym="",)
-    ax.set_ylabel("$\hat{N}_{e}$")
+    ax.set_ylabel("$\hat{N}_{e}$", fontsize=24)
+    ax.set_xlabel('Hz', fontsize=24)
     ax.plot([1 + x for x in range(len(tops))], tops, "rx")
     ax.plot([1 + x for x in range(len(bottoms))], bottoms, "rx")
     ax.plot([1 + x for x in range(len(hmeans))], hmeans, "k+")
@@ -599,13 +606,15 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs):
         bottom_box_vals = []
         top_box_vals = []
         corr_names = []
-        ax.axhline(Nb)
-        ax.axhline(top_flex_nb)
-        ax.axhline(bottom_flex_nb)
+        ax.axhline(Nb, color='k', lw=0.6)
+        ax.axhline(top_flex_nb, color='k', lw=0.3)
+        ax.axhline(bottom_flex_nb, color='k', lw=0.3)
         i = 0
         top_y = 3 * Nb
         for corr_name, corrections in get_corrs(N0, bname, nindivs, vals, ci, r2,
                                                 sr2, j):
+            if corr_name in ['None', 'NbNe0.9']: # , 'NbNe0.01']:
+                continue
             cvals, cci = corrections
             corr_names.append(corr_name)
             tops, bottoms = zip(*cci)
@@ -613,22 +622,23 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs):
             bottom_box_vals.append(bottoms)
             aboveTop = len([x for x in tops if x is not None and x < Nb])
             belowBottom = len([x for x in bottoms if x is None or x > Nb])
-            ax.text(i + 1.05, top_y, "%.1f" % (100 * aboveTop / len(tops)),
-                    va='top', ha='left', rotation='vertical',
-                    backgroundcolor='white', size=16)
-            ax.text(i + 1.05, 0, "%.1f" % (100 * belowBottom / len(bottoms)),
-                    va='bottom', ha='left', rotation='vertical',
-                    backgroundcolor='white', size=16)
+            rot = 'horizontal'
+            ax.text(i + 1.05, top_y, "%.0f" % (100 * aboveTop / len(tops)),
+                    va='top', ha='left', rotation=rot,
+                    backgroundcolor='green', size=24)
+            ax.text(i + 1.05, 0, "%.0f" % (100 * belowBottom / len(bottoms)),
+                    va='bottom', ha='left', rotation=rot,
+                    backgroundcolor='green', size=24)
             aboveFlexTop = len([x for x in tops if x is not None and x <
                                 bottom_flex_nb])
             belowFlexBottom = len([x for x in bottoms if x is None or x >
                                    top_flex_nb])
-            ax.text(i + 0.95, top_y, "%.1f" % (100 * aboveFlexTop / len(tops)),
-                    va='top', ha='right', rotation='vertical',
-                    backgroundcolor='white', size=16)
-            ax.text(i + 0.95, 0, "%.1f" % (100 * belowFlexBottom / len(bottoms)),
-                    va='bottom', ha='right', rotation='vertical',
-                    backgroundcolor='white', size=16)
+            ax.text(i + 0.95, top_y, "%.0f" % (100 * aboveFlexTop / len(tops)),
+                    va='top', ha='right', rotation=rot, color='white',
+                    backgroundcolor='red', size=24)
+            ax.text(i + 0.95, 0, "%.0f" % (100 * belowFlexBottom / len(bottoms)),
+                    va='bottom', ha='right', rotation=rot, color='white',
+                    backgroundcolor='red', size=24)
             i += 1
         sns.boxplot(top_box_vals, ax=ax)
         sns.boxplot(bottom_box_vals, ax=ax)
@@ -639,14 +649,17 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs):
         yticks = [0, Nb / 2, Nb, 2 * Nb, 3 * Nb]
         ax.set_yticks(yticks)
         ax.set_yticklabels([str(x) for x in yticks], size=24)
-        ax.text(1, Nb, 'inds=%d snps=%d' % (nindivs, nsnps),
-                ha='right', va='center', size=36, rotation='vertical')
+        ax.set_ylabel("$\hat{N}_{e}$", fontsize=32)
+        #ax.text(1, Nb, 'inds=%d snps=%d' % (nindivs, nsnps),
+        #        ha='right', va='center', size=36, rotation='vertical')
+        ax.set_title('Sampled individuals: %d' % n_indivs, fontsize=24)
     for i, n_snps in enumerate(all_snps):
         for j, n_indivs in enumerate(all_indivs):
             try:
                 plot_case(axs[i, j], n_indivs, n_snps)
             except KeyError:
                 pass  # Might be ok for Nb < sample size
+    #f.title('Sampled SNPs: %d' % n_snps, fontsize=24)
     f.tight_layout()
     #fig.savefig("output/compare-correction-%s-%d-%s.png" % (model, N0, suff))
     return f
@@ -838,7 +851,7 @@ def do_robin_nb_ne():
 
 
 def do_nb_linear(case, models, name, fun):
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(16, 9))
     nbs = []
     pes = []
     tops = []
@@ -863,6 +876,8 @@ def do_nb_linear(case, models, name, fun):
     ax.set_xticks(1 + np.arange(len(nbs)))
     ax.set_xticklabels([str(nb) for nb in nbs])
     ax.set_ylim(0, max(nbs))
+    ax.set_ylabel("$\hat{N}_{e}$", fontsize=32)
+    ax.set_xlabel("Target (simulated) ${N}_{b}$", fontsize=32)
     #fig.savefig("output/nb-linear-%s.png" % name)
 
 
