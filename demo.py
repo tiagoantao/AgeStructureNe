@@ -6,7 +6,7 @@ import numpy
 import myUtils
 
 if len(sys.argv)!=2:
-    print "python %s varConfFile" % (sys.argv[0], )
+    print "python {0!s} varConfFile".format(sys.argv[0] )
     sys.exit(-1)
 
 confFile = sys.argv[1]
@@ -71,15 +71,15 @@ def acu(fnamer, harit, startGen):
     return ret
 
 def pyr(model, N, startGen):
-    fname = "data/%s/%d%s%%d.demo" % (dataDir, N, model)
+    fname = "data/{0!s}/{1:d}{2!s}%d.demo".format(dataDir, N, model)
     myPyr = acu(fname, [], startGen)[1:]
     return [sum(myPyr)] + myPyr
 
 def vk(model, N, startGen):
     if doMature:
-        fname = "data/%s/%d%s%%d.vk.mature" % (dataDir, N, model)
+        fname = "data/{0!s}/{1:d}{2!s}%d.vk.mature".format(dataDir, N, model)
     else:
-        fname = "data/%s/%d%s%%d.vk" % (dataDir, N, model)
+        fname = "data/{0!s}/{1:d}{2!s}%d.vk".format(dataDir, N, model)
     return acu(fname, [3, 4], startGen)
 
  
@@ -88,7 +88,7 @@ def doOfs():
         Ns = N0[model]
         Ns.sort()
         for N in Ns:
-            print "%s\t%d" % (model, N)
+            print "{0!s}\t{1:d}".format(model, N)
             cfg = myUtils.getConfig(dataDir + "/" + str(N) + model + ".conf")
             startGen = cfg.gens - numGens - 1
             nowMale = {}
@@ -98,7 +98,7 @@ def doOfs():
             maxV = 0
             cnt=0.0
             for rep in range(reps):
-                fname = "data/%s/%d%s%d.ofs" % (dataDir, N, model, rep)
+                fname = "data/{0!s}/{1:d}{2!s}{3:d}.ofs".format(dataDir, N, model, rep)
                 f=open(fname)
                 ls = f.readlines()
                 f.close()
@@ -118,7 +118,7 @@ def doOfs():
                         totFemale[topOfs] = totFemale.get(topOfs, 0) + 1
             for i in range(maxV):
                 if i>20 and i<maxV-1: continue
-                print "\t\t%d\t%f\t%f\t%f\t%f" % (i, nowMale.get(i,0.0)/cnt, nowFemale.get(i,0)/cnt, totMale.get(i,0)/cnt, totFemale.get(i,0)/cnt)
+                print "\t\t{0:d}\t{1:f}\t{2:f}\t{3:f}\t{4:f}".format(i, nowMale.get(i,0.0)/cnt, nowFemale.get(i,0)/cnt, totMale.get(i,0)/cnt, totFemale.get(i,0)/cnt)
 
 
 

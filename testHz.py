@@ -3,13 +3,13 @@ import sys
 import os
 
 if len(sys.argv) != 3:
-    print "python %s startGen endGen" % (sys.argv[0],)
+    print "python {0!s} startGen endGen".format(sys.argv[0])
     sys.exit(-1)
 
 startGen = int(sys.argv[1])
 endGen = int(sys.argv[2])
 
-fName = "/tmp/hz%s.txt" % (str(os.getpid()))
+fName = "/tmp/hz{0!s}.txt".format((str(os.getpid())))
 
 f = open(fName, "w")
 l = sys.stdin.readline()

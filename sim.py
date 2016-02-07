@@ -365,10 +365,10 @@ def outputAge(pop):
         return True
     rep = pop.dvars().rep
     for i in pop.individuals():
-        out.write("%d %d %d %d %d %d %d\n" % (gen, rep, i.ind_id, i.sex(),
+        out.write("{0:d} {1:d} {2:d} {3:d} {4:d} {5:d} {6:d}\n".format(gen, rep, i.ind_id, i.sex(),
                                               i.father_id, i.mother_id, i.age))
         if i.age == 1 or gen == 0:
-            err.write("%d %d " % (i.ind_id, gen))
+            err.write("{0:d} {1:d} ".format(i.ind_id, gen))
             for pos in range(len(i.genotype(0))):
                 a1 = zeroC(i.allele(pos, 0))
                 a2 = zeroC(i.allele(pos, 1))
@@ -383,7 +383,7 @@ def outputMega(pop):
         return True
     for i in pop.individuals():
         if i.age == 0:
-            megaDB.write("%d %d %d %d %d\n" % (gen, i.ind_id, i.sex(),
+            megaDB.write("{0:d} {1:d} {2:d} {3:d} {4:d}\n".format(gen, i.ind_id, i.sex(),
                                                i.father_id, i.mother_id))
     return True
 

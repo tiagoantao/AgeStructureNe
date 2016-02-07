@@ -2,7 +2,7 @@ from sys import stdin, stderr, argv, exit
 import random
 
 if len(argv) not in [5, 6]:
-    print "python %s condition indivs startGen endGen [lp]" % (argv[0],)
+    print "python {0!s} condition indivs startGen endGen [lp]".format(argv[0])
     print "indivs can be ALL"
     exit(-1)
 

@@ -3,7 +3,7 @@ import bz2
 import random
 
 if len(argv) not in [4, 5]:
-    print "python %s genFile loci maxLoci [startLoci]" % (argv[0],)
+    print "python {0!s} genFile loci maxLoci [startLoci]".format(argv[0])
     exit(-1)
 
 genFile = argv[1]

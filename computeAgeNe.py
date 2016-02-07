@@ -10,7 +10,7 @@ model = sys.argv[1]
 N1 = int(sys.argv[2])
 with_bsf = len(sys.argv) > 3
 
-os.system('python generateAgeNe.py %s %d %s > tmp.agene' % (
+os.system('python generateAgeNe.py {0!s} {1:d} {2!s} > tmp.agene'.format(
     model, N1, 'yes' if with_bsf else ''))
 
 os.remove('out.tmp')

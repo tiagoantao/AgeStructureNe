@@ -5,7 +5,7 @@ import random
 #Only from newborns
 
 if len(argv) not in [5]:
-    print "python %s frac indivs startGen endGen" % (argv[0],)
+    print "python {0!s} frac indivs startGen endGen".format(argv[0])
     print "indivs can be ALL"
     exit(-1)
 

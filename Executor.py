@@ -27,26 +27,26 @@ class Condor:
         self.job += 1
         template = '''
 universe=java
-requirements=%s
+requirements={0!s}
 should_transfer_files=yes
 when_to_transfer_output=on_exit
-transfer_input_files=%s
-log=condor%d.log
-error=condor%d.error
-output=%s
-executable=%s
-arguments=%s
-java_vm_args=%s
+transfer_input_files={1!s}
+log=condor{2:d}.log
+error=condor{3:d}.error
+output={4!s}
+executable={5!s}
+arguments={6!s}
+java_vm_args={7!s}
 queue
-        ''' % (requirements, ",".join(self.send), self.job, self.job, self.out, command, parameters, self.javaVMArgs)
+        '''.format(requirements, ",".join(self.send), self.job, self.job, self.out, command, parameters, self.javaVMArgs)
 
-        rootName = "condor%d" % (self.job,)
+        rootName = "condor{0:d}".format(self.job)
         jobName = rootName + ".job"
         logName = rootName + ".log"
         w = open(jobName, "w")
         w.write(template)
         w.close()
-        subprocess.call("condor_submit %s" % (jobName,), shell=True)
+        subprocess.call("condor_submit {0!s}".format(jobName), shell=True)
         self.logName = logName
 
     def submit(self, command, parameters):
@@ -54,27 +54,27 @@ queue
         '''
         self.job += 1
         template = '''
-universe=%s
+universe={0!s}
 requirements=(Arch=="X86_64" || Arch=="INTEL") && ( OpSys=="LINUX")
 rank = kflops
 should_transfer_files=yes
 when_to_transfer_output=on_exit
-transfer_input_files=%s
-log=condor%d.log
-error=condor%d.error
-output=%s
-executable=%s
-arguments=%s
+transfer_input_files={1!s}
+log=condor{2:d}.log
+error=condor{3:d}.error
+output={4!s}
+executable={5!s}
+arguments={6!s}
 queue
-        ''' % (self.universe, ",".join(self.send), self.job, self.job, self.out, command, parameters)
+        '''.format(self.universe, ",".join(self.send), self.job, self.job, self.out, command, parameters)
 
-        rootName = "condor%d" % (self.job,)
+        rootName = "condor{0:d}".format(self.job)
         jobName = rootName + ".job"
         logName = rootName + ".log"
         w = open(jobName, "w")
         w.write(template)
         w.close()
-        subprocess.call("condor_submit %s" % (jobName,), shell=True)
+        subprocess.call("condor_submit {0!s}".format(jobName), shell=True)
         self.logName = logName
 
 
@@ -147,8 +147,7 @@ class Local:
             errSt = ""
         else:
             errSt = "2> " + err
-        p = subprocess.Popen("%s %s > %s %s" %
-                             (command, parameters, out, errSt),
+        p = subprocess.Popen("{0!s} {1!s} > {2!s} {3!s}".format(command, parameters, out, errSt),
                              shell=True)
         self.running.append(p)
         if hasattr(self, "out"):
@@ -162,7 +161,7 @@ class Pseudo:
 
         This executor will Dump of list of nohup nice commands
     '''
-    def __init__(self, outFile="/tmp/pseudo%d" % (os.getpid())):
+    def __init__(self, outFile="/tmp/pseudo{0:d}".format((os.getpid()))):
         '''
            outFile is where the text is written
         '''
@@ -172,8 +171,7 @@ class Pseudo:
     def submit(self, command, parameters):
         '''Submits a job
         '''
-        self.outFile.write("nohup /usr/bin/nice -n19 %s %s > %s\n" %
-                           (command, parameters, self.out))
+        self.outFile.write("nohup /usr/bin/nice -n19 {0!s} {1!s} > {2!s}\n".format(command, parameters, self.out))
         self.outFile.flush()
 
     def __del__(self):
@@ -199,8 +197,8 @@ class LSF:
         '''Removes dead processes from the running list.
         '''
         ongoing = []
-        statusFile = "/tmp/farm-%d" % (os.getpid())
-        os.system("bjobs > %s 2>/dev/null" % statusFile)
+        statusFile = "/tmp/farm-{0:d}".format((os.getpid()))
+        os.system("bjobs > {0!s} 2>/dev/null".format(statusFile))
         f = open(statusFile)
         f.readline()  # header
         for l in f:
@@ -242,8 +240,8 @@ class LSF:
         job = job % (self.queue, self.cnt, self.cnt, self.cnt, M,
                      self.mem, self.mem, myDir, command, parameters)
 
-        statusFile = "/tmp/farm-%d.%d" % (os.getpid(), self.cnt)
-        os.system(job + " >%s 2>/dev/null" % statusFile)
+        statusFile = "/tmp/farm-{0:d}.{1:d}".format(os.getpid(), self.cnt)
+        os.system(job + " >{0!s} 2>/dev/null".format(statusFile))
         f = open(statusFile)
         l = f.readline()
         job = int(l[l.find("<") + 1:l.find(">")])
@@ -279,8 +277,8 @@ class SGE:
         '''Removes dead processes from the running list.
         '''
         ongoing = []
-        statusFile = "/tmp/farm-%d" % (os.getpid())
-        os.system("qstat > %s 2>/dev/null" % statusFile)
+        statusFile = "/tmp/farm-{0:d}".format((os.getpid()))
+        os.system("qstat > {0!s} 2>/dev/null".format(statusFile))
         f = open(statusFile)
         f.readline()  # header
         f.readline()  # header
@@ -316,20 +314,20 @@ class SGE:
         '''Submits a job
         '''
         if self.mailUser is not None:
-            mail = "-m %s -M %s" % (self.mailOptions, self.mailUser)
+            mail = "-m {0!s} -M {1!s}".format(self.mailOptions, self.mailUser)
         while len(self.running) > self.maxProc:
             self.wait(beCareful=5)
         hosts = ""
         if len(self.hosts) > 0:
             hosts = " -q "
         for host in self.hosts:
-            hosts += "\*@%s" % host
+            hosts += "\*@{0!s}".format(host)
             if host != self.hosts[-1]:
                 hosts += ","
-        job = "qsub %s %s -S /bin/bash -V -P %s -cwd -l h_vmem=%dm %s %s" % (
+        job = "qsub {0!s} {1!s} -S /bin/bash -V -P {2!s} -cwd -l h_vmem={3:d}m {4!s} {5!s}".format(
             mail, hosts, self.project, self.mem, command, parameters)
-        statusFile = "/tmp/farm-%d.%d" % (os.getpid(), self.cnt)
-        os.system(job + " >%s 2>/dev/null" % statusFile)
+        statusFile = "/tmp/farm-{0:d}.{1:d}".format(os.getpid(), self.cnt)
+        os.system(job + " >{0!s} 2>/dev/null".format(statusFile))
         f = open(statusFile)
         l = f.readline()
         job = int(l.split(" ")[2])

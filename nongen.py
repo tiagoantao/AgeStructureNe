@@ -62,18 +62,18 @@ for stat in stats:
 ages = list(set(filter(lambda x:float(x), years[maxYear]["age"])))
 ages.sort()
 for year in years:
-    print >>demoout, "%3d" %(year, ),
-    print >>demoMout, "%3d" %(year, ),
-    print >>demoFout, "%3d" %(year, ),
+    print >>demoout, "{0:3d}".format(year ),
+    print >>demoMout, "{0:3d}".format(year ),
+    print >>demoFout, "{0:3d}".format(year ),
     if len(ageParents[year]) > 0:
-        print >>demoout, "%2.2f" % (1.0*sum(ageParents[year])/len(ageParents[year]),),
+        print >>demoout, "{0:2.2f}".format(1.0*sum(ageParents[year])/len(ageParents[year])),
     else:
         print >>demoout, "00.00",
 
     for age in ages:
-        print >>demoout, "%3d" % (len(filter(lambda x: x==age, years[year]["age"])),),
-        print >>demoMout, "%3d" % (len(filter(lambda x: x==age, years[year]["mage"])),),
-        print >>demoFout, "%3d" % (len(filter(lambda x: x==age, years[year]["fage"])),),
+        print >>demoout, "{0:3d}".format(len(filter(lambda x: x==age, years[year]["age"]))),
+        print >>demoMout, "{0:3d}".format(len(filter(lambda x: x==age, years[year]["mage"]))),
+        print >>demoFout, "{0:3d}".format(len(filter(lambda x: x==age, years[year]["fage"]))),
     print >>demoout, ""
     print >>demoMout, ""
     print >>demoFout, ""
@@ -81,9 +81,9 @@ for year in years:
 
 for gen in parentAgeGen:
     if gen==1: continue
-    print >>breeout, "%3d"% (gen,),
+    print >>breeout, "{0:3d}".format(gen),
     for age in ages:
-        print >>breeout, "%3d" % (len(filter(lambda x: x==age, parentAgeGen[gen])),),
+        print >>breeout, "{0:3d}".format(len(filter(lambda x: x==age, parentAgeGen[gen]))),
     print >>breeout, ""
 
 demoout.close()

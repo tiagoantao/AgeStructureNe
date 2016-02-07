@@ -2,7 +2,7 @@ from sys import stdin, argv, exit
 import scipy
 
 if len(argv) not in [4,5,6]:
-     print "python %s demo startGen endGen matureAgeM matureAgeF" % (argv[0])
+     print "python {0!s} demo startGen endGen matureAgeM matureAgeF".format((argv[0]))
      exit(-1)
 
 #stdin is ofs

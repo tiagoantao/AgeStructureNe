@@ -63,7 +63,7 @@ def dumpOut(gen, born, curr, prev, parents, gender, cfg):
 
 
 def doModel(model, N0, rep, cfg):
-    f = bz2.BZ2File("data/%s/%d%s%d.sim.bz2" % (dataDir, N0, model, rep))
+    f = bz2.BZ2File("data/{0!s}/{1:d}{2!s}{3:d}.sim.bz2".format(dataDir, N0, model, rep))
     myStart = 50
     currGen = 0
     gender = {}

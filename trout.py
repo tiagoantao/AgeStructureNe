@@ -68,9 +68,9 @@ pcrits = [None, 0.021, 0.035, 0.05, 0.1]
 
 def load_file(pref, cut=None, mydir='.'):
     if cut is None:
-        f = open("%s/output/%s.txt" % (mydir, pref))
+        f = open("{0!s}/output/{1!s}.txt".format(mydir, pref))
     else:
-        f = open("%s/output/%s-%d.txt" % (mydir, pref, cut))
+        f = open("{0!s}/output/{1!s}-{2:d}.txt".format(mydir, pref, cut))
     case = {}
     f.readline()
     f.readline()

@@ -16,7 +16,7 @@ def save(pop, numIndivs, numLoci, oExpr, ploidy):
 
     nd = 3
     # write the first line
-    f.write( 'Sim %d %d %d %d\n' % (np, numIndivs, numLoci, ploidy) )
+    f.write( 'Sim {0:d} {1:d} {2:d} {3:d}\n'.format(np, numIndivs, numLoci, ploidy) )
     # following lines with loci name.
     for li in range(len(loci)):
         lname = pop.locusName(loci[li])
@@ -33,7 +33,7 @@ def save(pop, numIndivs, numLoci, oExpr, ploidy):
         indivs = random.sample(range(pop.subPopSize(sp)), min([numIndivs,pop.subPopSize(sp)]))
         for ind in indivs:
             i = pop.individual(ind, sp)
-            f.write("%d(%d), " % (sp,ind))
+            f.write("{0:d}({1:d}), ".format(sp, ind))
             if ploidy==2:
                 p1 = 2*totNumLoci*ind          # begining of first hemo copy
                 p2 = 2*totNumLoci*ind + totNumLoci     # second

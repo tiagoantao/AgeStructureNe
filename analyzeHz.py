@@ -8,19 +8,17 @@ project = sys.argv[1]
 
 
 def do_hz(model, ltype, loc, N1s):
-    title = "%s %s" % (model, ltype)
-    print('python plotHz.py "%s" data/%s %s' %
-          (title, project, " ".join([str(N1) + model + "-" + str(loc)
+    title = "{0!s} {1!s}".format(model, ltype)
+    print('python plotHz.py "{0!s}" data/{1!s} {2!s}'.format(title, project, " ".join([str(N1) + model + "-" + str(loc)
                                     for N1 in N1s])))
-    os.system('python plotHz.py "%s" data/%s %s' %
-              (title, project, " ".join([str(N1) + model + "-" + str(loc)
+    os.system('python plotHz.py "{0!s}" data/{1!s} {2!s}'.format(title, project, " ".join([str(N1) + model + "-" + str(loc)
                                          for N1 in N1s])))
-    shutil.move("hz.png", "output/hz-%s-%s.png" % (model, ltype))
-    shutil.move("hhz.png", "output/hhz-%s-%s.png" % (model, ltype))
+    shutil.move("hz.png", "output/hz-{0!s}-{1!s}.png".format(model, ltype))
+    shutil.move("hhz.png", "output/hhz-{0!s}-{1!s}.png".format(model, ltype))
     for N1 in N1s:
-        shutil.move("ahz-%d%s-%d.png" % (N1, model, loc),
-                    "output/ahz-%s-%d-%s.png" % (model, N1, ltype))
-        os.remove("ahz-%d%s-%d.eps" % (N1, model, loc))
+        shutil.move("ahz-{0:d}{1!s}-{2:d}.png".format(N1, model, loc),
+                    "output/ahz-{0!s}-{1:d}-{2!s}.png".format(model, N1, ltype))
+        os.remove("ahz-{0:d}{1!s}-{2:d}.eps".format(N1, model, loc))
 
 
 try:

@@ -8,7 +8,7 @@ matplotlib.use('AGG')
 import pylab
 
 if len(sys.argv) < 4:
-    print("python %s title baseDir models..." % (sys.argv[0],))
+    print("python {0!s} title baseDir models...".format(sys.argv[0]))
     sys.exit(-1)
 
 title = sys.argv[1]
@@ -63,9 +63,8 @@ for model in models:
         meanHz = my[gen]
         for cut in cuts:
             if cut < currMean and cut > meanHz:
-                hzf.write("<tr><td>%s</td><td>%.2f</td><td>%d</td></tr>\n" %
-                          (model, cut, gen))
-                hztf.write("%s\t%.2f\t%d\n" % (model, cut, gen))
+                hzf.write("<tr><td>{0!s}</td><td>{1:.2f}</td><td>{2:d}</td></tr>\n".format(model, cut, gen))
+                hztf.write("{0!s}\t{1:.2f}\t{2:d}\n".format(model, cut, gen))
         currMean = meanHz
     pylab.plot(my, label=model.split("-")[0])
     pylab.plot(monom, label="Monom " + model.split("-")[0])
@@ -97,10 +96,10 @@ pylab.savefig("hhz.png")
 
 for model, reps in all_sims.items():
     pylab.clf()
-    pylab.title("%s" % model)
+    pylab.title("{0!s}".format(model))
     for rep, vals in reps.items():
         pylab.plot(range(len(vals)), vals, label=rep)
     pylab.legend()
-    pylab.savefig("ahz-%s.eps" % model)
-    pylab.savefig("ahz-%s.png" % model)
+    pylab.savefig("ahz-{0!s}.eps".format(model))
+    pylab.savefig("ahz-{0!s}.png".format(model))
     pylab.gca().legend().set_visible(False)

@@ -4,7 +4,7 @@ import myUtils
 
 if len(sys.argv) not in [3]:
     print("Do not forget to run plotHz")
-    print("python %s varConfFile prefix" % sys.argv[0])
+    print("python {0!s} varConfFile prefix".format(sys.argv[0]))
     sys.exit(-1)
 
 confFile = sys.argv[1]
@@ -17,7 +17,7 @@ def doCase(w, age, indivs, loci, isSNP, isRel, startGens, numGens,
         Ns = N0[model]
         Ns.sort()
         for N in Ns:
-            print >>w, "%s\t%s\t%s\t%d" % (age, case, model, N),
+            print >>w, "{0!s}\t{1!s}\t{2!s}\t{3:d}".format(age, case, model, N),
             if type(startGens) == int:
                 startGen = startGens  # hack
             else:
@@ -106,31 +106,31 @@ def doHz(w, startGens):
     ages = sampCohort.keys()
     for age in ages:
         for indivs, loci in sampSize:
-            case = '\t%d\t%d\tMSAT' % (indivs, loci)
+            case = '\t{0:d}\t{1:d}\tMSAT'.format(indivs, loci)
             doCase(w, age, indivs, loci, False, False, startGen, numGens,
                    None, case)
-            case = '\t%d\t%d\tMSAT-rel' % (indivs, loci)
+            case = '\t{0:d}\t{1:d}\tMSAT-rel'.format(indivs, loci)
             doCase(w, age, indivs, loci, False, True, startGen, numGens,
                    None, case)
             for pcrit in [0.021, 0.035, 0.05, 0.1]:
-                case = '%s\t%d\t%d\tMSAT' % ("{pcrit}".format(pcrit=pcrit),
+                case = '{0!s}\t{1:d}\t{2:d}\tMSAT'.format("{pcrit}".format(pcrit=pcrit),
                                              indivs, loci)
                 doCase(w, age, indivs, loci, False, False, startGen, numGens,
                        pcrit, case)
         for indivs, loci in sampSNP:
-            case = '\t%d\t%d\tSNP' % (indivs, loci)
+            case = '\t{0:d}\t{1:d}\tSNP'.format(indivs, loci)
             doCase(w, age, indivs, loci, True, False, startGen, numGens,
                    None, case)
             for pcrit in [0.021, 0.035, 0.05, 0.1]:
-                case = '%s\t%d\t%d\tSNP' % ("{pcrit}".format(pcrit=pcrit),
+                case = '{0!s}\t{1:d}\t{2:d}\tSNP'.format("{pcrit}".format(pcrit=pcrit),
                                             indivs, loci)
                 doCase(w, age, indivs, loci, True, False, startGen, numGens,
                        pcrit, case)
-            case = '\t%d\t%d\tSNP-rel' % (indivs, loci)
+            case = '\t{0:d}\t{1:d}\tSNP-rel'.format(indivs, loci)
             doCase(w, age, indivs, loci, True, True, startGen, numGens,
                    None, case)
 
-w = open("output/%s.txt" % pref, "w")
+w = open("output/{0!s}.txt".format(pref), "w")
 doHz(w, {})
 w.close()
 allCuts = {}
@@ -149,6 +149,6 @@ f.close()
 for cut, modelCuts in allCuts.items():
     print(cut)
     print(modelCuts.keys())
-    w = open("output/%s-%d.txt" % (pref, cut * 100), "w")
+    w = open("output/{0!s}-{1:d}.txt".format(pref, cut * 100), "w")
     doHz(w, modelCuts)
     w.close()

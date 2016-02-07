@@ -465,7 +465,7 @@ def getNonGenStats(f):
 
 
 def getDemo(project, model, N0, rep):
-    f = open('data/%s/%d%s%d.demo' % (project, N0, model, rep))
+    f = open('data/{0!s}/{1:d}{2!s}{3:d}.demo'.format(project, N0, model, rep))
     for l in f:
         toks = [x for x in l.strip().rstrip().split(' ') if x != '']
         cycle = int(toks[0])
@@ -476,7 +476,7 @@ def getDemo(project, model, N0, rep):
 
 
 def getVk(project, model, N0, rep):
-    f = open('data/%s/%d%s%d.vk' % (project, N0, model, rep))
+    f = open('data/{0!s}/{1:d}{2!s}{3:d}.vk'.format(project, N0, model, rep))
     for l in f:
         toks = [x for x in l.strip().rstrip().split(' ') if x != '']
         cycle = int(toks[0])

@@ -33,7 +33,7 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
     #fig.suptitle("Nb: %d (N1: %d) - cohort %s - %s" % (Nbs[model, N0],
     #                                                   N0, cohort, corr_name),
     #             fontsize=18)
-    fig.suptitle("Nb: %d" % Nbs[model, N0], fontsize=32)
+    fig.suptitle("Nb: {0:d}".format(Nbs[model, N0]), fontsize=32)
     box_vals = []
     box_vals = []
     tops = []
@@ -69,7 +69,7 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
                 bottoms.append(None)
             box_vals.append(vals)
             hmeans.append(hmean([x for x in vals if x > 0]))
-            labels.append("%d MSAT" % nloci)
+            labels.append("{0:d} MSAT".format(nloci))
         for nsnp in nsnps:
             try:
                 vals, ci, r2, sr2, j, ssize = case[cohort][(model, N0)][(None, nindiv, nsnp, "SNP")]
@@ -99,10 +99,10 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
             box_vals.append(vals)
             hmeans.append(hmean([x for x in vals if x > 0]))
             #Check above
-            labels.append("%d SNP" % nsnp)
+            labels.append("{0:d} SNP".format(nsnp))
         pos = len(labels)
         ax.axvline(pos + 0.5, color="k", lw=0.2)
-        ax.text(pos, 0 * Nbs[(model, N0)] * 3, "%d Individuals" % nindiv,
+        ax.text(pos, 0 * Nbs[(model, N0)] * 3, "{0:d} Individuals".format(nindiv),
                 ha="right", va="bottom", fontsize=16,
                 rotation="horizontal")
     ax.set_ylabel("$\hat{N}_{e}$", fontsize=32)
@@ -128,8 +128,7 @@ def do_cohort(case, model, N0, nindiv, corr_name):
     nb = Nbs[(model, N0)]
     #fig.suptitle("Nb: %d (N1: %d) - different cohorts - 100 SNPs -%s" %
     #            (nb, N0, corr_name), fontsize=18)
-    fig.suptitle("Nb: %d - different cohorts - 100 SNPs - %s" %
-                (nb, corr_name), fontsize=24)
+    fig.suptitle("Nb: {0:d} - different cohorts - 100 SNPs - {1!s}".format(nb, corr_name), fontsize=24)
     box_vals = []
     labels = []
     tops = []
@@ -160,11 +159,11 @@ def do_cohort(case, model, N0, nindiv, corr_name):
         elif cohort == 'c3c':
             labels.append("3 cohorts")
         else:
-            labels.append("%s" % cohort)
+            labels.append("{0!s}".format(cohort))
         if cohort == cohorts[-1]:
             pos = len(labels) + 0.5
             ax.axvline(pos, color="k", lw=0.2)
-            ax.text(last + (pos - last) / 2, 0, "%d Individuals sampled" % nindiv,
+            ax.text(last + (pos - last) / 2, 0, "{0:d} Individuals sampled".format(nindiv),
                     ha="center", va="bottom", size=24,
                     rotation="horizontal")
             last = pos
@@ -187,8 +186,7 @@ def do_cohort(case, model, N0, nindiv, corr_name):
 def do_rel(case, model, N0, nindiv, corr_name):
     fig, ax = plt.subplots()
     cohort = "Newb"
-    fig.suptitle("Nb: %d (N1: %d) - 20pc related individuals - cohort %s - %s"
-                 % (Nbs[(model, N0)], N0, cohort, corr_name))
+    fig.suptitle("Nb: {0:d} (N1: {1:d}) - 20pc related individuals - cohort {2!s} - {3!s}".format(Nbs[(model, N0)], N0, cohort, corr_name))
     box_vals = []
     labels = []
     bname = get_bname(model)
@@ -263,7 +261,7 @@ def do_lt_comp(case, nb, strat, corr_name):
     ratios = []
     #ax.set_title("Nb: %d - %s sampled - 100 SNPs - 50 indivs - %s corr" % (
     #    nb, strat, corr_name))
-    ax.set_title("Nb=%d - Correction: %s" % (nb, corr_name), fontsize=18)
+    ax.set_title("Nb={0:d} - Correction: {1!s}".format(nb, corr_name), fontsize=18)
     for pref, name in NbNames:
         if name == "Restr":
             continue
@@ -311,7 +309,7 @@ def do_lt_comp(case, nb, strat, corr_name):
     ax.set_yticks(yticks)
     ax.set_yticklabels([str(y) for y in yticks], fontsize=14)
     for i, ratio in enumerate(ratios):
-        ax.text(i + 1, 3 * nb * 0, '%.2f' % ratio, ha='center', va='bottom',
+        ax.text(i + 1, 3 * nb * 0, '{0:.2f}'.format(ratio), ha='center', va='bottom',
                 fontsize=14)
     ax.axhline(nb, color="k", lw=0.3)
     ax.set_xticks(range(1, 1 + len(labels)))
@@ -356,19 +354,17 @@ def do_bias(case):
 
 
 def do_hz(model, ltype, loc, N1s):
-    title = "%s %s" % (model, ltype)
-    print('python plotHz.py "%s" data/trout %s' %
-          (title, " ".join([str(N1) + model + "-" + str(loc)
+    title = "{0!s} {1!s}".format(model, ltype)
+    print('python plotHz.py "{0!s}" data/trout {1!s}'.format(title, " ".join([str(N1) + model + "-" + str(loc)
                             for N1 in N1s])))
-    os.system('python plotHz.py "%s" data/trout %s' %
-              (title, " ".join([str(N1) + model + "-" + str(loc)
+    os.system('python plotHz.py "{0!s}" data/trout {1!s}'.format(title, " ".join([str(N1) + model + "-" + str(loc)
                                 for N1 in N1s])))
-    shutil.move("hz.png", "output/hz-%s-%s.png" % (model, ltype))
-    shutil.move("hhz.png", "output/hhz-%s-%s.png" % (model, ltype))
+    shutil.move("hz.png", "output/hz-{0!s}-{1!s}.png".format(model, ltype))
+    shutil.move("hhz.png", "output/hhz-{0!s}-{1!s}.png".format(model, ltype))
     for N1 in N1s:
-        shutil.move("ahz-%d%s-%d.png" % (N1, model, loc),
-                    "output/ahz-%s-%d-%s.png" % (model, N1, ltype))
-        os.remove("ahz-%d%s-%d.eps" % (N1, model, loc))
+        shutil.move("ahz-{0:d}{1!s}-{2:d}.png".format(N1, model, loc),
+                    "output/ahz-{0!s}-{1:d}-{2!s}.png".format(model, N1, ltype))
+        os.remove("ahz-{0:d}{1!s}-{2:d}.eps".format(N1, model, loc))
 
 
 def do_hz_comp(pref, mydir, model, N0):
@@ -383,7 +379,7 @@ def do_hz_comp(pref, mydir, model, N0):
                 (model, N0)][(None, 50, nsnp, "SNP")]
             cutCase[cut][nsnp] = vals, ci, r2, sr2, j, ssize
     fig, ax = plt.subplots(figsize=(16, 9))
-    fig.suptitle("Hz comparison: %s - %d - Newb - SNPs - 50 indivs " % (model, N0))
+    fig.suptitle("Hz comparison: {0!s} - {1:d} - Newb - SNPs - 50 indivs ".format(model, N0))
     box = []
     cnt = 0
     labels = []
@@ -439,7 +435,7 @@ def do_pcrit(case, model, N0, isSNP):
                 vals, ci, r2, sr2, j, ssize = [], [], [], [], [], []
             sampCase[nmarkers][pcrit] = vals, ci, r2, sr2, j, ssize
     fig, ax = plt.subplots()
-    fig.suptitle("pcrit : %s - %d - Newb - %ss - 50 individuals" % (
+    fig.suptitle("pcrit : {0!s} - {1:d} - Newb - {2!s}s - 50 individuals".format(
         model, N0, marker_name))
     box = []
     cnt = 0
@@ -449,7 +445,7 @@ def do_pcrit(case, model, N0, isSNP):
     hmeans = []
 
     for nmarkers in markers:
-        ax.text(1 + cnt, 0, str(nmarkers) + " %ss" % marker_name, rotation="vertical", ha="left", va="bottom")
+        ax.text(1 + cnt, 0, str(nmarkers) + " {0!s}s".format(marker_name), rotation="vertical", ha="left", va="bottom")
         critCases = sampCase[nmarkers]
         for pcrit in pcrits:
             vals, ci, r2, sr2, j, ssize = critCases[pcrit]
@@ -492,14 +488,13 @@ def do_ld_progress(model, N0s):
 
     for N0 in N0s:
         fig, ax = plt.subplots()
-        fig.suptitle("LDNe estimates %s %d (%d)" %
-                     (model, N0, Nbs[(model, N0)]))
+        fig.suptitle("LDNe estimates {0!s} {1:d} ({2:d})".format(model, N0, Nbs[(model, N0)]))
         for nsnp in nsnps:
             vals = []
             rep = 0
             try:
                 while True:
-                    fname = "%s/ldout/%d%s%s%d%d-snp-%d" % (
+                    fname = "{0!s}/ldout/{1:d}{2!s}{3!s}{4:d}{5:d}-snp-{6:d}".format(
                         dataDir, N0, model, strat, ninds, nsnp, rep)
                     f = open(fname)
                     myEsts = eval(f.readline().rstrip())
@@ -524,7 +519,7 @@ def do_ld_progress(model, N0s):
 def fetch_nes(model, N0, rep, strat):
     ninds = 50
     nsnp = 100
-    fname = "%s/ldout/%d%s%s%d%d-snp-%d" % (dataDir, N0,
+    fname = "{0!s}/ldout/{1:d}{2!s}{3!s}{4:d}{5:d}-snp-{6:d}".format(dataDir, N0,
                                             model, strat, ninds, nsnp, rep)
     f = open(fname)
     myEsts = eval(f.readline().rstrip())
@@ -541,7 +536,7 @@ def do_nb_ne(model, N0, rep):
     start_year, vals = realNbs[model, N0][rep]
     nes, cis = fetch_nes(model, N0, rep, "Newb")
     fig, ax = plt.subplots(figsize=(16, 9))
-    fig.suptitle("%s N1: %d Nb: %d Ne: %.2f" % (model, N0,
+    fig.suptitle("{0!s} N1: {1:d} Nb: {2:d} Ne: {3:.2f}".format(model, N0,
                                                 Nbs[(model, N0)], Nes[N0]),
                  fontsize=18)
     ax.plot(vals[start_year:start_year + points], "+")
@@ -623,20 +618,20 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs):
             aboveTop = len([x for x in tops if x is not None and x < Nb])
             belowBottom = len([x for x in bottoms if x is None or x > Nb])
             rot = 'horizontal'
-            ax.text(i + 1.05, top_y, "%.0f" % (100 * aboveTop / len(tops)),
+            ax.text(i + 1.05, top_y, "{0:.0f}".format((100 * aboveTop / len(tops))),
                     va='top', ha='left', rotation=rot,
                     backgroundcolor='green', size=24)
-            ax.text(i + 1.05, 0, "%.0f" % (100 * belowBottom / len(bottoms)),
+            ax.text(i + 1.05, 0, "{0:.0f}".format((100 * belowBottom / len(bottoms))),
                     va='bottom', ha='left', rotation=rot,
                     backgroundcolor='green', size=24)
             aboveFlexTop = len([x for x in tops if x is not None and x <
                                 bottom_flex_nb])
             belowFlexBottom = len([x for x in bottoms if x is None or x >
                                    top_flex_nb])
-            ax.text(i + 0.95, top_y, "%.0f" % (100 * aboveFlexTop / len(tops)),
+            ax.text(i + 0.95, top_y, "{0:.0f}".format((100 * aboveFlexTop / len(tops))),
                     va='top', ha='right', rotation=rot, color='white',
                     backgroundcolor='red', size=24)
-            ax.text(i + 0.95, 0, "%.0f" % (100 * belowFlexBottom / len(bottoms)),
+            ax.text(i + 0.95, 0, "{0:.0f}".format((100 * belowFlexBottom / len(bottoms))),
                     va='bottom', ha='right', rotation=rot, color='white',
                     backgroundcolor='red', size=24)
             i += 1
@@ -652,7 +647,7 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs):
         ax.set_ylabel("$\hat{N}_{e}$", fontsize=32)
         #ax.text(1, Nb, 'inds=%d snps=%d' % (nindivs, nsnps),
         #        ha='right', va='center', size=36, rotation='vertical')
-        ax.set_title('Sampled individuals: %d' % n_indivs, fontsize=24)
+        ax.set_title('Sampled individuals: {0:d}'.format(n_indivs), fontsize=24)
     for i, n_snps in enumerate(all_snps):
         for j, n_indivs in enumerate(all_indivs):
             try:
@@ -668,7 +663,7 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs):
 def do_table_ci(Nbs, case, dir_pref, modelN0s, nsnps,
                 nindivs, ci_percentile=50.0, flex_nb=False):
     cohort = "Newb"
-    w = open(dir_pref + "/table-ci-%d-%d-%.1f.txt" % (
+    w = open(dir_pref + "/table-ci-{0:d}-{1:d}-{2:.1f}.txt".format(
         nsnps, nindivs, ci_percentile), "w")
     w.write('Standard deviations problematic because of infinites\n')
     w.write("Corr Model Nb N1 J median mean stdDev percTopCI meanTopCI stdDevTopCI aboveTop medianTopErr percBotCI meanBotCI stdDevBotCI belowBot medianBotErr\n")
@@ -843,9 +838,8 @@ def do_robin_nb_ne():
 
             ax.text(tops["X"], tops["Y"], text, va="bottom", ha="right")
             ax.text(tops["X"], tops["Y"],
-                    "%.2f (%.2f)" % tuple(stats[i]), va="top", ha="right")
-        fig.text(0.02, 0.5, "bulltrout N1: %d Nb: %d Ne: %.2f" %
-                 (N0, Nbs[(model, N0)], Nes[N0]),
+                    "{0:.2f} ({1:.2f})".format(*tuple(stats[i])), va="top", ha="right")
+        fig.text(0.02, 0.5, "bulltrout N1: {0:d} Nb: {1:d} Ne: {2:.2f}".format(N0, Nbs[(model, N0)], Nes[N0]),
                  rotation="vertical", ha="left", va="center")
         #fig.savefig("output/nb-robin-%d.png" % N0)
 

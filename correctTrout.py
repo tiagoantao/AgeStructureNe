@@ -48,7 +48,7 @@ def plot_model(fig, model):
         vals.append(val)
 
     ax = fig.add_subplot(2, 1, 1)
-    ax.set_title("Nb and estimators %s" % bname)
+    ax.set_title("Nb and estimators {0!s}".format(bname))
     ax.plot(vals, '+', label="Nb")
     for name, lvals in ldnes.items():
         ax.plot(lvals, '-', label=name)
@@ -59,7 +59,7 @@ def plot_model(fig, model):
     ax.legend()
 
     ax = fig.add_subplot(2, 1, 2)
-    ax.set_title("Fraction of error %s" % bname)
+    ax.set_title("Fraction of error {0!s}".format(bname))
     ax.plot([1.0] * nobs, '+', label="Nb")
     for name, cvals in errs.items():
         ax.plot(cvals, '-', label=name)
