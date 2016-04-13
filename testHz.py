@@ -1,9 +1,10 @@
+from __future__ import print_function
 from Bio.PopGen.GenePop.EasyController import EasyController
 import sys
 import os
 
 if len(sys.argv) != 3:
-    print "python %s startGen endGen" % (sys.argv[0],)
+    print("python %s startGen endGen" % (sys.argv[0],))
     sys.exit(-1)
 
 startGen = int(sys.argv[1])
@@ -27,8 +28,8 @@ for pop in range(numPops):
         #print float(exphe)/(exphe+expho),
         obs, freqs = ctrl.get_allele_frequency(pop, locus)
         ho = 0.0
-        for freq in freqs.values():
+        for freq in list(freqs.values()):
             ho += freq**2
-        print 1-ho,
-    print
+        print(1-ho, end=' ')
+    print()
 os.remove(fName)

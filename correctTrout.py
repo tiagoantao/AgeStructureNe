@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 
 import sys
 
@@ -26,7 +26,7 @@ def plot_model(fig, model):
     errs = {}
     labels = []
     cnb = case['Newb']
-    nbks = sorted(Nbs.keys(), key=lambda x: x[1])
+    nbks = sorted(list(Nbs.keys()), key=lambda x: x[1])
     for cname, cdata in get_corrs(bname, [], []):
         ldnes[cname] = []
         errs[cname] = []
@@ -50,18 +50,18 @@ def plot_model(fig, model):
     ax = fig.add_subplot(2, 1, 1)
     ax.set_title("Nb and estimators %s" % bname)
     ax.plot(vals, '+', label="Nb")
-    for name, lvals in ldnes.items():
+    for name, lvals in list(ldnes.items()):
         ax.plot(lvals, '-', label=name)
-        print name
-        print vals
-        print lvals
+        print(name)
+        print(vals)
+        print(lvals)
     ax.set_xticklabels(labels)
     ax.legend()
 
     ax = fig.add_subplot(2, 1, 2)
     ax.set_title("Fraction of error %s" % bname)
     ax.plot([1.0] * nobs, '+', label="Nb")
-    for name, cvals in errs.items():
+    for name, cvals in list(errs.items()):
         ax.plot(cvals, '-', label=name)
     ax.set_xticklabels(labels)
     ax.legend()

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import multiprocessing
 import sys
 import os
@@ -6,7 +7,7 @@ import myUtils
 import Executor
 
 if len(sys.argv) not in [2, 3]:
-    print "python %s varConfFile dogen" % sys.argv[0]
+    print("python %s varConfFile dogen" % sys.argv[0])
     sys.exit(-1)
 
 varConfFile = sys.argv[1]
@@ -33,7 +34,7 @@ def nongen(model, N, ageM, ageF, reps, startGen):
 
 
 def gen(model, N, ageM, ageF, reps):
-    print 1, reps
+    print(1, reps)
     os.chdir(myDir)
     cond = "(sex==1 and age>%d) or (sex==2 and age>%d)" % (ageM, ageF)
     for rep in range(reps):
@@ -43,19 +44,19 @@ def gen(model, N, ageM, ageF, reps):
         else:
             lexec.submit("bash", 'topGo.sh %d %d %d%s "%s"' %
                          (rep, rep + 1, N, model, cond))
-            print("bash", 'topGo.sh %d %d %d%s "%s"' %
-                  (rep, rep + 1, N, model, cond))
+            print(("bash", 'topGo.sh %d %d %d%s "%s"' %
+                  (rep, rep + 1, N, model, cond)))
     os.chdir("..")
     #bash topGo.sh $REPS $REPE ${a[$i]}  ${age[$i]} ;
 
-models = N0.keys()
+models = list(N0.keys())
 models.sort()
 
 for model in models:
     Ns = N0[model]
     Ns.sort()
     for N in Ns:
-        print model, N
+        print(model, N)
         cfg = myUtils.getConfig("%s/%d%s.conf" % (myDir, N, model))
         startGen = cfg.gens - numGens
         ageM, ageF = myUtils.getAgeFecund(cfg)

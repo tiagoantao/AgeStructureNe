@@ -1,9 +1,10 @@
+from __future__ import print_function
 from sys import stdin, stderr, argv, exit
 import random
 
 if len(argv) not in [5, 6]:
-    print "python %s condition indivs startGen endGen [lp]" % (argv[0],)
-    print "indivs can be ALL"
+    print("python %s condition indivs startGen endGen [lp]" % (argv[0],))
+    print("indivs can be ALL")
     exit(-1)
 
 cond = argv[1]
@@ -36,20 +37,20 @@ while l!= "":
     if gen>currGen:
         if currGen>=startGen:
             if nindivs:
-                print currGen, random.sample(indivs, nindivs)
+                print(currGen, random.sample(indivs, nindivs))
             else:
                 if len(indivs)>maxInds:
-                    print currGen, random.sample(indivs, maxInds)
+                    print(currGen, random.sample(indivs, maxInds))
                 else:
-                    print currGen, indivs
+                    print(currGen, indivs)
             if lp:
                 if nindivs:
-                    print random.sample(indivs, nindivs)
+                    print(random.sample(indivs, nindivs))
                 else:
                     if len(indivs)>maxInds:
-                        print random.sample(indivs, maxInds)
+                        print(random.sample(indivs, maxInds))
                     else:
-                        print indivs
+                        print(indivs)
         indivs = []
         currGen=gen
         if currGen>endGen:
@@ -60,17 +61,17 @@ while l!= "":
     l = stdin.readline()
 if currGen<=endGen:
     if nindivs:
-        print currGen, random.sample(indivs, nindivs)
+        print(currGen, random.sample(indivs, nindivs))
     else:
         if len(indivs)>maxInds:
-            print currGen, random.sample(indivs, maxInds)
+            print(currGen, random.sample(indivs, maxInds))
         else:
-            print currGen, indivs
+            print(currGen, indivs)
     if lp:
         if nindivs:
-            print random.sample(indivs, nindivs)
+            print(random.sample(indivs, nindivs))
         else:
             if len(indivs)>maxInds:
-                print random.sample(indivs, maxInds)
+                print(random.sample(indivs, maxInds))
             else:
-                print indivs
+                print(indivs)

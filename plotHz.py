@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 
 import os
 import sys
@@ -8,7 +8,7 @@ matplotlib.use('AGG')
 import pylab
 
 if len(sys.argv) < 4:
-    print("python %s title baseDir models..." % (sys.argv[0],))
+    print(("python %s title baseDir models..." % (sys.argv[0],)))
     sys.exit(-1)
 
 title = sys.argv[1]
@@ -37,8 +37,7 @@ for model in models:
             f.close()
             cnt = 0
             for l in ls:
-                res = map(lambda x: float(x),
-                          l.rstrip().replace("\t", " ").split(" "))
+                res = [float(x) for x in l.rstrip().replace("\t", " ").split(" ")]
                 all_sims[model][rep].append(sum(res) / len(res))
                 if cnt == 200:
                     bla = res
@@ -56,7 +55,7 @@ for model in models:
     monom = []
     for hzs in allLs:
         my.append(sum(hzs) / len(hzs))
-        monom.append(len(filter(lambda x: x == 0.0, hzs)) / len(hzs))
+        monom.append(len([x for x in hzs if x == 0.0]) / len(hzs))
     currMean = my[0]
     for g in range(len(my) - 1):
         gen = g + 1
@@ -79,14 +78,14 @@ pylab.savefig("hz.png")
 
 pylab.clf()
 pylab.title(title)
-for model, hd in h_dist.items():
+for model, hd in list(h_dist.items()):
     val_cnt = {}
     for val in hd:
         val = round(val, 2)
         val_cnt[val] = val_cnt.get(val, 0) + 1
     freqs = []
     cnts = []
-    for freq, cnt in val_cnt.items():
+    for freq, cnt in list(val_cnt.items()):
         freqs.append(freq)
         cnts.append(cnt)
     pylab.plot(freqs, cnts, '.', label=model)
@@ -95,11 +94,11 @@ pylab.xlim(-0.01, 0.51)
 pylab.savefig("hhz.eps")
 pylab.savefig("hhz.png")
 
-for model, reps in all_sims.items():
+for model, reps in list(all_sims.items()):
     pylab.clf()
     pylab.title("%s" % model)
-    for rep, vals in reps.items():
-        pylab.plot(range(len(vals)), vals, label=rep)
+    for rep, vals in list(reps.items()):
+        pylab.plot(list(range(len(vals))), vals, label=rep)
     pylab.legend()
     pylab.savefig("ahz-%s.eps" % model)
     pylab.savefig("ahz-%s.png" % model)

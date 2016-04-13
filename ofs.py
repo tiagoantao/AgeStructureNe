@@ -1,3 +1,4 @@
+from __future__ import print_function
 from myUtils import getNonGenStats
 from sys import stdin, stderr
 
@@ -16,7 +17,7 @@ for stat in stats:
         rems = []
         for dead in alive:
             if dead not in aliveNow:
-                print currGen, istats[dead][0], dead, istats[dead][1], offs[dead], offsGen.get(dead,0)
+                print(currGen, istats[dead][0], dead, istats[dead][1], offs[dead], offsGen.get(dead,0))
                 del offs[dead]
                 del istats[dead]
                 rems.append(dead)

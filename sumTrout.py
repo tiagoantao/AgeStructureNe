@@ -1,10 +1,11 @@
+from __future__ import print_function
 import sys
 
 import myUtils
 
 if len(sys.argv) not in [3]:
     print("Do not forget to run plotHz")
-    print("python %s varConfFile prefix" % sys.argv[0])
+    print(("python %s varConfFile prefix" % sys.argv[0]))
     sys.exit(-1)
 
 confFile = sys.argv[1]
@@ -17,16 +18,16 @@ def doCase(w, age, indivs, loci, isSNP, isRel, startGens, numGens,
         Ns = N0[model]
         Ns.sort()
         for N in Ns:
-            print >>w, "%s\t%s\t%s\t%d" % (age, case, model, N),
+            print("%s\t%s\t%s\t%d" % (age, case, model, N), end=' ', file=w)
             if type(startGens) == int:
                 startGen = startGens  # hack
             else:
                 try:
                     startGen = startGens[str(N) + model]
                 except KeyError:
-                    print >>sys.stderr, "err", N, model
-                    print >>w, "\t",
-                    print >>w
+                    print("err", N, model, file=sys.stderr)
+                    print("\t", end=' ', file=w)
+                    print(file=w)
                     continue
             if pcrit is None:
                 name = ""
@@ -51,7 +52,7 @@ def doCase(w, age, indivs, loci, isSNP, isRel, startGens, numGens,
                     l = l.replace("inf", "1000000")
                     le = eval(l)
                     ldne.extend(le[startGen:startGen + numGens])
-                    ldne = map(lambda x: x if x > 0 else 1000000, ldne)
+                    ldne = [x if x > 0 else 1000000 for x in ldne]
                     l = f.readline().rstrip()
                     if l == "":
                         raise IOError("Not complete")
@@ -76,19 +77,19 @@ def doCase(w, age, indivs, loci, isSNP, isRel, startGens, numGens,
                     f.close()
 
                 if len(ldne) > 0:
-                    print >>w, "\t" + str(ldne),
-                    print >>w, "\t" + str(ldneCI),
-                    print >>w, "\t" + str(r2),
-                    print >>w, "\t" + str(sr2),
-                    print >>w, "\t" + str(j),
-                    print >>w, "\t" + str(ssize),
+                    print("\t" + str(ldne), end=' ', file=w)
+                    print("\t" + str(ldneCI), end=' ', file=w)
+                    print("\t" + str(r2), end=' ', file=w)
+                    print("\t" + str(sr2), end=' ', file=w)
+                    print("\t" + str(j), end=' ', file=w)
+                    print("\t" + str(ssize), end=' ', file=w)
             except IOError:
-                print >>sys.stderr, "err", mName, model, indivs, loci, rep, name
-            print >>w
+                print("err", mName, model, indivs, loci, rep, name, file=sys.stderr)
+            print(file=w)
 
 N0, sampCohort, sampSize, sampSNP, numGens, reps, dataDir = myUtils.getVarConf(confFile)
 
-models = N0.keys()
+models = list(N0.keys())
 models.sort()
 
 
@@ -103,7 +104,7 @@ def doHz(w, startGens):
             else:
                 startGen = startGens
 
-    ages = sampCohort.keys()
+    ages = list(sampCohort.keys())
     for age in ages:
         for indivs, loci in sampSize:
             case = '\t%d\t%d\tMSAT' % (indivs, loci)
@@ -146,9 +147,9 @@ for l in f:
     modelCuts = allCuts.setdefault(cut, {})
     modelCuts[model] = gen
 f.close()
-for cut, modelCuts in allCuts.items():
+for cut, modelCuts in list(allCuts.items()):
     print(cut)
-    print(modelCuts.keys())
+    print((list(modelCuts.keys())))
     w = open("output/%s-%d.txt" % (pref, cut * 100), "w")
     doHz(w, modelCuts)
     w.close()

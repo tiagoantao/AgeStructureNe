@@ -58,9 +58,9 @@ log_b = -0.671991958
 log_c = 0.799127
 
 corrs = {}
-for sp, nbne in nb_corrs.items():
+for sp, nbne in list(nb_corrs.items()):
     corrs[sp] = {}
-    for N1, mcorr in nbne.items():
+    for N1, mcorr in list(nbne.items()):
         corrs[sp][N1] = 1 / (1.26 - 0.323 * mcorr)
 
 pcrits = [None, 0.021, 0.035, 0.05, 0.1]

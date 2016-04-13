@@ -1,3 +1,4 @@
+from __future__ import print_function
 from simuOpt import simuOptions
 simuOptions["Quiet"] = True
 import simuPOP as sp
@@ -7,7 +8,7 @@ import random
 import numpy
 
 if len(sys.argv) not in [3, ]:
-    print "Syntax:", sys.argv[0], "<confFile> <prefout>"
+    print("Syntax:", sys.argv[0], "<confFile> <prefout>")
     sys.exit(-1)
 
 cfg = getConfig(sys.argv[1])
@@ -43,7 +44,7 @@ def createGenome(size, numMSats, numSNPs):
     preOps = []
     if cfg.mutFreq > 0:
         preOps.append(sp.StepwiseMutator(rates=cfg.mutFreq,
-                      loci=range(numMSats)))
+                      loci=list(range(numMSats))))
     return loci, initOps, preOps
 
 
@@ -228,7 +229,7 @@ def restrictedGenerator(pop, subPop):
         gen = litterSkipGenerator(pop, subPop)
         #print 1, pop.dvars().gen, nb
         for i in range(cfg.N0):
-            pair.append(gen.next())
+            pair.append(next(gen))
         if pop.dvars().gen < 10:
             break
         nb = calcNb(pop, pair)
@@ -239,7 +240,7 @@ def restrictedGenerator(pop, subPop):
                 female.breed -= 1
             attempts += 1
         if attempts > 100:
-            print "out", pop.dvars().gen
+            print("out", pop.dvars().gen)
             sys.exit(-1)
     for male, female in pair:
         yield male, female
@@ -448,7 +449,7 @@ def createAge(pop):
         sp.PyOperator(func=cull),
     ]
     pop.setVirtualSplitter(sp.InfoSplitter(field='age',
-                                           cutoff=range(1, cfg.ages)))
+                                           cutoff=list(range(1, cfg.ages))))
     return ageInitOps, agePreOps, mateOp, agePostOps
 
 (ageInitOps, agePreOps, mateOp, agePostOps) = createAge(pop)

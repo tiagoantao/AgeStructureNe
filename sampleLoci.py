@@ -1,9 +1,10 @@
+from __future__ import print_function
 from sys import stdin, argv, exit
 import bz2
 import random
 
 if len(argv) not in [4, 5]:
-    print "python %s genFile loci maxLoci [startLoci]" % (argv[0],)
+    print("python %s genFile loci maxLoci [startLoci]" % (argv[0],))
     exit(-1)
 
 genFile = argv[1]
@@ -11,7 +12,7 @@ nloci = int(argv[2])
 maxLoci = int(argv[3])
 startLoci = int(argv[4]) if len(argv) == 5 else 0
 
-loci = [x + startLoci for x in random.sample(range(maxLoci), nloci)]
+loci = [x + startLoci for x in random.sample(list(range(maxLoci)), nloci)]
 
 l = stdin.readline()
 gens = []
@@ -49,11 +50,11 @@ f.close()
 #print >>stderr, genetics.keys()
 
 #dump genepop file
-print "lala land"
+print("lala land")
 for locus in loci:
-    print "l" + str(locus)
+    print("l" + str(locus))
 for indivs in gens:
-    print "Pop"
+    print("Pop")
     for indiv in indivs:
-        print "i" + str(indiv) + ",",
-        print " ".join(genetics[indiv])
+        print("i" + str(indiv) + ",", end=' ')
+        print(" ".join(genetics[indiv]))

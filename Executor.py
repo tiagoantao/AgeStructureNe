@@ -2,6 +2,7 @@
 #
 #The local executor is only partially async, if there is too much load
 #   it will block!
+from __future__ import print_function
 
 import multiprocessing
 import os
@@ -204,7 +205,7 @@ class LSF:
         f = open(statusFile)
         f.readline()  # header
         for l in f:
-            toks = filter(lambda x: x != "", l.rstrip().split(" "))
+            toks = [x for x in l.rstrip().split(" ") if x != ""]
             ongoing.append(int(toks[0]))
         os.remove(statusFile)
         myDels = []
@@ -285,7 +286,7 @@ class SGE:
         f.readline()  # header
         f.readline()  # header
         for l in f:
-            toks = filter(lambda x: x != "", l.rstrip().split(" "))
+            toks = [x for x in l.rstrip().split(" ") if x != ""]
             ongoing.append(int(toks[0]))
         os.remove(statusFile)
         myDels = []

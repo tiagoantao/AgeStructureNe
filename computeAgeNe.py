@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 
 import os
 import subprocess
@@ -28,4 +28,4 @@ for l in f:
         #We want the last
         nb = float(l.rstrip().split(' ')[-1])
 f.close()
-print (nb, ne, nb / ne)
+print((nb, ne, nb / ne))

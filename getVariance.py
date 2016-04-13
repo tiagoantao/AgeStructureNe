@@ -1,10 +1,12 @@
+from __future__ import print_function
+
 import os
 import sys
 
 import myUtils
 
 if len(sys.argv) not in [2]:
-    print "python %s varConfFile" % sys.argv[0]
+    print("python %s varConfFile" % sys.argv[0])
     sys.exit(-1)
 
 varConfFile = sys.argv[1]
@@ -13,7 +15,7 @@ myDir = varConfFile.split("/")[0]
 
 N0, sampCohort, sampSize, sampSNP, numGens, reps, dataDir = myUtils.getVarConf(varConfFile)
 
-models = N0.keys()
+models = list(N0.keys())
 models.sort()
 
 outdir = 'output/variance'

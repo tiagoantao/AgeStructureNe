@@ -1,4 +1,8 @@
-import ConfigParser
+try:
+    import configparser as ConfigParser
+except:
+    import ConfigParser
+from functools import reduce
 
 meta = {
     "bighorn"    : {'name': 'Bighorn sheep'},
@@ -323,7 +327,7 @@ fecMale = {
 
 
 def getVarConf(fName):
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     config.read(fName)
 
     N0 = eval(config.get("var", "N0"))
@@ -434,7 +438,7 @@ def getAgeFecund(cfg):
 
 def calcHarmonic(lst):
     #Negatives are converted to infs (LDNe)
-    myLst = map(lambda x: x < 0 and float("inf") or x, lst)
+    myLst = [x < 0 and float("inf") or x for x in lst]
     try:
         return 1.0 * len(lst) / reduce(lambda x, y: 1.0 / y + x, myLst, 0.0)
     except ZeroDivisionError:

@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 
 import functools
 import math
@@ -54,7 +54,7 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
                     ci = cci
                     break
                 if len(ci) > 0:
-                    bottom, top = zip(*ci)
+                    bottom, top = list(zip(*ci))
                     tops.append(np.percentile([x if x is not None else
                                                100000 for x in top], 90))
                     bottoms.append(np.percentile([x if x is not None
@@ -82,7 +82,7 @@ def do_nb(case, cohort, N0, nsnps, pref, corr_name):
                     ci = cci
                     break
                 if len(ci) > 0:
-                    bottom, top = zip(*ci)
+                    bottom, top = list(zip(*ci))
                     tops.append(np.percentile([x if x is not None else
                                                100000 for x in top], 90))
                     bottoms.append(np.percentile([x if x is not None
@@ -150,7 +150,7 @@ def do_cohort(case, model, N0, nindiv, corr_name):
             break
         box_vals.append(vals)
         hmeans.append(hmean(vals))
-        bottom, top = zip(*ci)
+        bottom, top = list(zip(*ci))
         top = [100000 if x is None else x for x in top]
         bottom = [100000 if x is None else x for x in bottom]
         tops.append(np.percentile(top, 90))
@@ -233,7 +233,7 @@ def do_nb_comp(case):
     fig, ax = plt.subplots()
     box_vals = []
     labels = []
-    n0s = Nbs.keys()
+    n0s = list(Nbs.keys())
     n0s.sort()
     fig.suptitle("Nb comparison - 100 SNPs - 50 indivs")
     for model, n0 in n0s:
@@ -244,7 +244,7 @@ def do_nb_comp(case):
             case["Newb"][(model, n0)][(None, 50, 100, "SNP")]
         labels.append(str(nb))
         box_vals.append(vals)
-    ax.set_xticks(range(len(labels)), labels)
+    ax.set_xticks(list(range(len(labels))), labels)
     ax.set_ylabel("$\hat{N}_{e}$")
     sns.boxplot(box_vals, notch=0, sym="")
     #fig.savefig("output/nb-comp.png")
@@ -267,7 +267,7 @@ def do_lt_comp(case, nb, strat, corr_name):
     for pref, name in NbNames:
         if name == "Restr":
             continue
-        for k, nb2 in Nbs.items():
+        for k, nb2 in list(Nbs.items()):
             model, n0 = k
             if nb2 != nb or n0 < 50:
                 continue
@@ -286,7 +286,7 @@ def do_lt_comp(case, nb, strat, corr_name):
             ratios.append(nb_corrs[name][n0])
             hmeans.append(hmean(vals))
             try:
-                top, bottom = zip(*ci)
+                top, bottom = list(zip(*ci))
             except ValueError:
                 top, bottom = [], []
             top = [100000 if x is None else x for x in top]
@@ -314,7 +314,7 @@ def do_lt_comp(case, nb, strat, corr_name):
         ax.text(i + 1, 3 * nb * 0, '%.2f' % ratio, ha='center', va='bottom',
                 fontsize=14)
     ax.axhline(nb, color="k", lw=0.3)
-    ax.set_xticks(range(1, 1 + len(labels)))
+    ax.set_xticks(list(range(1, 1 + len(labels))))
     ax.set_xticklabels(labels, fontsize=16)
     ax.set_xlabel('Species', fontsize=24)
     plt.subplots_adjust(top=0.8)
@@ -323,7 +323,7 @@ def do_lt_comp(case, nb, strat, corr_name):
 
 
 def do_bias(case):
-    n0s = Nbs.keys()
+    n0s = list(Nbs.keys())
     n0s.sort()
     sampling = "Newb"
     table = [["Nb", "Sampling", "Model", "N1", "NeEst",
@@ -357,9 +357,9 @@ def do_bias(case):
 
 def do_hz(model, ltype, loc, N1s):
     title = "%s %s" % (model, ltype)
-    print('python plotHz.py "%s" data/trout %s' %
+    print(('python plotHz.py "%s" data/trout %s' %
           (title, " ".join([str(N1) + model + "-" + str(loc)
-                            for N1 in N1s])))
+                            for N1 in N1s]))))
     os.system('python plotHz.py "%s" data/trout %s' %
               (title, " ".join([str(N1) + model + "-" + str(loc)
                                 for N1 in N1s])))
@@ -397,7 +397,7 @@ def do_hz_comp(pref, mydir, model, N0):
         for nsnp in snps:
             vals, ci, r2, sr2, j, ssize = cases[nsnp]
             hmeans.append(hmean(vals))
-            bottom, top = zip(*ci)
+            bottom, top = list(zip(*ci))
             top = [100000 if x is None else x for x in top]
             bottom = [100000 if x is None else x for x in bottom]
             tops.append(np.percentile(top, 90))
@@ -455,7 +455,7 @@ def do_pcrit(case, model, N0, isSNP):
             vals, ci, r2, sr2, j, ssize = critCases[pcrit]
             if len(vals) > 0:
                 hmeans.append(hmean(vals))
-                bottom, top = zip(*ci)
+                bottom, top = list(zip(*ci))
                 tops.append(np.percentile([x if x is not None else 100000
                                            for x in top], 90))
                 bottoms.append(np.percentile([x if x is not None else 0.1
@@ -514,7 +514,7 @@ def do_ld_progress(model, N0s):
                 pass
                 # We are done
             if rep > 0:
-                ax.plot(_do_window(map(lambda x: x / rep, vals)),
+                ax.plot(_do_window([x / rep for x in vals]),
                         label=str(nsnp))
         ax.set_ylim(1.0 * Nbs[(model, N0)], 1.5 * Nbs[(model, N0)])
         ax.legend()
@@ -559,9 +559,9 @@ def do_nb_ne(model, N0, rep):
                 vals[start_year + i] <= cci[i][1] and cci[i][1] < 100000:
             in_corr += 1
         cerrs.append((cvals[i] - cci[i][0], cci[i][1] - cvals[i]))
-    ax.errorbar(np.array(range(len(cis20))) + 0.1, nes20, fmt="+",
-                yerr=zip(*errs), mec="red", color="red")
-    ax.errorbar(range(len(cis20)), cvals, fmt="+", yerr=zip(*cerrs),
+    ax.errorbar(np.array(list(range(len(cis20)))) + 0.1, nes20, fmt="+",
+                yerr=list(zip(*errs)), mec="red", color="red")
+    ax.errorbar(list(range(len(cis20))), cvals, fmt="+", yerr=list(zip(*cerrs)),
                 mec="green", color="green")
     ax.axhline(Nbs[(model, N0)])
     ax.axhline(Nes[N0])
@@ -617,7 +617,7 @@ def compare_correction_ci(case, model, N0, all_snps, all_indivs):
                 continue
             cvals, cci = corrections
             corr_names.append(corr_name)
-            tops, bottoms = zip(*cci)
+            tops, bottoms = list(zip(*cci))
             top_box_vals.append(tops)
             bottom_box_vals.append(bottoms)
             aboveTop = len([x for x in tops if x is not None and x < Nb])
@@ -683,14 +683,14 @@ def do_table_ci(Nbs, case, dir_pref, modelN0s, nsnps,
             bottom_nb = nb_
         vals, ci, r2, sr2, j, ssize = \
             case[cohort][(model, N0)][(None, nindivs, nsnps, "SNP")]
-        print(bname, model, N0, top_nb, nb_, bottom_nb)
+        print((bname, model, N0, top_nb, nb_, bottom_nb))
         for has_corr, corrections in get_corrs(N0, bname, nindivs,
                                                vals, ci, r2, sr2, j):
             cvals, cci = corrections
             topErr = [0, 0.0]
             botErr = [0, 0.0]
             if len(ci) > 0:
-                tops, bottoms = zip(*cci)
+                tops, bottoms = list(zip(*cci))
                 topProb = botProb = 0
                 for bottom in bottoms:
                     if bottom is None or bottom > top_nb:
@@ -746,15 +746,15 @@ def do_all_nb_ne():
             allBasics.setdefault(N0, []).append(basics)
             allNbComps.setdefault(N0, []).append(nbcomps)
             allNbs.setdefault(N0, []).append(nbs)
-    print("naive", in_naive)
-    print("corr", in_corrs)
+    print(("naive", in_naive))
+    print(("corr", in_corrs))
     basicMeans = []
     basicStds = []
     compMeans = []
     compStds = []
     N0s = [180, 361, 722]
     for N0 in N0s:
-        print("NbSTD", N0, np.std(allNbs[N0]))
+        print(("NbSTD", N0, np.std(allNbs[N0])))
         meanBasic = np.mean(allBasics[N0])
         meanComp = np.mean(allNbComps[N0])
         stdBasic = np.std(allBasics[N0])
@@ -865,7 +865,7 @@ def do_nb_linear(case, models, name, fun):
                        r2=r2, sr2=sr2, j=j)
         if len(vals) == 0:
             continue
-        bottom, top = zip(*ci)
+        bottom, top = list(zip(*ci))
         nbs.append(nb)
         tops.append(top)
         pes.append(vals)

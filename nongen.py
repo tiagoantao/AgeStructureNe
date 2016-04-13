@@ -1,3 +1,4 @@
+from __future__ import print_function
 from myUtils import getNonGenStats
 from sys import stdin,argv
 
@@ -33,7 +34,7 @@ for stat in stats:
                 ageParents[currGen].extend(
                     [prevMature[father],prevMature[mother]])
             except KeyError:
-                if currGen <= 1: print "bonkers", currGen
+                if currGen <= 1: print("bonkers", currGen)
 
             
         offspring = []
@@ -41,7 +42,7 @@ for stat in stats:
         matureAge = {}
         currGen = stat["gen"]
     if stat["rep"] == 0 and stat["gen"]>0:
-        if not years.has_key(stat["gen"]):
+        if stat["gen"] not in years:
             years[stat["gen"]] = {}
             years[stat["gen"]][ "age"] = []
             years[stat["gen"]]["fage"] = []
@@ -59,32 +60,32 @@ for stat in stats:
         matureAge[stat["id"]] = age
                 
 
-ages = list(set(filter(lambda x:float(x), years[maxYear]["age"])))
+ages = list(set([x for x in years[maxYear]["age"] if float(x)]))
 ages.sort()
 for year in years:
-    print >>demoout, "%3d" %(year, ),
-    print >>demoMout, "%3d" %(year, ),
-    print >>demoFout, "%3d" %(year, ),
+    print("%3d" %(year, ), end=' ', file=demoout)
+    print("%3d" %(year, ), end=' ', file=demoMout)
+    print("%3d" %(year, ), end=' ', file=demoFout)
     if len(ageParents[year]) > 0:
-        print >>demoout, "%2.2f" % (1.0*sum(ageParents[year])/len(ageParents[year]),),
+        print("%2.2f" % (1.0*sum(ageParents[year])/len(ageParents[year]),), end=' ', file=demoout)
     else:
-        print >>demoout, "00.00",
+        print("00.00", end=' ', file=demoout)
 
     for age in ages:
-        print >>demoout, "%3d" % (len(filter(lambda x: x==age, years[year]["age"])),),
-        print >>demoMout, "%3d" % (len(filter(lambda x: x==age, years[year]["mage"])),),
-        print >>demoFout, "%3d" % (len(filter(lambda x: x==age, years[year]["fage"])),),
-    print >>demoout, ""
-    print >>demoMout, ""
-    print >>demoFout, ""
+        print("%3d" % (len([x for x in years[year]["age"] if x==age]),), end=' ', file=demoout)
+        print("%3d" % (len([x for x in years[year]["mage"] if x==age]),), end=' ', file=demoMout)
+        print("%3d" % (len([x for x in years[year]["fage"] if x==age]),), end=' ', file=demoFout)
+    print("", file=demoout)
+    print("", file=demoMout)
+    print("", file=demoFout)
 
 
 for gen in parentAgeGen:
     if gen==1: continue
-    print >>breeout, "%3d"% (gen,),
+    print("%3d"% (gen,), end=' ', file=breeout)
     for age in ages:
-        print >>breeout, "%3d" % (len(filter(lambda x: x==age, parentAgeGen[gen])),),
-    print >>breeout, ""
+        print("%3d" % (len([x for x in parentAgeGen[gen] if x==age]),), end=' ', file=breeout)
+    print("", file=breeout)
 
 demoout.close()
 breeout.close()

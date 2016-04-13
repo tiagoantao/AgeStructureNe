@@ -1,8 +1,9 @@
+from  __future__ import print_function
 from sys import stdin, argv, exit
 import scipy
 
 if len(argv) not in [4,5,6]:
-     print "python %s demo startGen endGen matureAgeM matureAgeF" % (argv[0])
+     print("python %s demo startGen endGen matureAgeM matureAgeF" % (argv[0]))
      exit(-1)
 
 #stdin is ofs
@@ -26,7 +27,7 @@ popSizes = {}
 f = open(demo)
 l = f.readline()
 while l!="":
-    toks = map(lambda x:float(x), filter(lambda y:y!="",l.rstrip().split(" ")))
+    toks = [float(x) for x in [y for y in l.rstrip().split(" ") if y!=""]]
     toks[0] = int(toks[0])
     popSizes[toks[0]] = sum(toks[2:])
     N1s[toks[0]] = toks[2]
@@ -40,7 +41,7 @@ def getGenderDemo(name, sizes):
      f = open(name)
      l = f.readline()
      while l!="":
-         toks = map(lambda x:float(x), filter(lambda y:y!="",l.rstrip().split(" ")))
+         toks = [float(x) for x in [y for y in l.rstrip().split(" ") if y!=""]]
          toks[0]=int(toks[0])
          sizes[toks[0]] = sum(toks[1:])
          l = f.readline()
@@ -84,4 +85,4 @@ for gen in ofGens:
     k, Vk =  tota.mean(), tota.var()
     NeHill = 4 * N1s[gen] * L[gen] / (Vk + 2)
     NeHills.append(NeHill)
-    print gen, k, Vk, (k*popSizes[gen] - 2) / (k-1+ (Vk/k)), NeHill
+    print(gen, k, Vk, (k*popSizes[gen] - 2) / (k-1+ (Vk/k)), NeHill)

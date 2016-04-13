@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import sys
 
@@ -29,10 +30,10 @@ sampleStratsSNP = True, [(100, 50)]
 
 myd = {"DDIR": DDIR, "MODEL": model,
        "AGECOND": agecond, "AGEDESC": agedesc, "GENS": gens}
-print(model, agecond)
+print((model, agecond))
 
 for rep in range(reps, repe):
-    print("REP", rep)
+    print(("REP", rep))
     myd["rep"] = rep
     if agedesc in ["c2c", "c3c"]:
         myd["thres"] = 0.011
@@ -52,7 +53,7 @@ for rep in range(reps, repe):
         for isSNP, strat in [sampleStratsSNP, sampleStratsMSAT]:
             isMSAT = not isSNP
             for nloci, nindivs in strat:
-                print(nloci, nindivs, isSNP)
+                print((nloci, nindivs, isSNP))
                 if nindivs <= 15:
                     thres = 0.035
                 elif nindivs <= 25:

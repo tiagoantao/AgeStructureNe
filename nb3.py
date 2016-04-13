@@ -1,3 +1,4 @@
+from __future__ import print_function
 import bz2
 import sys
 
@@ -10,7 +11,7 @@ cf = sys.argv[1]
 
 N0s, sampCohort, sampSize, sampSNP, numGens, reps, dataDir = getVarConf(cf)
 
-models = N0s.keys()
+models = list(N0s.keys())
 models.sort()
 
 
@@ -48,15 +49,15 @@ def dumpOut(gen, born, curr, prev, parents, gender, cfg):
         else:
             ofsCntMoms[parent] += 1
     kbar = 2.0 * cntOfs / cntPossParents
-    a = scipy.array(ofsCnt.values())
+    a = scipy.array(list(ofsCnt.values()))
     vk = a.var()
 
     kbarm = 1.0 * cntOfs / cntPossDads
-    a = scipy.array(ofsCntDads.values())
+    a = scipy.array(list(ofsCntDads.values()))
     vkm = a.var()
 
     kbarf = 1.0 * cntOfs / cntPossMoms
-    a = scipy.array(ofsCntMoms.values())
+    a = scipy.array(list(ofsCntMoms.values()))
     vkf = a.var()
     nb = (kbar * cntPossParents - 2) / (kbar - 1 + vk / kbar)
     return cntOfs, cntPossParents, len(set(parents)), kbar, vk, kbarm, vkm, kbarf, vkf, nb
@@ -97,7 +98,7 @@ def doModel(model, N0, rep, cfg):
 
 
 def dumpMeans(allRes):
-    keys = allRes[0].keys()
+    keys = list(allRes[0].keys())
     numVals = len(allRes[0][keys[0]])
     keys.sort()
     vals = []
@@ -111,47 +112,47 @@ def dumpMeans(allRes):
             myRes = allRes[i][key]
             for j in range(numVals):
                 acu[j] += myRes[j]
-        print key,
+        print(key, end=' ')
         for i in range(numVals):
             v = acu[i] / len(allRes)
-            print v,
+            print(v, end=' ')
             vals[i].append(v)
-        print
+        print()
     return vals
 
 for model in models:
     for N0 in N0s[model]:
         allRes = []
-        print model, N0
-        print "gen N1 Nall Npar kbar vk kbarm vkm kbarf vkf nb"
+        print(model, N0)
+        print("gen N1 Nall Npar kbar vk kbarm vkm kbarf vkf nb")
         cfg = getConfig(dataDir + "/" + str(N0) + model + ".conf")
         startGen = cfg.gens - numGens - 1
         try:
             for rep in range(reps):
                 repCase = doModel(model, N0, rep, cfg)
-                print >>sys.stderr, model, N0, rep,
-                myGens = repCase.keys()
+                print(model, N0, rep, end=' ', file=sys.stderr)
+                myGens = list(repCase.keys())
                 myGens.sort()
-                print >>sys.stderr, myGens[0],
+                print(myGens[0], end=' ', file=sys.stderr)
                 for myGen in myGens:
-                    print >>sys.stderr, repCase[myGen][-1],
-                print >>sys.stderr
+                    print(repCase[myGen][-1], end=' ', file=sys.stderr)
+                print(file=sys.stderr)
                 #print >>sys.stderr, model, N0, rep, repCase
                 miniRep = {}
-                for gen, vals in repCase.items():
+                for gen, vals in list(repCase.items()):
                     if gen >= startGen:
                         miniRep[gen] = vals
                 allRes.append(miniRep)
         except IOError:
-            print "NoData", rep
+            print("NoData", rep)
             continue
         vals = dumpMeans(allRes)
-        print "",
+        print("", end=' ')
         for i in range(len(vals) - 1):
-            print scipy.mean(vals[i]),
+            print(scipy.mean(vals[i]), end=' ')
         try:
             hm = stats.hmean(vals[-1])
-            print hm
+            print(hm)
         except ValueError:
-            print "Negs",
-            print stats.hmean(filter(lambda x: x > 0, vals[-1]))
+            print("Negs", end=' ')
+            print(stats.hmean([x for x in vals[-1] if x > 0]))

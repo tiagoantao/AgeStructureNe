@@ -1,19 +1,20 @@
-import ConfigParser
+from __future__ import division, print_function
 import sys
+
 from scipy import stats
 import numpy
 
 import myUtils
 
 if len(sys.argv)!=2:
-    print "python %s varConfFile" % (sys.argv[0], )
+    print("python %s varConfFile" % (sys.argv[0], ))
     sys.exit(-1)
 
 confFile = sys.argv[1]
 
 N0, sampCohort, sampSize, sampSNP, numGens, reps, dataDir = myUtils.getVarConf(confFile)
 
-models = N0.keys()
+models = list(N0.keys())
 models.sort()
 
 def doModels(fun):
@@ -28,7 +29,7 @@ def doModels(fun):
             sys.stdout.write(str(N) + "\t")
             try:
                 ret = fun(model, N, startGen)
-                sys.stdout.write("\t".join(map(lambda x:str(x), ret)))
+                sys.stdout.write("\t".join([str(x) for x in ret]))
             except IOError:
                 sys.stdout.write("not done")
             sys.stdout.write("\n")
@@ -37,8 +38,7 @@ def doModels(fun):
 def cleanSpaces(ls, minVal):
     vals = []
     for l in ls:
-        toks = map(lambda y:float(y),
-               filter(lambda x:x!="", l.rstrip().split(" ")))
+        toks = [float(y) for y in [x for x in l.rstrip().split(" ") if x!=""]]
         if toks[0]<minVal: continue
         vals.append(toks)
     return vals
@@ -61,7 +61,7 @@ def acu(fnamer, harit, startGen):
                     acu[i-1] = acu.get(i-1, 0) + 1.0/val[i]
                 else:
                     acu[i-1] = acu.get(i-1, 0) + val[i]
-    ks = acu.keys()
+    ks = list(acu.keys())
     ks.sort()
     for k in ks:
         if k+1 in harit:
@@ -88,7 +88,7 @@ def doOfs():
         Ns = N0[model]
         Ns.sort()
         for N in Ns:
-            print "%s\t%d" % (model, N)
+            print("%s\t%d" % (model, N))
             cfg = myUtils.getConfig(dataDir + "/" + str(N) + model + ".conf")
             startGen = cfg.gens - numGens - 1
             nowMale = {}
@@ -118,20 +118,20 @@ def doOfs():
                         totFemale[topOfs] = totFemale.get(topOfs, 0) + 1
             for i in range(maxV):
                 if i>20 and i<maxV-1: continue
-                print "\t\t%d\t%f\t%f\t%f\t%f" % (i, nowMale.get(i,0.0)/cnt, nowFemale.get(i,0)/cnt, totMale.get(i,0)/cnt, totFemale.get(i,0)/cnt)
+                print("\t\t%d\t%f\t%f\t%f\t%f" % (i, nowMale.get(i,0.0)/cnt, nowFemale.get(i,0)/cnt, totMale.get(i,0)/cnt, totFemale.get(i,0)/cnt))
 
 
 
 
-print
-print "All individuals"
-print "model\tN1\tk\tvk\t (k*popSizes[gen] - 2) / (k-1+ (Vk/k))\tHillNe"
+print()
+print("All individuals")
+print("model\tN1\tk\tvk\t (k*popSizes[gen] - 2) / (k-1+ (Vk/k))\tHillNe")
 doMature=False
 doModels(vk)
 
-print
-print "MATURE"
-print "model\tN1\tk\tvk\t (k*popSizes[gen] - 2) / (k-1+ (Vk/k))\tHillNe"
+print()
+print("MATURE")
+print("model\tN1\tk\tvk\t (k*popSizes[gen] - 2) / (k-1+ (Vk/k))\tHillNe")
 try:
     doMature=True
     doModels(vk)
@@ -139,10 +139,10 @@ except IOError:
     pass
 
 try:
-    print "Model\tN1\tcnt\tnowMaleOfs\tnowFemaleOfs\ttotMaleOfs\ttotFemaleOfs"
+    print("Model\tN1\tcnt\tnowMaleOfs\tnowFemaleOfs\ttotMaleOfs\ttotFemaleOfs")
     doOfs()
 except IOError:
     pass
 
-print "model\tN1\tNc\tN1\tN2\t..."
+print("model\tN1\tNc\tN1\tN2\t...")
 doModels(pyr)

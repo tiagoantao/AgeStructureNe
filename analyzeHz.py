@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 
 import os
 import shutil
@@ -9,9 +9,9 @@ project = sys.argv[1]
 
 def do_hz(model, ltype, loc, N1s):
     title = "%s %s" % (model, ltype)
-    print('python plotHz.py "%s" data/%s %s' %
+    print(('python plotHz.py "%s" data/%s %s' %
           (title, project, " ".join([str(N1) + model + "-" + str(loc)
-                                    for N1 in N1s])))
+                                    for N1 in N1s]))))
     os.system('python plotHz.py "%s" data/%s %s' %
               (title, project, " ".join([str(N1) + model + "-" + str(loc)
                                          for N1 in N1s])))
