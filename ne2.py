@@ -1,11 +1,12 @@
+from __future__ import print_function
 import os
 import sys
 
-from igrat.genetics.popgen.ne2.Controller import NeEstimator2Controller
-from igrat.genetics.popgen import ne2
+from genomics.popgen.ne2.Controller import NeEstimator2Controller
+from genomics.popgen import ne2
 
 if len(sys.argv) != 2:
-    print "%s <thres>"
+    print("%s <thres>")
     exit(-1)
 
 thres = float(sys.argv[1])
@@ -52,10 +53,10 @@ ldout.close()
 
 os.remove(fname)
 os.remove(fname + ".out")
-print str(mNes)
-print str(mNesCI)
-print >>sys.stderr, str(mOr2s)
-print >>sys.stderr, str(mSmpr2s)
-print >>sys.stderr, str(mIndep)
-print >>sys.stderr, str(mHMean)
+print(str(mNes))
+print(str(mNesCI))
+print(str(mOr2s), file=sys.stderr)
+print(str(mSmpr2s), file=sys.stderr)
+print(str(mIndep), file=sys.stderr)
+print(str(mHMean), file=sys.stderr)
 sys.stdout.flush()

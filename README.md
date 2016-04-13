@@ -19,7 +19,7 @@ Genepop (1)
 
 LDNe (1,2)
 
-igrat
+pygenomics
 
 matplotlib
 
