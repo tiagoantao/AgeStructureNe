@@ -1,6 +1,7 @@
 from __future__ import print_function
 from simuOpt import simuOptions
 simuOptions["Quiet"] = True
+simuOptions["Optimized"] = True
 import simuPOP as sp
 from myUtils import getConfig
 import sys
