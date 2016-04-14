@@ -1,12 +1,12 @@
 from __future__ import print_function
+import sys
+import random
+import numpy
 from simuOpt import simuOptions
 simuOptions["Quiet"] = True
 simuOptions["Optimized"] = True
 import simuPOP as sp
 from myUtils import getConfig
-import sys
-import random
-import numpy
 
 if len(sys.argv) not in [3, ]:
     print("Syntax:", sys.argv[0], "<confFile> <prefout>")
@@ -18,7 +18,7 @@ prefOut = sys.argv[2]
 
 def createGenome(size, numMSats, numSNPs):
     maxAlleleN = 100
-    #print "Mutation model is most probably not correct", numMSats, numSNPs
+    # print "Mutation model is most probably not correct", numMSats, numSNPs
     loci = (numMSats + numSNPs) * [1]
     initOps = []
 
@@ -38,7 +38,7 @@ def createGenome(size, numMSats, numSNPs):
         freq = 0.5
         initOps.append(
             sp.InitGenotype(
-                #Position 0 is coded as 0, not good for genepop
+                # Position 0 is coded as 0, not good for genepop
                 freq=[0.0, freq, 1 - freq],
                 loci=numMSats + snp))
 
@@ -89,7 +89,8 @@ def evolveSim(sim, gens, mateOp,
 
 (pop, popInitOps, popPreOps, popPostOps, oExpr) = createSinglePop(
     cfg.popSize, cfg.numMSats + cfg.numSNPs, cfg.startLambda, cfg.lbd)
-(loci, genInitOps, genPreOps) = createGenome(cfg.popSize, cfg.numMSats, cfg.numSNPs)
+(loci, genInitOps, genPreOps) = createGenome(cfg.popSize,
+                                             cfg.numMSats, cfg.numSNPs)
 
 
 def calcDemo(gen, pop):
@@ -137,15 +138,15 @@ def litterSkipGenerator(pop, subPop):
             diff = int(gen - ind.breed)
             if diff > len(cfg.skip):
                 available = True
-                #print diff, len(cfg.skip), gen, ind.breed
+                # print diff, len(cfg.skip), gen, ind.breed
             else:
                 prob = random.random() * 100
-                #print prob, cfg.skip, diff
+                # print prob, cfg.skip, diff
                 if prob > cfg.skip[diff - 1]:
                     available = True
                 else:
                     available = False
-            #print ind, available
+            # print ind, available
             if available:
                 femalesAge.setdefault(int(ind.age), []).append(ind)
 
@@ -216,7 +217,7 @@ def calcNb(pop, pair):
     kbar = 2.0 * cfg.N0 / len(cofs)
     Vk = numpy.var(cofs)
     nb = (kbar * len(cofs) - 2) / (kbar - 1 + Vk / kbar)
-    #print len(pair), kbar, Vk, (kbar * len(cofs) - 2) / (kbar - 1 + Vk / kbar)
+    # print len(pair), kbar,Vk, (kbar * len(cofs) - 2) / (kbar - 1 + Vk / kbar)
     return nb
 
 
@@ -228,7 +229,7 @@ def restrictedGenerator(pop, subPop):
     while not nbOK:
         pair = []
         gen = litterSkipGenerator(pop, subPop)
-        #print 1, pop.dvars().gen, nb
+        # print 1, pop.dvars().gen, nb
         for i in range(cfg.N0):
             pair.append(next(gen))
         if pop.dvars().gen < 10:
@@ -265,7 +266,7 @@ def fitnessGenerator(pop, subPop):
             if a:
                 gamma = numpy.random.gamma(a, b)
                 ind.rep_succ = gamma
-                #ind.rep_succ = numpy.random.poisson(gamma)
+                # ind.rep_succ = numpy.random.poisson(gamma)
             else:
                 ind.rep_succ = 1
             perAgeMaleNorm[int(ind.age) - 1] = perAgeMaleNorm.get(
@@ -273,13 +274,13 @@ def fitnessGenerator(pop, subPop):
             ageCntMale[int(ind.age) - 1] = ageCntMale.get(
                 int(ind.age) - 1, 0.0) + 1
         else:
-            #if ind.age == 0: totFecFemales +=0
+            # if ind.age == 0: totFecFemales +=0
             a = cfg.gammaAFemale[int(ind.age) - 1]
             b = cfg.gammaBFemale[int(ind.age) - 1]
             if a:
                 gamma = numpy.random.gamma(a, b)
                 ind.rep_succ = gamma
-                #ind.rep_succ = numpy.random.poisson(gamma)
+                # ind.rep_succ = numpy.random.poisson(gamma)
             else:
                 ind.rep_succ = 1
             perAgeFemaleNorm[int(ind.age) - 1] = perAgeFemaleNorm.get(
@@ -420,9 +421,9 @@ def setAge(pop):
 
 def createAge(pop):
     ageInitOps = [
-        #InitInfo(lambda: random.randint(0, cfg.ages-2), infoFields='age'),
+        # InitInfo(lambda: random.randint(0, cfg.ages-2), infoFields='age'),
         sp.IdTagger(),
-        #PyOperator(func=outputAge,at=[0]),
+        # PyOperator(func=outputAge,at=[0]),
         sp.PyOperator(func=setAge, at=[0]),
     ]
     agePreOps = [
@@ -461,8 +462,8 @@ err = open(prefOut + ".gen", "w")
 megaDB = open(prefOut + ".db", "w")
 reportOps = [
     sp.Stat(popSize=True),
-    #PyEval(r'"gen %d\n" % gen', reps=0),
-    #PyEval(r'"size %s\n" % subPopSize', reps=0),
+    # PyEval(r'"gen %d\n" % gen', reps=0),
+    # PyEval(r'"size %s\n" % subPopSize', reps=0),
 ]
 sim = createSim(pop, cfg.reps)
 evolveSim(sim, cfg.gens, mateOp, genInitOps, genPreOps, popInitOps,

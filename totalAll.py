@@ -19,9 +19,10 @@ else:
 myDir = varConfFile.split("/")[0]
 
 lexec = Executor.Local(-multiprocessing.cpu_count())
-#lexec = Executor.Local(-10)
+# lexec = Executor.Local(-10)
 
-N0, sampCohort, sampSize, sampSNP, numGens, reps, dataDir = myUtils.getVarConf(varConfFile)
+N0, sampCohort, sampSize, sampSNP, numGens, reps, dataDir = \
+    myUtils.getVarConf(varConfFile)
 
 
 def nongen(model, N, ageM, ageF, reps, startGen):
@@ -47,7 +48,7 @@ def gen(model, N, ageM, ageF, reps):
             print(("bash", 'topGo.sh %d %d %d%s "%s"' %
                   (rep, rep + 1, N, model, cond)))
     os.chdir("..")
-    #bash topGo.sh $REPS $REPE ${a[$i]}  ${age[$i]} ;
+    # bash topGo.sh $REPS $REPE ${a[$i]}  ${age[$i]} ;
 
 models = list(N0.keys())
 models.sort()

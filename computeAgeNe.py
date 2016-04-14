@@ -25,7 +25,7 @@ for l in f:
     if l.find('Ne (Eq 2) ') > -1:
         ne = float(l.rstrip().split(' ')[-1])
     if l.find('Nb ') > -1:
-        #We want the last
+        # We want the last
         nb = float(l.rstrip().split(' ')[-1])
 f.close()
 print((nb, ne, nb / ne))

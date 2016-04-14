@@ -13,7 +13,8 @@ varConfFile = sys.argv[1]
 
 myDir = varConfFile.split("/")[0]
 
-N0, sampCohort, sampSize, sampSNP, numGens, reps, dataDir = myUtils.getVarConf(varConfFile)
+N0, sampCohort, sampSize, sampSNP, numGens, reps, dataDir = \
+    myUtils.getVarConf(varConfFile)
 
 models = list(N0.keys())
 models.sort()

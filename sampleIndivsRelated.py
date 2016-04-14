@@ -2,7 +2,7 @@ from __future__ import division
 from sys import stdin, argv, exit
 import random
 
-#Only from newborns
+# Only from newborns
 
 if len(argv) not in [5]:
     print "python %s frac indivs startGen endGen" % (argv[0],)
@@ -60,8 +60,8 @@ while l != "":
         l = stdin.readline()
         continue
     sameParents.setdefault((father, mother), []).append(id)
-    #sameParents.setdefault(father, []).append(id)
-    #sameParents.setdefault(mother, []).append(id)
+    # sameParents.setdefault(father, []).append(id)
+    # sameParents.setdefault(mother, []).append(id)
     indivs.append(id)
 
     if gen > currGen:

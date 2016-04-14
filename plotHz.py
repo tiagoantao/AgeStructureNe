@@ -37,7 +37,8 @@ for model in models:
             f.close()
             cnt = 0
             for l in ls:
-                res = [float(x) for x in l.rstrip().replace("\t", " ").split(" ")]
+                res = [float(x) for x in
+                       l.rstrip().replace("\t", " ").split(" ")]
                 all_sims[model][rep].append(sum(res) / len(res))
                 if cnt == 200:
                     bla = res

@@ -14,7 +14,7 @@ fName = "/tmp/hz%s.txt" % (str(os.getpid()))
 
 f = open(fName, "w")
 l = sys.stdin.readline()
-while l!="":
+while l != "":
     f.write(l)
     l = sys.stdin.readline()
 f.close()
@@ -24,8 +24,8 @@ pop_list, loci_list = ctrl.get_basic_info()
 numPops = len(pop_list)
 for pop in range(numPops):
     for locus in loci_list:
-        #expho, obsho, exphe, obshe =  ctrl.get_heterozygosity_info(pop, locus)
-        #print float(exphe)/(exphe+expho),
+        # expho, obsho, exphe, obshe = ctrl.get_heterozygosity_info(pop, locus)
+        # print float(exphe)/(exphe+expho),
         obs, freqs = ctrl.get_allele_frequency(pop, locus)
         ho = 0.0
         for freq in list(freqs.values()):

@@ -84,10 +84,12 @@ def doCase(w, age, indivs, loci, isSNP, isRel, startGens, numGens,
                     print("\t" + str(j), end=' ', file=w)
                     print("\t" + str(ssize), end=' ', file=w)
             except IOError:
-                print("err", mName, model, indivs, loci, rep, name, file=sys.stderr)
+                print("err", mName, model, indivs, loci, rep, name,
+                      file=sys.stderr)
             print(file=w)
 
-N0, sampCohort, sampSize, sampSNP, numGens, reps, dataDir = myUtils.getVarConf(confFile)
+N0, sampCohort, sampSize, sampSNP, numGens, reps, dataDir = \
+    myUtils.getVarConf(confFile)
 
 models = list(N0.keys())
 models.sort()

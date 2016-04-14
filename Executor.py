@@ -1,6 +1,6 @@
-#Implements asynchronous executors for local machines and condor
+# Implements asynchronous executors for local machines and condor
 #
-#The local executor is only partially async, if there is too much load
+# The local executor is only partially async, if there is too much load
 #   it will block!
 from __future__ import print_function
 

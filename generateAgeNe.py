@@ -22,7 +22,8 @@ for age in range(ages[model] - 1):
             bm = 0
         else:
             bm = (curr_survival[1] - 1) / curr_survival[1]
-        curr_survival = curr_survival[0] * survivalFemale[model][age], curr_survival[1] * survivalMale[model][age]
+        curr_survival = curr_survival[0] * survivalFemale[model][age],\
+            curr_survival[1] * survivalMale[model][age]
     else:
         bf = bm = 1
     print(('%d %f %f %f %f %f %f' %

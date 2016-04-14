@@ -8,8 +8,8 @@ if len(argv) not in [5, 6]:
     exit(-1)
 
 maxAge = int(argv[1])
-if argv[2]=="ALL":
-    nindivs=None # Actually we stop at 200
+if argv[2] == "ALL":
+    nindivs = None  # Actually we stop at 200
     maxInds = 200
 else:
     nindivs = int(argv[2])
@@ -19,8 +19,9 @@ lp = len(argv) == 6
 
 l = stdin.readline()
 
-#currGen = cfg.startSave
+# currGen = cfg.startSave
 currGen = 0
+
 
 def getIndivs(ageInds):
     indivs = []
@@ -29,12 +30,13 @@ def getIndivs(ageInds):
         indivs.extend(random.sample(inds, maxIndsPerCohort))
     return indivs
 
-ageCnt={}
+ageCnt = {}
 indivsAge = {}
-while l!= "":
+while l != "":
     toks = l.rstrip().split(" ")
     rep = int(float(toks[1]))
-    if rep>0: break
+    if rep > 0:
+        break
     gen = int(float(toks[0]))
     id = int(float(toks[2]))
     sex = int(float(toks[3]))
@@ -42,13 +44,13 @@ while l!= "":
     mother = int(float(toks[5]))
     age = int(float(toks[6]))
 
-    if gen>currGen:
-        if currGen>=startGen:
+    if gen > currGen:
+        if currGen >= startGen:
             indivs = getIndivs(indivsAge)
             if nindivs:
                 print(currGen, random.sample(indivs, nindivs))
             else:
-                if len(indivs)>maxInds:
+                if len(indivs) > maxInds:
                     print(currGen, random.sample(indivs, maxInds))
                 else:
                     print(currGen, indivs)
@@ -56,25 +58,25 @@ while l!= "":
                 if nindivs:
                     print(random.sample(indivs, nindivs))
                 else:
-                    if len(indivs)>maxInds:
+                    if len(indivs) > maxInds:
                         print(random.sample(indivs, maxInds))
                     else:
                         print(indivs)
         indivsAge = {}
-        currGen=gen
-        if currGen>endGen:
+        currGen = gen
+        if currGen > endGen:
             break
-    
-    if age<=maxAge:
+
+    if age <= maxAge:
         ageCnt[age] = ageCnt.get(age, 0) + 1
-        indivsAge.setdefault(age,[]).append(id)
+        indivsAge.setdefault(age, []).append(id)
     l = stdin.readline()
-if currGen<=endGen:
+if currGen <= endGen:
     indivs = getIndivs(indivsAge)
     if nindivs:
         print(currGen, random.sample(indivs, nindivs))
     else:
-        if len(indivs)>maxInds:
+        if len(indivs) > maxInds:
             print(currGen, random.sample(indivs, maxInds))
         else:
             print(currGen, indivs)
@@ -82,7 +84,7 @@ if currGen<=endGen:
         if nindivs:
             print(random.sample(indivs, nindivs))
         else:
-            if len(indivs)>maxInds:
+            if len(indivs) > maxInds:
                 print(random.sample(indivs, maxInds))
             else:
                 print(indivs)

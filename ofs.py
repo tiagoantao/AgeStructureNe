@@ -4,7 +4,7 @@ from sys import stdin, stderr
 
 stats = getNonGenStats(stdin)
 
-gens={}
+gens = {}
 currGen = 0
 alive = []
 aliveNow = []
@@ -12,12 +12,13 @@ offs = {}
 offsGen = {}
 istats = {}
 for stat in stats:
-    if stat["gen"]>currGen:
+    if stat["gen"] > currGen:
         currGen = int(float(stat["gen"]))
         rems = []
         for dead in alive:
             if dead not in aliveNow:
-                print(currGen, istats[dead][0], dead, istats[dead][1], offs[dead], offsGen.get(dead,0))
+                print(currGen, istats[dead][0], dead, istats[dead][1],
+                      offs[dead], offsGen.get(dead, 0))
                 del offs[dead]
                 del istats[dead]
                 rems.append(dead)
@@ -35,8 +36,8 @@ for stat in stats:
         alive.append(id)
         istats[id] = currGen, gender
         offs[id] = 0
-        if father>0:
-            offs[father] = offs.get(father,0)+1
-            offsGen[father] = offsGen.get(father,0)+1
-            offs[mother] = offs.get(mother,0)+1
-            offsGen[mother] = offsGen.get(mother,0)+1
+        if father > 0:
+            offs[father] = offs.get(father, 0) + 1
+            offsGen[father] = offsGen.get(father, 0) + 1
+            offs[mother] = offs.get(mother, 0) + 1
+            offsGen[mother] = offsGen.get(mother, 0) + 1

@@ -19,7 +19,7 @@ gens = []
 
 currGen = 0
 
-#get individuals per generation
+# get individuals per generation
 indivs = set()
 while l != "":
     l = l.rstrip()
@@ -30,7 +30,7 @@ while l != "":
     gens.append(genIndivs)
     l = stdin.readline()
 
-#get genetic data
+# get genetic data
 f = bz2.BZ2File(genFile)
 l = f.readline()
 genetics = {}
@@ -47,9 +47,9 @@ while l != "":
     l = f.readline()
 f.close()
 
-#print >>stderr, genetics.keys()
+# print >>stderr, genetics.keys()
 
-#dump genepop file
+# dump genepop file
 print("lala land")
 for locus in loci:
     print("l" + str(locus))

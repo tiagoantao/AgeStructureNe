@@ -33,16 +33,16 @@ def dumpOut(gen, born, curr, prev, parents, gender, cfg):
         cntPossParents += 1
 
         if gender[pi] == 1:
-            #fec = cfg.fecundityMale
+            # fec = cfg.fecundityMale
             cntPossDads += 1
             ofsCntDads[pi] = 0
         else:
-            #fec = cfg.fecundityFemale
+            # fec = cfg.fecundityFemale
             cntPossMoms += 1
             ofsCntMoms[pi] = 0
         ofsCnt[pi] = 0
     for parent in parents:
-        #print prev.index(parent)
+        # print prev.index(parent)
         ofsCnt[parent] += 1
         if gender[parent] == 1:
             ofsCntDads[parent] += 1
@@ -60,7 +60,8 @@ def dumpOut(gen, born, curr, prev, parents, gender, cfg):
     a = scipy.array(list(ofsCntMoms.values()))
     vkf = a.var()
     nb = (kbar * cntPossParents - 2) / (kbar - 1 + vk / kbar)
-    return cntOfs, cntPossParents, len(set(parents)), kbar, vk, kbarm, vkm, kbarf, vkf, nb
+    return cntOfs, cntPossParents, \
+        len(set(parents)), kbar, vk, kbarm, vkm, kbarf, vkf, nb
 
 
 def doModel(model, N0, rep, cfg):
@@ -137,7 +138,7 @@ for model in models:
                 for myGen in myGens:
                     print(repCase[myGen][-1], end=' ', file=sys.stderr)
                 print(file=sys.stderr)
-                #print >>sys.stderr, model, N0, rep, repCase
+                # print >>sys.stderr, model, N0, rep, repCase
                 miniRep = {}
                 for gen, vals in list(repCase.items()):
                     if gen >= startGen:
