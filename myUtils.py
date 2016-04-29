@@ -337,7 +337,7 @@ fecMale = {
 
 
 def getVarConf(fName):
-    config = configparser.ConfigParser()
+    config = ConfigParser.ConfigParser()
     config.read(fName)
 
     N0 = eval(config.get("var", "N0"))
