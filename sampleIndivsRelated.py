@@ -1,12 +1,12 @@
-from __future__ import division
+from __future__ import division, print_function
 from sys import stdin, argv, exit
 import random
 
 # Only from newborns
 
 if len(argv) not in [5]:
-    print "python %s frac indivs startGen endGen" % (argv[0],)
-    print "indivs can be ALL"
+    print("python %s frac indivs startGen endGen" % argv[0])
+    print("indivs can be ALL")
     exit(-1)
 
 frac = int(argv[1]) / 100
@@ -39,7 +39,7 @@ def getSibs(sameParents, todo):
                 todo -= 2
                 break
         if not have_more:
-            print "Not enough relateds"
+            print("Not enough relateds")
             exit()
     return rels
 
@@ -71,13 +71,13 @@ while l != "":
                 indivs.remove(related)
             if nindivs:
                 remaining = nindivs - len(relateds)
-                print currGen, relateds + random.sample(indivs, remaining)
+                print(currGen, relateds + random.sample(indivs, remaining))
             else:
                 if len(indivs) > maxInds:
                     remaining = maxInds - len(relateds)
-                    print currGen, relateds + random.sample(indivs, remaining)
+                    print(currGen, relateds + random.sample(indivs, remaining))
                 else:
-                    print currGen, relateds + indivs
+                    print(currGen, relateds + indivs)
         sameParents = {}
         indivs = []
         currGen = gen
@@ -92,10 +92,10 @@ if currGen <= endGen:
         indivs.remove(related)
     if nindivs:
         remaining = nindivs - len(relateds)
-        print currGen, relateds + random.sample(indivs, remaining)
+        print(currGen, relateds + random.sample(indivs, remaining))
     else:
         if len(indivs) > maxInds:
             remaining = maxInds - len(relateds)
-            print currGen, relateds + random.sample(indivs, remaining)
+            print(currGen, relateds + random.sample(indivs, remaining))
         else:
-            print currGen, relateds + indivs
+            print(currGen, relateds + indivs)

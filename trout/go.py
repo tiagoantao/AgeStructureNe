@@ -74,6 +74,7 @@ for rep in range(reps, repe):
                     if isMSAT:
                         os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivsRelated.py 20 {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 100|python ../ne2.py {thres} > ldout/{MODEL}Newb{nindivs}{nloci}-rel-{rep} 2> ldout/{MODEL}Newb{nindivs}{nloci}-rel-{rep}.r2'.format(**myd))
                     else:
+                        print('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivsRelated.py 20 {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ne2.py {thres} > ldout/{MODEL}Newb{nindivs}{nloci}-snp-rel-{rep} 2> ldout/{MODEL}Newb{nindivs}{nloci}-snp-rel-{rep}.r2'.format(**myd))
                         os.system('bzcat {DDIR}/{MODEL}{rep}.sim.bz2 |python ../sampleIndivsRelated.py 20 {nindivs} 1 {GENS}|python ../sampleLoci.py {DDIR}/{MODEL}{rep}.gen.bz2 {nloci} 400 100|python ../ne2.py {thres} > ldout/{MODEL}Newb{nindivs}{nloci}-snp-rel-{rep} 2> ldout/{MODEL}Newb{nindivs}{nloci}-snp-rel-{rep}.r2'.format(**myd))
                 # pcrit Thresholds
                 #if nindivs == 50 and isSNP:

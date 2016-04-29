@@ -31,7 +31,7 @@ while l != "":
     l = stdin.readline()
 
 # get genetic data
-f = bz2.BZ2File(genFile)
+f = bz2.open(genFile, 'rt')
 l = f.readline()
 genetics = {}
 while l != "":
