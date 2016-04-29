@@ -2,7 +2,7 @@ from __future__ import print_function
 import os
 import sys
 
-from genomics.popgen.ne2.Controller import NeEstimator2Controller
+from genomics.popgen.ne2.controller import NeEstimator2Controller
 from genomics.popgen import ne2
 
 if len(sys.argv) != 2:
@@ -24,7 +24,7 @@ while l != "":
 if cnt == 0:  # Sample size above indivs
     sys.exit(0)
 out.close()
-ne2c.run_neestimator2('.', fname, '.', fname + '.out', crits=[thres])
+ne2c.run('.', fname, '.', fname + '.out', crits=[thres])
 ldout = open(fname + '.out')
 ldres = ne2.parse(ldout)
 
